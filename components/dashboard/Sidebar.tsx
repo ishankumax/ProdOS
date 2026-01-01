@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import LogoutButton from "@/components/LogoutButton";
@@ -14,6 +15,19 @@ const NAV_ITEMS = [
 
 export default function Sidebar({ userEmail }: { userEmail?: string }) {
   const pathname = usePathname();
+  const [activeTheme, setActiveTheme] = useState<string>("default");
+
+  useEffect(() => {
+    const theme = localStorage.getItem("prod_os_theme") || "default";
+    setActiveTheme(theme);
+    document.documentElement.setAttribute("data-theme", theme);
+  }, []);
+
+  const changeTheme = (themeName: string) => {
+    setActiveTheme(themeName);
+    document.documentElement.setAttribute("data-theme", themeName);
+    localStorage.setItem("prod_os_theme", themeName);
+  };
 
   return (
     <aside className="w-full h-full flex flex-col bg-surface border-r border-white/5 sticky top-0">
@@ -98,13 +112,51 @@ export default function Sidebar({ userEmail }: { userEmail?: string }) {
             <div className="flex justify-between items-center text-[10px]">
               <span className="text-white/20 uppercase tracking-tighter">Heartbeat</span>
               <div className="flex items-center gap-1.5">
-                <span className="w-1 h-1 rounded-full bg-brand-500 animate-pulse" />
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse" />
                 <span className="text-brand-400 font-bold uppercase tracking-widest">Active</span>
               </div>
             </div>
             <div className="flex justify-between items-center text-[10px]">
               <span className="text-white/20 uppercase tracking-tighter">Latency</span>
               <span className="text-emerald-400/80 uppercase">12ms</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-1">
+          <p className="px-3 text-[10px] font-bold text-white/20 uppercase tracking-widest mb-2">
+            System Interface
+          </p>
+          <div className="mx-3 p-3 rounded-lg bg-white/[0.02] border border-white/5 space-y-3 font-mono">
+            <div className="flex justify-between items-center text-[10px] border-b border-white/5 pb-2">
+              <span className="text-white/20 uppercase tracking-tighter">Protocol</span>
+              <span className="text-brand-400 font-bold uppercase tracking-wider">
+                {activeTheme === 'default' ? 'Nordic' : activeTheme}
+              </span>
+            </div>
+            <div className="grid grid-cols-5 gap-1.5 pt-0.5">
+              {[
+                { name: "default", label: "NOR", color: "bg-indigo-500", title: "Nordic Blue (Default)" },
+                { name: "amber", label: "AMB", color: "bg-amber-500", title: "Cyberpunk Amber" },
+                { name: "green", label: "MAT", color: "bg-emerald-500", title: "Matrix Green" },
+                { name: "rose", label: "DRC", color: "bg-rose-500", title: "Dracula Rose" },
+                { name: "mono", label: "GHO", color: "bg-zinc-400", title: "Ghost Monochrome" },
+              ].map((themeOpt) => (
+                <button
+                  key={themeOpt.name}
+                  onClick={() => changeTheme(themeOpt.name)}
+                  title={themeOpt.title}
+                  className={cn(
+                    "flex flex-col items-center justify-center p-1.5 rounded border transition-all text-[8px] font-bold uppercase",
+                    activeTheme === themeOpt.name
+                      ? "border-brand-500/40 bg-brand-500/10 text-brand-400"
+                      : "border-white/5 bg-white/[0.01] text-white/30 hover:text-white/60 hover:bg-white/5"
+                  )}
+                >
+                  <span className={cn("w-1.5 h-1.5 rounded-full mb-1", themeOpt.color)} />
+                  {themeOpt.label}
+                </button>
+              ))}
             </div>
           </div>
         </div>
