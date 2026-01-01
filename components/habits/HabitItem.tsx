@@ -40,7 +40,7 @@ export default function HabitItem({ habit }: HabitItemProps) {
         disabled={isPending}
         className={`flex-shrink-0 w-12 h-12 rounded-2xl border-2 flex items-center justify-center transition-all duration-500 ${
           optimisticCompleted
-            ? "bg-brand-500 border-brand-500 text-white shadow-[0_0_20px_rgba(139,92,246,0.5)]"
+            ? "bg-brand-500 border-brand-500 text-white shadow-[0_0_20px_rgba(var(--brand-500-rgb),0.5)]"
             : "border-white/10 text-white/10 hover:border-brand-400 hover:text-white group-hover:bg-brand-500/5"
         }`}
       >

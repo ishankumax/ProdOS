@@ -36,7 +36,7 @@ export default function DayCard({ date, goals, habits, logs, isToday }: DayCardP
     <div className={cn(
       "flex flex-col gap-4 p-4 rounded-xl border transition-all duration-500 min-h-[220px] group relative overflow-hidden",
       isToday 
-        ? "bg-white/[0.04] border-brand-500/40 ring-1 ring-brand-500/20 shadow-[0_0_20px_rgba(139,92,246,0.05)]" 
+        ? "bg-white/[0.04] border-brand-500/40 ring-1 ring-brand-500/20 shadow-[0_0_20px_rgba(var(--brand-500-rgb),0.05)]" 
         : isHighCompletion
           ? "bg-brand-500/[0.05] border-brand-500/20"
           : "bg-white/[0.02] border-white/5 hover:bg-white/[0.04] hover:border-white/10"
@@ -77,7 +77,7 @@ export default function DayCard({ date, goals, habits, logs, isToday }: DayCardP
                   className={cn(
                     "w-2 h-2 rounded-full transition-all duration-300",
                     isCompleted 
-                      ? "bg-brand-500 shadow-[0_0_10px_rgba(139,92,246,0.5)]" 
+                      ? "bg-brand-500 shadow-[0_0_10px_rgba(var(--brand-500-rgb),0.5)]" 
                       : "bg-white/10"
                   )}
                 />

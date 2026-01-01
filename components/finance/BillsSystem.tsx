@@ -15,7 +15,7 @@ export default function BillsSystem({ bills, onUpdate, onAdd, onDelete }: BillsS
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-brand-500 shadow-[0_0_10px_rgba(139,92,246,0.5)]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-brand-500 shadow-[0_0_10px_rgba(var(--brand-500-rgb),0.5)]" />
           Recurring Bills
         </h2>
         <button 
