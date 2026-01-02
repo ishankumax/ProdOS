@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 const THEMES = [
@@ -14,21 +14,20 @@ const THEMES = [
 export default function FloatingThemeSelector() {
   const [activeTheme, setActiveTheme] = useState<string>("default");
   const [isHovered, setIsHovered] = useState(false);
-  const [closeTimeoutId, setCloseTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleMouseEnter = () => {
-    if (closeTimeoutId) {
-      clearTimeout(closeTimeoutId);
-      setCloseTimeoutId(null);
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
     }
     setIsHovered(true);
   };
 
   const handleMouseLeave = () => {
-    const id = setTimeout(() => {
+    closeTimeoutRef.current = setTimeout(() => {
       setIsHovered(false);
     }, 400); // 400ms delay for visual forgiveness
-    setCloseTimeoutId(id);
   };
 
   useEffect(() => {
@@ -44,9 +43,9 @@ export default function FloatingThemeSelector() {
     window.addEventListener("theme-change", handleThemeChange as EventListener);
     return () => {
       window.removeEventListener("theme-change", handleThemeChange as EventListener);
-      if (closeTimeoutId) clearTimeout(closeTimeoutId);
+      if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
     };
-  }, [closeTimeoutId]);
+  }, []);
 
   const changeTheme = (themeName: string) => {
     setActiveTheme(themeName);
