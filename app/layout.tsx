@@ -1,17 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Outfit, Space_Mono } from "next/font/google";
 import "./globals.css";
 import FloatingThemeSelector from "@/components/ui/FloatingThemeSelector";
 
-const inter = Inter({
+const outfit = Outfit({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-outfit",
   display: "swap",
 });
 
-const jetbrainsMono = JetBrains_Mono({
+const spaceMono = Space_Mono({
+  weight: ["400", "700"],
   subsets: ["latin"],
-  variable: "--font-mono",
+  variable: "--font-space-mono",
   display: "swap",
 });
 
@@ -71,7 +72,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} font-sans bg-surface text-white antialiased`}
+        className={`${outfit.variable} ${spaceMono.variable} font-sans bg-surface text-white antialiased`}
       >
         {children}
         <FloatingThemeSelector />
