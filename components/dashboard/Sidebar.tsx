@@ -157,7 +157,7 @@ export default function Sidebar({ userEmail }: { userEmail?: string }) {
                   onClick={() => changeTheme(themeOpt.name)}
                   title={themeOpt.title}
                   className={cn(
-                    "flex flex-col items-center justify-center p-1.5 rounded border transition-all text-[8px] font-bold uppercase",
+                    "flex flex-col items-center justify-center p-1.5 rounded border transition-all font-sans text-[9px] font-medium tracking-wider uppercase",
                     activeTheme === themeOpt.name
                       ? "border-brand-500/40 bg-brand-500/10 text-brand-400"
                       : "border-white/5 bg-white/[0.01] text-white/30 hover:text-white/60 hover:bg-white/5"
