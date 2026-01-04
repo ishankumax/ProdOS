@@ -79,7 +79,7 @@ export default function FloatingThemeSelector() {
             onClick={() => changeTheme(themeOpt.name)}
             title={themeOpt.title}
             className={cn(
-              "flex items-center gap-1 px-1.5 py-1 rounded transition-all duration-200 border font-mono text-[9px] font-bold active:scale-95",
+              "flex items-center gap-1 px-2 py-1 rounded transition-all duration-200 border font-sans text-[10px] font-medium tracking-wider active:scale-95",
               activeTheme === themeOpt.name
                 ? "border-brand-500/30 bg-brand-500/10 text-brand-400 shadow-[0_0_8px_rgba(var(--brand-500-rgb),0.1)]"
                 : "border-transparent text-white/40 hover:text-white/80 hover:bg-white/[0.02]"
