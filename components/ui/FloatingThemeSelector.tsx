@@ -95,8 +95,8 @@ export default function FloatingThemeSelector() {
       {(() => {
         const currentTheme = THEMES.find((t) => t.name === activeTheme) || THEMES[0];
         return (
-          <div className="w-12 h-12 flex items-center justify-center cursor-pointer pointer-events-none shrink-0 select-none">
-            <span className="text-[10px] font-bold text-brand-400 tracking-wider font-mono uppercase">
+          <div className="w-full h-12 flex items-center justify-center cursor-pointer pointer-events-none shrink-0 select-none">
+            <span className="text-[10px] font-bold text-brand-400 font-mono uppercase">
               {currentTheme.label}
             </span>
           </div>
