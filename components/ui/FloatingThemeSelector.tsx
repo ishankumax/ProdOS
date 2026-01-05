@@ -85,7 +85,7 @@ export default function FloatingThemeSelector() {
                 : "border-transparent text-white/40 hover:text-white/80 hover:bg-white/[0.02]"
             )}
           >
-            <span className={cn("w-1.5 h-1.5 rounded-full mb-0.5 shadow-sm shrink-0", themeOpt.color)} />
+            <span className={cn("w-2 h-2 rounded-full mb-0.5 shadow-sm shrink-0", themeOpt.color)} />
             {themeOpt.label}
           </button>
         ))}
