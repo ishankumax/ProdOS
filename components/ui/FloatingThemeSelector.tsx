@@ -91,17 +91,18 @@ export default function FloatingThemeSelector() {
         ))}
       </div>
 
-      {/* Trigger Dot / Icon */}
-      <div className="w-12 h-12 flex items-center justify-center cursor-pointer pointer-events-none text-white/60 shrink-0">
-        <span
-          className={cn(
-            "text-base transition-transform duration-500 ease-out leading-none select-none flex items-center justify-center",
-            isHovered ? "rotate-180 text-brand-400" : "text-white/40"
-          )}
-        >
-          ❖
-        </span>
-      </div>
+      {/* Trigger Dot / Icon - Shows active theme */}
+      {(() => {
+        const currentTheme = THEMES.find((t) => t.name === activeTheme) || THEMES[0];
+        return (
+          <div className="w-12 h-12 flex flex-col items-center justify-center cursor-pointer pointer-events-none shrink-0 select-none pb-0.5">
+            <span className={cn("w-1.5 h-1.5 rounded-full mb-1 shadow-sm transition-all duration-300", currentTheme.color)} />
+            <span className="text-[9px] font-bold text-white/50 tracking-wider font-mono uppercase">
+              {currentTheme.label}
+            </span>
+          </div>
+        );
+      })()}
     </div>
   );
 }
