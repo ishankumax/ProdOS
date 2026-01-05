@@ -60,7 +60,7 @@ export default function FloatingThemeSelector() {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       className={cn(
-        "fixed bottom-6 right-6 z-50 flex items-center h-12 overflow-hidden cursor-default select-none transition-all duration-500 ease-out rounded-full border backdrop-blur-md",
+        "fixed bottom-24 right-6 z-50 flex items-center h-12 overflow-hidden cursor-default select-none transition-all duration-500 ease-out rounded-full border backdrop-blur-md",
         "bg-surface-raised/80 border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]",
         "hover:border-brand-500/30 hover:shadow-[0_0_20px_rgba(var(--brand-500-rgb),0.15)]",
         isHovered ? "w-[340px]" : "w-12"
