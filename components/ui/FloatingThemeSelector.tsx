@@ -95,7 +95,7 @@ export default function FloatingThemeSelector() {
       <div className="w-12 h-12 flex items-center justify-center cursor-pointer pointer-events-none text-white/60 shrink-0">
         <span
           className={cn(
-            "text-base transition-transform duration-500 ease-out font-mono leading-none",
+            "text-base transition-transform duration-500 ease-out leading-none select-none flex items-center justify-center",
             isHovered ? "rotate-180 text-brand-400" : "text-white/40"
           )}
         >
