@@ -15,7 +15,7 @@ export default function Sidebar({ userEmail }: { userEmail?: string }) {
   const pathname = usePathname();
 
   return (
-    <div className="flex items-center gap-3 sm:gap-4 md:gap-6 px-4 py-2.5 rounded-full border backdrop-blur-md bg-surface-raised/85 border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.6)] hover:border-brand-500/20 transition-all duration-300 pointer-events-auto">
+    <div className="flex items-center gap-3 sm:gap-4 md:gap-6 px-4 h-12 rounded-full border backdrop-blur-md bg-surface-raised/85 border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.6)] hover:border-brand-500/20 transition-all duration-300 pointer-events-auto">
       {/* Brand Icon & Label */}
       <div className="flex items-center gap-2 select-none">
         <div className="w-7 h-7 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold text-xs shrink-0 shadow-[0_0_12px_rgba(var(--brand-500-rgb),0.3)]">

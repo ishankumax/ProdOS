@@ -60,7 +60,7 @@ export default function FloatingThemeSelector() {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       className={cn(
-        "fixed bottom-6 right-6 z-50 flex flex-col items-center w-12 overflow-hidden cursor-default select-none transition-all duration-500 ease-out rounded-full border backdrop-blur-md",
+        "fixed bottom-6 right-6 z-50 flex flex-col justify-end items-center w-12 overflow-hidden cursor-default select-none transition-all duration-500 ease-out rounded-full border backdrop-blur-md",
         "bg-surface-raised/80 border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]",
         "hover:border-brand-500/30 hover:shadow-[0_0_20px_rgba(var(--brand-500-rgb),0.15)]",
         isHovered ? "h-[268px]" : "h-12"
@@ -69,7 +69,7 @@ export default function FloatingThemeSelector() {
       {/* Expanded Theme Selection Stack */}
       <div
         className={cn(
-          "flex flex-col items-center gap-1.5 pt-3.5 transition-all duration-300 w-full",
+          "absolute top-3 flex flex-col items-center gap-1.5 transition-all duration-300 w-full",
           isHovered ? "opacity-100 pointer-events-auto delay-100" : "opacity-0 pointer-events-none"
         )}
       >
@@ -92,7 +92,7 @@ export default function FloatingThemeSelector() {
       </div>
 
       {/* Trigger Dot / Icon */}
-      <div className="absolute bottom-0 left-0 w-12 h-12 flex items-center justify-center cursor-pointer pointer-events-none text-white/60">
+      <div className="w-12 h-12 flex items-center justify-center cursor-pointer pointer-events-none text-white/60 shrink-0">
         <span
           className={cn(
             "text-base transition-transform duration-500 ease-out font-mono leading-none",
