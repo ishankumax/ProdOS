@@ -80,8 +80,8 @@ export default function InvestmentsPage() {
         const parsed = JSON.parse(stored) as InvestmentCategory[];
         if (parsed.length > 0) {
           setCategories(parsed);
-          setSelectedId(parsed[0].id);
-          setNotesText(parsed[0].notes || "");
+          setSelectedId(parsed[0]!.id);
+          setNotesText(parsed[0]!.notes || "");
           return;
         }
       } catch (e) {
@@ -89,8 +89,8 @@ export default function InvestmentsPage() {
       }
     }
     setCategories(DEFAULT_CATEGORIES);
-    setSelectedId(DEFAULT_CATEGORIES[0].id);
-    setNotesText(DEFAULT_CATEGORIES[0].notes);
+    setSelectedId(DEFAULT_CATEGORIES[0]!.id);
+    setNotesText(DEFAULT_CATEGORIES[0]!.notes);
   }, []);
 
   // Sync local notes state when selected category changes
@@ -104,7 +104,7 @@ export default function InvestmentsPage() {
   if (!isClient || categories.length === 0) {
     return (
       <DashboardShell userEmail="demo@workspace.ai">
-        <div className="max-w-[1200px] mx-auto px-6 sm:px-10 py-12 flex items-center justify-center min-h-[400px]">
+        <div className="prod-container flex items-center justify-center min-h-[400px]">
           <div className="flex flex-col items-center gap-3 font-mono">
             <span className="w-6 h-6 rounded-full border border-brand-400 border-t-transparent animate-spin" />
             <span className="text-white/40 text-xs tracking-widest uppercase">Initializing Vault Protocol...</span>
@@ -114,7 +114,7 @@ export default function InvestmentsPage() {
     );
   }
 
-  const selectedCategory = categories.find((c) => c.id === selectedId) || categories[0];
+  const selectedCategory = categories.find((c) => c.id === selectedId) || categories[0]!;
 
   // Global calculations
   const totalInvested = categories.reduce((sum, c) => sum + Number(c.invested || 0), 0);
@@ -157,7 +157,7 @@ export default function InvestmentsPage() {
     const next = categories.filter((c) => c.id !== id);
     setCategories(next);
     if (selectedId === id) {
-      setSelectedId(next[0].id);
+      setSelectedId(next[0]!.id);
     }
     localStorage.setItem("prod_os_investments", JSON.stringify(next));
   };
@@ -175,7 +175,7 @@ export default function InvestmentsPage() {
 
   return (
     <DashboardShell userEmail="demo@workspace.ai">
-      <div className="max-w-[1200px] mx-auto px-6 sm:px-10 py-12 space-y-12">
+      <div className="prod-container">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="space-y-2">
@@ -183,10 +183,6 @@ export default function InvestmentsPage() {
               Investment OS
             </h1>
             <p className="text-sm text-white/30">Capital allocation and venture performance ledger.</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse shadow-[0_0_10px_rgba(235,94,40,0.5)]" />
-            <span className="text-[10px] font-mono text-brand-400 uppercase tracking-widest font-bold">Ledger Connected</span>
           </div>
         </div>
 
@@ -251,21 +247,21 @@ export default function InvestmentsPage() {
           <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Global Portfolio Summary</p>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             {/* Total Invested */}
-            <div className="p-5 rounded-2xl bg-white/[0.01] border border-white/5 space-y-2 hover:bg-white/[0.02] transition-colors">
+            <div className="prod-card-interactive space-y-2 !p-5">
               <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest block">Total Invested</span>
               <span className="text-xl font-bold font-mono text-white">
                 ₹{totalInvested.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
               </span>
             </div>
             {/* Total Value */}
-            <div className="p-5 rounded-2xl bg-white/[0.01] border border-white/5 space-y-2 hover:bg-white/[0.02] transition-colors">
+            <div className="prod-card-interactive space-y-2 !p-5">
               <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest block">Current Value</span>
               <span className="text-xl font-bold font-mono text-white">
                 ₹{totalValue.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
               </span>
             </div>
             {/* Profit/Loss */}
-            <div className="p-5 rounded-2xl bg-white/[0.01] border border-white/5 space-y-2 hover:bg-white/[0.02] transition-colors">
+            <div className="prod-card-interactive space-y-2 !p-5">
               <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest block">Total Profit/Loss</span>
               <span className={cn(
                 "text-xl font-bold font-mono",
@@ -275,7 +271,7 @@ export default function InvestmentsPage() {
               </span>
             </div>
             {/* Net ROI */}
-            <div className="p-5 rounded-2xl bg-white/[0.01] border border-white/5 space-y-2 hover:bg-white/[0.02] transition-colors">
+            <div className="prod-card-interactive space-y-2 !p-5">
               <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest block">Net ROI</span>
               <span className={cn(
                 "text-xl font-bold font-mono",
@@ -285,7 +281,7 @@ export default function InvestmentsPage() {
               </span>
             </div>
             {/* Future Expected */}
-            <div className="p-5 rounded-2xl bg-white/[0.01] border border-white/5 space-y-2 hover:bg-white/[0.02] transition-colors col-span-2 md:col-span-1">
+            <div className="prod-card-interactive space-y-2 !p-5 col-span-2 md:col-span-1">
               <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest block">Future Expected</span>
               <span className="text-xl font-bold font-mono text-brand-400">
                 ₹{totalFutureExpectation.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
@@ -301,7 +297,7 @@ export default function InvestmentsPage() {
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             {/* Invested */}
-            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-3 hover:border-white/10 transition-colors">
+            <div className="prod-card-interactive space-y-3">
               <span className="text-[10px] font-bold text-white/40 uppercase tracking-wider block">Capital Invested</span>
               <div className="text-2xl font-bold font-mono text-white flex items-center">
                 <EditableText
@@ -315,7 +311,7 @@ export default function InvestmentsPage() {
               </div>
             </div>
             {/* Current Value */}
-            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-3 hover:border-white/10 transition-colors">
+            <div className="prod-card-interactive space-y-3">
               <span className="text-[10px] font-bold text-white/40 uppercase tracking-wider block">Current Valuation</span>
               <div className="text-2xl font-bold font-mono text-white flex items-center">
                 <EditableText
@@ -329,7 +325,7 @@ export default function InvestmentsPage() {
               </div>
             </div>
             {/* Future Expectation */}
-            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-3 hover:border-white/10 transition-colors">
+            <div className="prod-card-interactive space-y-3">
               <span className="text-[10px] font-bold text-white/40 uppercase tracking-wider block">Future Expectation</span>
               <div className="text-2xl font-bold font-mono text-white flex items-center">
                 <EditableText
@@ -343,7 +339,7 @@ export default function InvestmentsPage() {
               </div>
             </div>
             {/* Profit/Loss */}
-            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-3 hover:border-white/10 transition-colors">
+            <div className="prod-card-interactive space-y-3">
               <span className="text-[10px] font-bold text-white/40 uppercase tracking-wider block">Net Profit / Loss</span>
               <span className={cn(
                 "text-2xl font-bold font-mono block py-0.5",
@@ -353,7 +349,7 @@ export default function InvestmentsPage() {
               </span>
             </div>
             {/* ROI */}
-            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-3 hover:border-white/10 transition-colors">
+            <div className="prod-card-interactive space-y-3">
               <span className="text-[10px] font-bold text-white/40 uppercase tracking-wider block">ROI Percentage</span>
               <span className={cn(
                 "text-2xl font-bold font-mono block py-0.5",
@@ -368,7 +364,7 @@ export default function InvestmentsPage() {
         {/* Bottom Section: Notes & Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Notes column */}
-          <div className="rounded-2xl border border-white/5 bg-white/[0.01] p-6 space-y-4 hover:border-white/10 transition-all">
+          <div className="prod-card-interactive space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-sm font-bold text-white uppercase tracking-widest font-mono">Notes: {selectedCategory.name}</h3>
               <span className="text-[9px] text-white/20 font-mono">Auto-saves on blur</span>
@@ -377,7 +373,7 @@ export default function InvestmentsPage() {
               value={notesText}
               onChange={(e) => setNotesText(e.target.value)}
               onBlur={() => updateField("notes", notesText)}
-              className="w-full h-[200px] bg-white/[0.02] border border-white/5 rounded-xl p-4 font-mono text-sm text-white/80 outline-none focus:border-brand-500/30 focus:bg-white/[0.03] transition-all resize-none"
+              className="w-full h-[200px] prod-input p-4 rounded-xl font-mono text-sm text-white/80 resize-none"
               placeholder="Enter asset metrics details, milestones, or liquidity notes here..."
             />
           </div>
@@ -385,7 +381,7 @@ export default function InvestmentsPage() {
           {/* Simple Charts column */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Capital Allocation segmented progress bar */}
-            <div className="rounded-2xl border border-white/5 bg-white/[0.01] p-6 space-y-6 hover:border-white/10 transition-all flex flex-col justify-between">
+            <div className="prod-card-interactive space-y-6 flex flex-col justify-between">
               <div>
                 <h3 className="text-xs font-bold text-white uppercase tracking-widest font-mono">Capital Allocation</h3>
                 <p className="text-[10px] text-white/30 font-mono mt-1">Portfolio share by asset category.</p>
@@ -441,7 +437,7 @@ export default function InvestmentsPage() {
             </div>
 
             {/* Growth Projection Comparison vertical bars */}
-            <div className="rounded-2xl border border-white/5 bg-white/[0.01] p-6 space-y-6 hover:border-white/10 transition-all flex flex-col justify-between">
+            <div className="prod-card-interactive space-y-6 flex flex-col justify-between">
               <div>
                 <h3 className="text-xs font-bold text-white uppercase tracking-widest font-mono">Growth Comparison</h3>
                 <p className="text-[10px] text-white/30 font-mono mt-1">{selectedCategory.name} performance scale.</p>

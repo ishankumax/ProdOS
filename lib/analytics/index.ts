@@ -33,7 +33,7 @@ export function computeHabitStreaks(habits: Habit[], logs: HabitLog[]): HabitStr
         streak++;
         const date = new Date(currentDateStr);
         date.setDate(date.getDate() - 1);
-        currentDateStr = date.toISOString().split("T")[0];
+        currentDateStr = date.toISOString().split("T")[0]!;
       }
     }
 

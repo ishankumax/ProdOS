@@ -10,6 +10,9 @@ import { getCachedData, setCachedData } from "@/lib/cache/redis";
  */
 const MOCK_ANALYTICS: UserAnalytics = {
   daily_goals: { completed: 1, total: 3, rate: 33 },
+  weekly_goals: { completed: 0, total: 0, rate: 0 },
+  monthly_goals: { completed: 0, total: 0, rate: 0 },
+  streaks: [],
   weekly_activity: [
     { date: '2024-05-08', goals_completed: 2, habits_completed: 3 },
     { date: '2024-05-09', goals_completed: 1, habits_completed: 2 },
@@ -19,7 +22,6 @@ const MOCK_ANALYTICS: UserAnalytics = {
     { date: '2024-05-13', goals_completed: 1, habits_completed: 2 },
     { date: '2024-05-14', goals_completed: 1, habits_completed: 1 },
   ],
-  habit_streaks: { max: 12, average: 6 }
 };
 
 export async function getUserAnalytics(): Promise<UserAnalytics> {
