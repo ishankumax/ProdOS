@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Sidebar from "./Sidebar";
 import RightPanel from "./RightPanel";
+import FloatingThemeSelector from "@/components/ui/FloatingThemeSelector";
 import { cn } from "@/lib/utils";
 
 interface DashboardShellProps {
@@ -52,6 +53,9 @@ export default function DashboardShell({ userEmail, children }: DashboardShellPr
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none w-auto max-w-[95vw] md:max-w-none flex justify-center">
         <Sidebar userEmail={userEmail} />
       </div>
+
+      {/* 4. Floating Theme Selector (sharing layout coordinates) */}
+      <FloatingThemeSelector />
     </div>
   );
 }
