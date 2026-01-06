@@ -176,6 +176,68 @@
 
 
 @layer components {
+  /* Layout Containers */
+  .prod-container {
+    @apply max-w-[1200px] mx-auto px-6 sm:px-10 py-12 space-y-12 sm:space-y-16;
+  }
+
+  /* Shared Dock Style for Sidebar and FloatingThemeSelector */
+  .prod-dock {
+    @apply h-12 rounded-full border backdrop-blur-md bg-surface-raised/80 border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] transition-all duration-300 pointer-events-auto;
+  }
+
+  /* Shared Card Styles */
+  .prod-card {
+    @apply rounded-2xl bg-white/[0.01] border border-white/5 p-6 transition-all duration-300;
+  }
+  
+  .prod-card-interactive {
+    @apply prod-card hover:bg-white/[0.03] hover:border-white/10 hover:shadow-[0_0_20px_rgba(var(--brand-500-rgb),0.05)];
+  }
+
+  .prod-card-dashed {
+    @apply rounded-2xl border border-dashed border-white/5 bg-white/[0.01] p-6 transition-all duration-300;
+  }
+
+  /* Shared Badge / Status indicator styles */
+  .prod-badge {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.01] border border-white/5 font-mono text-[9px] font-bold uppercase tracking-wider text-brand-400 shrink-0 select-none;
+  }
+
+  .prod-badge-active {
+    @apply prod-badge border-brand-500/20 bg-brand-500/10 text-brand-400 shadow-[0_0_8px_rgba(var(--brand-500-rgb),0.1)];
+  }
+
+  /* Nav Links in Docks */
+  .prod-nav-link {
+    @apply flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all font-mono whitespace-nowrap border border-transparent text-white/50 hover:text-white hover:bg-white/5;
+  }
+  .prod-nav-link-active {
+    @apply prod-nav-link text-brand-400 bg-brand-500/10 border-brand-500/20 shadow-[0_0_8px_rgba(var(--brand-500-rgb),0.1)] hover:text-brand-400 hover:bg-brand-500/10;
+  }
+
+  /* Standard Forms and Buttons styles */
+  .prod-btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl
+           bg-brand-500 text-white text-sm font-medium
+           transition-all duration-200
+           hover:bg-brand-400 active:scale-95
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400 focus-visible:ring-offset-2 focus-visible:ring-offset-surface;
+  }
+
+  .prod-btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg
+           text-white/55 text-xs font-semibold font-mono uppercase tracking-wider
+           transition-all duration-200
+           hover:text-white hover:bg-white/5 active:scale-95
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-surface;
+  }
+
+  .prod-input {
+    @apply rounded-xl bg-white/[0.02] border border-white/5 px-4 py-2.5 font-mono text-sm text-white outline-none focus:border-brand-500/30 focus:bg-white/[0.03] transition-all;
+  }
+
+  /* Keep legacy rules for backwards compatibility */
   .glass {
     @apply backdrop-blur-md bg-white/5 border border-white/10;
   }
