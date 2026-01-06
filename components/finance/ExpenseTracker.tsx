@@ -17,7 +17,7 @@ export default function ExpenseTracker({ expenses, onUpdate, onAdd, onDelete }: 
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]" />
+          <span className="w-2 h-2 shrink-0 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.5)]" />
           Expenses
         </h2>
         <button 

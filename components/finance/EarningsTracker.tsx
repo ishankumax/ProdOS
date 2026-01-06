@@ -18,7 +18,7 @@ export default function EarningsTracker({ earnings, onUpdate, onAdd, onDelete }:
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
+          <span className="w-2 h-2 shrink-0 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
           Earnings
         </h2>
         <button 

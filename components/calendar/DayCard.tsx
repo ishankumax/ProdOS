@@ -97,7 +97,7 @@ export default function DayCard({ date, goals, habits, logs, isToday }: DayCardP
             dayGoals.map(goal => (
               <div key={goal.id} className="flex items-start gap-2 group/item">
                 <div className={cn(
-                  "mt-1 w-1.5 h-1.5 rounded-full flex-shrink-0 transition-transform group-hover/item:scale-125",
+                  "mt-1.5 w-2 h-2 rounded-full flex-shrink-0 transition-transform group-hover/item:scale-125",
                   goal.completed ? "bg-brand-400" : "border border-white/30"
                 )} />
                 <p className={cn(

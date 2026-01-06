@@ -96,7 +96,7 @@ export default function RightPanel() {
                 key={sug.title}
                 className="w-full prod-card-interactive !p-4 !rounded-xl text-left flex items-start gap-3 group hover:bg-brand-500/10 hover:border-brand-500/20"
               >
-                <div className="w-1.5 h-1.5 rounded-full bg-brand-500 mt-1.5 opacity-40 group-hover:opacity-100" />
+                <div className="w-2 h-2 shrink-0 rounded-full bg-brand-500 mt-1.5 opacity-40 group-hover:opacity-100" />
                 <div>
                    <p className="text-xs font-bold text-white/80 group-hover:text-white">{sug.title}</p>
                    <p className="text-[10px] text-white/30 mt-1">{sug.action}</p>
