@@ -29,7 +29,7 @@ export default function EarningsTracker({ earnings, onUpdate, onAdd, onDelete }:
         </button>
       </div>
 
-      <div className="rounded-2xl border border-white/5 bg-white/[0.01] overflow-hidden">
+      <div className="prod-card overflow-hidden p-0">
         <div className="overflow-x-auto custom-scrollbar">
           <table className="w-full text-left border-collapse min-w-[700px]">
             <thead>

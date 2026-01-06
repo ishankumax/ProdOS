@@ -71,7 +71,7 @@ export default function RightPanel() {
             {INSIGHTS.map((insight) => (
               <div 
                 key={insight.label}
-                className="p-4 rounded-xl border border-white/5 bg-white/[0.01] space-y-2 hover:bg-white/[0.03] transition-colors group"
+                className="prod-card-interactive !p-4 !rounded-xl space-y-2 group"
               >
                 <div className="flex justify-between items-start">
                   <span className="text-brand-400 text-xs font-bold">{insight.icon} {insight.label}</span>
@@ -94,7 +94,7 @@ export default function RightPanel() {
             {SUGGESTIONS.map((sug) => (
               <button 
                 key={sug.title}
-                className="w-full p-4 rounded-xl border border-white/5 bg-white/[0.01] hover:bg-brand-500/10 hover:border-brand-500/20 transition-all text-left flex items-start gap-3 group"
+                className="w-full prod-card-interactive !p-4 !rounded-xl text-left flex items-start gap-3 group hover:bg-brand-500/10 hover:border-brand-500/20"
               >
                 <div className="w-1.5 h-1.5 rounded-full bg-brand-500 mt-1.5 opacity-40 group-hover:opacity-100" />
                 <div>

@@ -51,7 +51,7 @@ export default function FinanceAnalytics({ earnings, expenses }: FinanceAnalytic
         </div>
 
         {/* Minimal Stats */}
-        <div className="p-6 rounded-2xl border border-white/5 bg-white/[0.01] flex flex-col justify-center space-y-4">
+        <div className="prod-card flex flex-col justify-center space-y-4">
            <div className="space-y-1">
              <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Efficiency Ratio</p>
              <p className="text-2xl font-bold text-white">

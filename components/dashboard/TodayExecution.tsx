@@ -27,7 +27,7 @@ export default function TodayExecution({ analytics, goals, habits }: TodayExecut
     <div className="space-y-10">
       {/* Visual Progress Header */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4 hover:border-white/10 hover:bg-white/[0.03] transition-all group">
+        <div className="prod-card-interactive space-y-4 group">
           <div className="flex justify-between items-center">
             <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Daily Progress</p>
             <span className="text-[10px] font-black text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded tracking-tighter">↗ 12.5%</span>
@@ -44,7 +44,7 @@ export default function TodayExecution({ analytics, goals, habits }: TodayExecut
           </div>
         </div>
 
-        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4 hover:border-white/10 hover:bg-white/[0.03] transition-all group">
+        <div className="prod-card-interactive space-y-4 group">
           <div className="flex justify-between items-center">
             <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Habit Momentum</p>
             <span className="text-[10px] font-black text-brand-400 bg-brand-400/10 px-1.5 py-0.5 rounded tracking-tighter">STABLE</span>
@@ -60,7 +60,7 @@ export default function TodayExecution({ analytics, goals, habits }: TodayExecut
           </div>
         </div>
 
-        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4 hover:border-white/10 hover:bg-white/[0.03] transition-all group">
+        <div className="prod-card-interactive space-y-4 group">
           <div className="flex justify-between items-center">
             <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Weekly Capacity</p>
             <span className="text-[10px] font-black text-brand-400/60 tracking-tighter">7 DAY PROTOCOL</span>

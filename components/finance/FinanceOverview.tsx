@@ -43,7 +43,7 @@ export default function FinanceOverview({ summary }: FinanceOverviewProps) {
       {cards.map((card) => (
         <div
           key={card.label}
-          className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-3 hover:border-white/10 hover:bg-white/[0.03] transition-all duration-300"
+          className="prod-card-interactive space-y-3"
         >
           <div className="flex justify-between items-start">
             <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">
