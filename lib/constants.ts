@@ -33,3 +33,17 @@ export const FEATURES: Feature[] = [
     icon: "↗",
   },
 ];
+
+export interface ContextItem {
+  id: string;
+  label: string;
+  icon: string;
+  desc: string;
+}
+
+export const CONTEXTS: ContextItem[] = [
+  { id: "personal", label: "Personal Workspace", icon: "⊞", desc: "Private dashboard & routine registry." },
+  { id: "acme", label: "Acme Corporation", icon: "⌬", desc: "Enterprise operations & protocol ledger." },
+  { id: "vanguard", label: "Vanguard Labs", icon: "⎊", desc: "R&D sandbox & venture seed allocations." },
+  { id: "helix", label: "Helix Ventures", icon: "⧉", desc: "Secondary portfolio & growth assets." }
+];
