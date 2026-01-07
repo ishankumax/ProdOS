@@ -2,6 +2,7 @@
 
 import Sidebar from "./Sidebar";
 import FloatingThemeSelector from "@/components/ui/FloatingThemeSelector";
+import ContextSwitcher from "./ContextSwitcher";
 import { cn } from "@/lib/utils";
 
 interface DashboardShellProps {
@@ -24,6 +25,9 @@ export default function DashboardShell({ userEmail, children }: DashboardShellPr
 
       {/* 3. Floating Theme Selector (sharing layout coordinates) */}
       <FloatingThemeSelector />
+
+      {/* 4. Floating Top-Right Context Switcher */}
+      <ContextSwitcher />
     </div>
   );
 }
