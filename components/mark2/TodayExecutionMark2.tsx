@@ -74,28 +74,6 @@ export default function TodayExecutionMark2({
     <EditModeProvider>
       {/* 3-Column Command Grid Viewport */}
       <div className="w-full flex flex-col lg:flex-row lg:h-[calc(100vh-140px)] gap-6 font-sans">
-        
-        {/* Left Column (25%) - Strategy */}
-        <section className="w-full lg:w-1/4 flex flex-col gap-6 lg:overflow-y-auto pr-1">
-          <LeftColumn goals={filteredGoals} domains={v2Domains} onRefresh={handleRefresh} />
-        </section>
-
-        {/* Center Column (50%) - Execution */}
-        <section className="w-full lg:w-1/2 flex flex-col gap-6 lg:overflow-y-auto px-1">
-          <CenterColumn tasks={filteredTasks} domains={v2Domains} onRefresh={handleRefresh} />
-        </section>
-
-        {/* Right Column (25%) - Intelligence */}
-        <section className="w-full lg:w-1/4 flex flex-col gap-6 lg:overflow-y-auto pl-1">
-          <RightColumn
-            domains={v2Domains}
-            kpiDefinitions={filteredKpis}
-            kpiLogs={filteredLogs}
-            activeDomainId={activeDomainId}
-            onRefresh={handleRefresh}
-          />
-        </section>
-
         {/* Floating Controls */}
         <ControlCenter />
       </div>
