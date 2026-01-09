@@ -1,14 +1,8 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { createClient } from "@/lib/supabase-server";
-
-export const metadata: Metadata = {
-  title: "Personal OS — Execution Portal",
-  description: "A private system for goals, habits, and progress.",
-};
-
-import { redirect } from "next/navigation";
-
-export default async function HomePage() {
-  redirect("/dashboard");
+export default function HomePage() {
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-center p-24">
+      <h1 className="text-4xl font-bold">Project Reset</h1>
+      <p className="mt-4 text-xl">Tailwind is ready to go.</p>
+    </main>
+  );
 }
