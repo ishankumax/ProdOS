@@ -1,14 +1,20 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { createClient } from "@/lib/supabase-server";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Personal OS — Execution Portal",
-  description: "A private system for goals, habits, and progress.",
-};
+import { useState } from "react";
+import Shell from "@/components/layout/Shell";
+import { WorkspaceType } from "@/components/layout/Sidebar";
 
-import { redirect } from "next/navigation";
+export default function HomePage() {
+  const [workspace, setWorkspace] = useState<WorkspaceType>("Personal Life");
 
-export default async function HomePage() {
-  redirect("/dashboard");
+  return (
+    <Shell activeWorkspace={workspace} onWorkspaceChange={setWorkspace}>
+      <div className="p-8">
+        <div className="border border-dashed border-white/20 rounded-xl h-96 flex flex-col items-center justify-center text-white/40">
+          <p className="text-xl font-medium mb-2">{workspace} Content</p>
+          <p className="text-sm">Widgets will be placed here.</p>
+        </div>
+      </div>
+    </Shell>
+  );
 }
