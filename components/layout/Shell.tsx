@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Sidebar, { WorkspaceType } from "./Sidebar";
 import Header from "./Header";
+import GoalsRail from "./GoalsRail";
+import CompletedDrawer from "./CompletedDrawer";
 
 interface ShellProps {
   children: React.ReactNode;
@@ -22,9 +24,14 @@ export default function Shell({ children, activeWorkspace, onWorkspaceChange }: 
         <Header activeWorkspace={activeWorkspace} />
 
         {/* Workspace Content Layer */}
-        <main className="flex-1 overflow-auto relative">
-          {children}
-        </main>
+        <div className="flex-1 flex overflow-hidden relative">
+          <GoalsRail />
+          <CompletedDrawer />
+          
+          <main className="flex-1 overflow-auto p-8 relative">
+            {children}
+          </main>
+        </div>
 
         {/* 3. Floating Bottom-Right Control */}
         <div className="absolute bottom-8 right-8">
