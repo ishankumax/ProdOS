@@ -1,9 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useData } from "@/components/providers/DataProvider";
 
 export default function CompletedDrawer() {
   const [isOpen, setIsOpen] = useState(false);
+  const { tasks, toggleTask } = useData();
+  
+  const completedTasks = tasks.filter(t => t.completed);
 
   return (
     <div className={`fixed left-0 top-16 bottom-0 z-20 bg-[#0d0d14] border-r border-white/10 transition-transform duration-300 ${isOpen ? "translate-x-0 w-80" : "-translate-x-full w-80"}`}>
@@ -19,9 +23,19 @@ export default function CompletedDrawer() {
         <h3 className="text-sm font-bold text-white/60 uppercase tracking-widest mb-6 border-b border-white/5 pb-4">Completed ⇔ Left</h3>
         
         <div className="flex-1 overflow-auto space-y-3">
-          <div className="p-3 bg-white/5 rounded line-through text-white/40 text-sm">Review PRs for frontend</div>
-          <div className="p-3 bg-white/5 rounded line-through text-white/40 text-sm">Read 10 pages</div>
-          <div className="p-3 bg-white/5 rounded line-through text-white/40 text-sm">Gym workout</div>
+          {completedTasks.length === 0 ? (
+            <div className="text-sm text-white/20 italic text-center mt-4">No completed tasks</div>
+          ) : (
+            completedTasks.map((task) => (
+              <div 
+                key={task.id} 
+                onClick={() => toggleTask(task.id)}
+                className="p-3 bg-white/5 rounded line-through text-white/40 text-sm cursor-pointer hover:bg-white/10 transition-colors"
+              >
+                {task.text}
+              </div>
+            ))
+          )}
         </div>
         
         <div className="pt-4 border-t border-white/5 text-center">
