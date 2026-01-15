@@ -41,10 +41,6 @@ interface CalendarOverlayProps {
   onClose: () => void;
 }
 
-// ─── Panel width constant — keeps panel to the left of the 60px button strip ──
-const PANEL_WIDTH = 300; // px
-const BUTTON_STRIP_WIDTH = 68; // px (right-6 + button w-11 = 24+44=68)
-
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProps) {
   const { tasks, addTask, toggleTask } = useData();
@@ -69,7 +65,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
     if (isAddingTask) setTimeout(() => inputRef.current?.focus(), 50);
   }, [isAddingTask]);
 
-  // Close on outside click (but not on the trigger button — Shell handles toggle)
+  // Close on outside click
   useEffect(() => {
     if (!isOpen) return;
     const handler = (e: MouseEvent) => {
@@ -137,7 +133,6 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
   const todayKey = toKey(today.getFullYear(), today.getMonth(), today.getDate());
   const isSelectedToday = selectedKey === todayKey;
 
-  // Show all pending tasks when today is selected; otherwise empty
   const visibleTasks: AgendaTask[] = useMemo(() => {
     if (!isSelectedToday) return [];
     return tasks.filter(t => !t.completed).map(t => ({
@@ -148,7 +143,6 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
     }));
   }, [isSelectedToday, tasks]);
 
-  // Dates that have pending tasks (for dots)
   const datesWithTasks = useMemo(() => {
     const set = new Set<number>();
     if (
@@ -188,47 +182,47 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* ── Backdrop blur overlay ───────────────────────────────────── */}
+          {/* ── Subtle backdrop (not full-screen blur, just dimming) ── */}
           <motion.div
             key="cal-backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[149] bg-black/20 backdrop-blur-[2px]"
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[149]"
             onMouseDown={onClose}
           />
 
-          {/* ── Full-height panel ──────────────────────────────────────── */}
+          {/* ── Floating inline panel anchored bottom-right ── */}
           <motion.div
             ref={panelRef}
             key="cal-panel"
-            initial={{ opacity: 0, x: PANEL_WIDTH }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: PANEL_WIDTH }}
-            transition={{ duration: 0.32, ease: [0.32, 0.72, 0, 1] }}
+            initial={{ opacity: 0, scale: 0.92, y: 16 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.92, y: 16 }}
+            transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
             style={{
               position: "fixed",
-              top: 0,
-              right: BUTTON_STRIP_WIDTH,
-              width: PANEL_WIDTH,
-              height: "100vh",
+              bottom: "96px",       // sits above the bottom-right button strip
+              right: "24px",        // aligned with the right-6 buttons
+              width: "300px",
               zIndex: 150,
+              transformOrigin: "bottom right",
             }}
-            className="flex flex-col border-l border-r border-white/8 bg-[#0d0d18]/98 backdrop-blur-2xl shadow-[-24px_0_64px_rgba(0,0,0,0.6)]"
+            className="flex flex-col rounded-2xl border border-white/[0.10] bg-[#0d0d1a]/95 backdrop-blur-2xl shadow-[0_8px_48px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.04)] overflow-hidden"
             onMouseDown={e => e.stopPropagation()}
           >
-            {/* ══ TOP SECTION: Clock + Calendar ══════════════════════════ */}
-            <div className="flex-shrink-0 px-5 pt-5 pb-3">
 
-              {/* Live Clock */}
+            {/* ══ HEADER: Clock strip ══════════════════════════════════ */}
+            <div className="flex-shrink-0 px-4 pt-4 pb-3 border-b border-white/[0.06]">
               <LiveClock />
+            </div>
 
-              {/* Separator */}
-              <div className="mt-4 mb-3 border-t border-white/6" />
+            {/* ══ CALENDAR SECTION ════════════════════════════════════ */}
+            <div className="flex-shrink-0 px-4 pt-3 pb-2">
 
-              {/* Calendar header */}
-              <div className="flex items-center justify-between mb-3">
+              {/* Month/Year header with nav */}
+              <div className="flex items-center justify-between mb-2">
                 <button
                   onClick={goToPrev}
                   className="w-7 h-7 rounded-lg flex items-center justify-center text-white/35 hover:text-white hover:bg-white/10 transition-all"
@@ -242,7 +236,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                       m === "month" ? "year" : m === "year" ? "decade" : "month"
                     )
                   }
-                  className="text-sm font-bold text-white/85 tracking-wide hover:text-violet-300 transition-colors"
+                  className="text-xs font-bold text-white/85 tracking-wide hover:text-violet-300 transition-colors px-2 py-1 rounded-lg hover:bg-white/5"
                 >
                   {headerLabel}
                 </button>
@@ -265,7 +259,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                     initial={{ opacity: 0, x: -6 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 6 }}
-                    transition={{ duration: 0.18 }}
+                    transition={{ duration: 0.15 }}
                   >
                     {/* Day labels */}
                     <div className="grid grid-cols-7 mb-1">
@@ -275,7 +269,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                           className={`text-center text-[9px] font-bold py-1 ${i === 0 || i === 6
                             ? "text-violet-400/50"
                             : "text-white/20"
-                            }`}
+                          }`}
                         >
                           {d}
                         </div>
@@ -296,7 +290,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                           <button
                             key={`d-${day}`}
                             onClick={() => setSelectedDay(day)}
-                            className="relative flex flex-col items-center justify-center h-9 rounded-lg transition-all duration-150 group/cell"
+                            className="relative flex flex-col items-center justify-center h-8 rounded-lg transition-all duration-150 group/cell"
                           >
                             <span
                               className={`
@@ -317,7 +311,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                             </span>
                             {hasDot && (
                               <span
-                                className={`absolute bottom-0.5 w-1 h-1 rounded-full ${selF ? "bg-white" : "bg-violet-400"}`}
+                                className={`absolute bottom-0 w-1 h-1 rounded-full ${selF ? "bg-white" : "bg-violet-400"}`}
                               />
                             )}
                           </button>
@@ -334,7 +328,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                     initial={{ opacity: 0, scale: 0.96 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.96 }}
-                    transition={{ duration: 0.18 }}
+                    transition={{ duration: 0.15 }}
                     className="grid grid-cols-3 gap-1.5 py-1"
                   >
                     {MONTH_NAMES.map((name, mi) => {
@@ -349,7 +343,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                             : isSel
                             ? "bg-white/14 text-white ring-1 ring-white/20"
                             : "text-white/45 hover:bg-white/8 hover:text-white"
-                            }`}
+                          }`}
                         >
                           {name.slice(0, 3)}
                         </button>
@@ -365,7 +359,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                     initial={{ opacity: 0, scale: 0.96 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.96 }}
-                    transition={{ duration: 0.18 }}
+                    transition={{ duration: 0.15 }}
                     className="grid grid-cols-4 gap-1.5 py-1"
                   >
                     {Array.from({ length: 12 }, (_, i) => decadeStart - 1 + i).map(yr => {
@@ -383,7 +377,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                             : isSel
                             ? "bg-white/14 text-white ring-1 ring-white/20"
                             : "text-white/45 hover:bg-white/8 hover:text-white"
-                            }`}
+                          }`}
                         >
                           {yr}
                         </button>
@@ -395,11 +389,11 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
               </AnimatePresence>
             </div>
 
-            {/* ── Divider ─────────────────────────────────────────────── */}
-            <div className="flex-shrink-0 mx-4 border-t border-white/6" />
+            {/* ── Divider ──────────────────────────────────────────── */}
+            <div className="flex-shrink-0 mx-4 border-t border-white/[0.06]" />
 
-            {/* ══ MIDDLE SECTION: Tasks (fills remaining height) ══════════ */}
-            <div className="flex-1 flex flex-col min-h-0 px-4 pt-3 pb-2">
+            {/* ══ TASKS SECTION ════════════════════════════════════════ */}
+            <div className="flex flex-col px-4 pt-3 pb-3 max-h-48 min-h-0">
 
               {/* Tasks header */}
               <div className="flex items-center justify-between mb-2 flex-shrink-0">
@@ -414,6 +408,21 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                     </span>
                   )}
                 </div>
+                {/* Add task button inline */}
+                <button
+                  onClick={() => setIsAddingTask(a => !a)}
+                  title="Add Task"
+                  className={`w-6 h-6 rounded-full flex items-center justify-center border transition-all duration-200 ${isAddingTask
+                    ? "bg-violet-500 border-violet-400 text-white scale-110"
+                    : "bg-white/6 border-white/12 text-white/40 hover:bg-violet-500/20 hover:border-violet-500/40 hover:text-violet-300"
+                  }`}
+                >
+                  <motion.i
+                    animate={{ rotate: isAddingTask ? 45 : 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="fi fi-sr-plus text-[10px] flex items-center"
+                  />
+                </button>
               </div>
 
               {/* Add task inline form */}
@@ -443,7 +452,8 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
               </AnimatePresence>
 
               {/* Scrollable task list */}
-              <div className="flex-1 overflow-y-auto space-y-1.5 pr-0.5 min-h-0"
+              <div
+                className="flex-1 overflow-y-auto space-y-1.5 pr-0.5 min-h-0"
                 style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(139,92,246,0.2) transparent" }}
               >
                 <AnimatePresence mode="popLayout">
@@ -453,34 +463,31 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="flex flex-col items-center justify-center h-full py-8 text-center"
+                      className="flex flex-col items-center justify-center py-5 text-center"
                     >
-                      <div className="w-10 h-10 rounded-xl bg-white/4 border border-white/8 flex items-center justify-center mb-3">
-                        <i className="fi fi-sr-check-circle text-white/15 text-lg flex items-center" />
+                      <div className="w-8 h-8 rounded-xl bg-white/4 border border-white/8 flex items-center justify-center mb-2">
+                        <i className="fi fi-sr-check-circle text-white/15 text-sm flex items-center" />
                       </div>
-                      <p className="text-[11px] text-white/20 italic">No tasks for this day</p>
-                      <p className="text-[10px] text-white/12 mt-1">Tap + to add one</p>
+                      <p className="text-[10px] text-white/20 italic">No tasks for this day</p>
                     </motion.div>
                   ) : (
                     visibleTasks.map((task, i) => (
                       <motion.div
                         key={task.id}
                         layout
-                        initial={{ opacity: 0, x: -10 }}
+                        initial={{ opacity: 0, x: -8 }}
                         animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 10, height: 0, marginBottom: 0 }}
-                        transition={{ duration: 0.18, delay: i * 0.03 }}
+                        exit={{ opacity: 0, x: 8, height: 0, marginBottom: 0 }}
+                        transition={{ duration: 0.15, delay: i * 0.03 }}
                         onClick={() => toggleTask(task.id)}
-                        className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.07] hover:border-white/10 cursor-pointer transition-all group"
+                        className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.07] hover:border-white/10 cursor-pointer transition-all group"
                       >
                         {/* Checkbox */}
                         <div className="w-4 h-4 rounded-[5px] border border-violet-400/35 flex-shrink-0 flex items-center justify-center group-hover:border-violet-400/70 transition-colors">
                           <i className="fi fi-sr-check text-[7px] text-violet-400 opacity-0 group-hover:opacity-50 flex items-center transition-opacity" />
                         </div>
-
-                        {/* Violet accent bar */}
-                        <div className="w-0.5 h-full self-stretch rounded-full flex-shrink-0 bg-violet-400/50" />
-
+                        {/* Accent bar */}
+                        <div className="w-0.5 self-stretch rounded-full flex-shrink-0 bg-violet-400/50" />
                         {/* Text */}
                         <p className="text-[11px] font-medium text-white/75 leading-tight truncate flex-1">
                           {task.title}
@@ -492,29 +499,6 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
               </div>
             </div>
 
-            {/* ── Divider ─────────────────────────────────────────────── */}
-            <div className="flex-shrink-0 mx-4 border-t border-white/6" />
-
-            {/* ══ BOTTOM: Add button ═══════════════════════════════════════ */}
-            <div className="flex-shrink-0 px-4 py-4 flex items-center justify-between">
-              <span className="text-[9px] text-white/20 uppercase tracking-widest font-bold">
-                {visibleTasks.length} task{visibleTasks.length !== 1 ? "s" : ""}
-              </span>
-              <button
-                onClick={() => setIsAddingTask(a => !a)}
-                title="Add Task"
-                className={`w-9 h-9 rounded-full flex items-center justify-center shadow-lg border transition-all duration-200 ${isAddingTask
-                  ? "bg-violet-500 border-violet-400 text-white scale-110 shadow-violet-500/40"
-                  : "bg-white/6 border-white/12 text-white/50 hover:bg-violet-500/20 hover:border-violet-500/40 hover:text-violet-300 hover:scale-105"
-                  }`}
-              >
-                <motion.i
-                  animate={{ rotate: isAddingTask ? 45 : 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="fi fi-sr-plus text-sm flex items-center"
-                />
-              </button>
-            </div>
           </motion.div>
         </>
       )}
@@ -531,18 +515,18 @@ function LiveClock() {
   }, []);
 
   const timeStr = time.toLocaleTimeString([], {
-    hour: "2-digit", minute: "2-digit", second: "2-digit",
+    hour: "2-digit", minute: "2-digit",
   });
   const dateStr = time.toLocaleDateString([], {
-    weekday: "long", month: "long", day: "numeric",
+    weekday: "short", month: "short", day: "numeric",
   }).toUpperCase();
 
   return (
-    <div>
-      <p className="text-2xl font-light tracking-tight text-white font-mono leading-none">
+    <div className="flex items-center justify-between">
+      <p className="text-xl font-light tracking-tight text-white font-mono leading-none">
         {timeStr}
       </p>
-      <p className="text-[10px] text-white/35 mt-1.5 tracking-widest font-semibold">
+      <p className="text-[9px] text-white/35 tracking-widest font-semibold">
         {dateStr}
       </p>
     </div>
