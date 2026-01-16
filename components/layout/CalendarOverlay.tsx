@@ -4,6 +4,7 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useData } from "@/components/providers/DataProvider";
 import { ICONS, CLASSES, TEXT, LAYOUT } from "@/lib/theme";
+import { GENIE_PANEL_VARIANTS, GENIE_PANEL_TRANSITION, GENIE_LIST_ITEM, GENIE_LIST_TRANSITION, LIST_STAGGER } from "@/lib/motion";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface AgendaTask {
@@ -176,37 +177,11 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
           <motion.div
             ref={panelRef}
             key="cal-panel"
-            initial={{
-              opacity: 0,
-              scaleY: 0.05,
-              scaleX: 0.6,
-              y: 32,
-              clipPath: "inset(92% 0% 0% 20% round 22px)",
-            }}
-            animate={{
-              opacity: 1,
-              scaleY: 1,
-              scaleX: 1,
-              y: 0,
-              clipPath: "inset(0% 0% 0% 0% round 16px)",
-            }}
-            exit={{
-              opacity: 0,
-              scaleY: 0.05,
-              scaleX: 0.6,
-              y: 32,
-              clipPath: "inset(92% 0% 0% 20% round 22px)",
-            }}
-            transition={{
-              // Spring for the scale — gives the natural Genie bounce
-              scaleY:   { type: "spring", stiffness: 380, damping: 28, mass: 0.7 },
-              scaleX:   { type: "spring", stiffness: 420, damping: 32, mass: 0.6 },
-              y:        { type: "spring", stiffness: 380, damping: 28, mass: 0.7 },
-              // clipPath reveals slightly slower for the wipe-up effect
-              clipPath: { type: "spring", stiffness: 320, damping: 30, mass: 0.8 },
-              // Opacity is instant — panel appears at once
-              opacity:  { duration: 0.08 },
-            }}
+            variants={GENIE_PANEL_VARIANTS}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={GENIE_PANEL_TRANSITION}
             style={{
               position:        "fixed",
               top:             PANEL_TOP,
@@ -448,10 +423,14 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                       <motion.div
                         key={task.id}
                         layout
-                        initial={{ opacity: 0, x: -8 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 8, height: 0, marginBottom: 0 }}
-                        transition={{ duration: 0.15, delay: i * 0.03 }}
+                        variants={GENIE_LIST_ITEM}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        transition={{
+                          ...GENIE_LIST_TRANSITION,
+                          delay: i * LIST_STAGGER
+                        }}
                         onClick={() => toggleTask(task.id)}
                         className={`${CLASSES.cardHover} flex items-center gap-2 p-2.5 cursor-pointer group`}
                       >
