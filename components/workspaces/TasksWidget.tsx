@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useData } from "@/components/providers/DataProvider";
 import { useEditMode } from "@/contexts/EditModeContext";
 import { ICONS, CLASSES, TEXT } from "@/lib/theme";
+import { GENIE_LIST_ITEM, GENIE_LIST_TRANSITION, LIST_STAGGER } from "@/lib/motion";
 
 export default function TasksWidget() {
   const { tasks, addTask, toggleTask } = useData();
@@ -41,44 +43,69 @@ export default function TasksWidget() {
       </div>
 
       <div className="flex-1 overflow-auto space-y-2 pr-2" style={CLASSES.scrollStyle}>
-        {isEditing && isAdding && (
-          <form onSubmit={handleAdd} className="mb-4 animate-in fade-in slide-in-from-top-2 duration-200">
-            <input
-              type="text"
-              autoFocus
-              value={newTaskText}
-              onChange={(e) => setNewTaskText(e.target.value)}
-              onBlur={() => !newTaskText.trim() && setIsAdding(false)}
-              placeholder="What needs to be done?"
-              className={CLASSES.input}
-            />
-          </form>
-        )}
+        <AnimatePresence mode="popLayout">
+          {isEditing && isAdding && (
+            <motion.form
+              key="add-task-form"
+              initial={{ opacity: 0, y: -8, scaleY: 0.95 }}
+              animate={{ opacity: 1, y: 0, scaleY: 1 }}
+              exit={{ opacity: 0, y: -8, scaleY: 0.95 }}
+              transition={GENIE_LIST_TRANSITION}
+              onSubmit={handleAdd}
+              className="mb-4"
+            >
+              <input
+                type="text"
+                autoFocus
+                value={newTaskText}
+                onChange={(e) => setNewTaskText(e.target.value)}
+                onBlur={() => !newTaskText.trim() && setIsAdding(false)}
+                placeholder="What needs to be done?"
+                className={CLASSES.input}
+              />
+            </motion.form>
+          )}
 
-        {pendingTasks.map((task) => (
-          <div
-            key={task.id}
-            onClick={() => toggleTask(task.id)}
-            className="group flex items-center gap-4 p-3 rounded-xl hover:bg-white/[0.05] transition-colors cursor-pointer"
-          >
-            <div className={`w-5 h-5 rounded border-2 flex-shrink-0 transition-colors flex items-center justify-center ${
-              task.completed
-                ? "bg-brand-500 border-brand-500"
-                : "border-white/20 group-hover:border-brand-400"
-            }`}>
-              {task.completed && <i className={`${ICONS.check} text-white text-[10px] flex items-center`} />}
-            </div>
-            <span className={`text-white/80 ${task.completed ? "line-through opacity-50" : ""}`}>
-              {task.text}
-            </span>
-          </div>
-        ))}
+          {pendingTasks.map((task, i) => (
+            <motion.div
+              key={task.id}
+              layout
+              variants={GENIE_LIST_ITEM}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              transition={{
+                ...GENIE_LIST_TRANSITION,
+                delay: i * LIST_STAGGER,
+              }}
+              onClick={() => toggleTask(task.id)}
+              className="group flex items-center gap-4 p-3 rounded-xl hover:bg-white/[0.05] transition-colors cursor-pointer"
+            >
+              <div className={`w-5 h-5 rounded border-2 flex-shrink-0 transition-colors flex items-center justify-center ${
+                task.completed
+                  ? "bg-brand-500 border-brand-500"
+                  : "border-white/20 group-hover:border-brand-400"
+              }`}>
+                {task.completed && <i className={`${ICONS.check} text-white text-[10px] flex items-center`} />}
+              </div>
+              <span className={`text-white/80 ${task.completed ? "line-through opacity-50" : ""}`}>
+                {task.text}
+              </span>
+            </motion.div>
+          ))}
 
-        {!isAdding && pendingTasks.length === 0 && (
-          <div className={`h-full flex items-center justify-center ${TEXT.dim} italic`}>
-            No tasks for today. Add one above.
-          </div>
-        )}
+          {!isAdding && pendingTasks.length === 0 && (
+            <motion.div
+              key="empty-pending"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className={`h-full flex items-center justify-center ${TEXT.dim} italic`}
+            >
+              No tasks for today. Add one above.
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
