@@ -3,6 +3,7 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useData } from "@/components/providers/DataProvider";
+import { ICONS, CLASSES, TEXT, LAYOUT } from "@/lib/theme";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface AgendaTask {
@@ -175,13 +176,13 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
             transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
             style={{
               position: "fixed",
-              bottom: "96px",       // sits above the bottom-right button strip
-              right: "24px",        // aligned with the right-6 buttons
-              width: "300px",
+              bottom: PANEL_BOTTOM,
+              right: PANEL_RIGHT,
+              width: PANEL_WIDTH,
               zIndex: 150,
               transformOrigin: "bottom right",
             }}
-            className="flex flex-col rounded-2xl border border-white/[0.10] bg-[#0d0d1a]/95 backdrop-blur-2xl shadow-[0_8px_48px_rgba(0,0,0,0.7),0_0_0_1px_rgba(255,255,255,0.04)] overflow-hidden"
+            className={CLASSES.panel}
             onMouseDown={e => e.stopPropagation()}
           >
 
@@ -197,9 +198,9 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
               <div className="flex items-center justify-between mb-2">
                 <button
                   onClick={goToPrev}
-                  className="w-7 h-7 rounded-lg flex items-center justify-center text-white/35 hover:text-white hover:bg-white/10 transition-all"
+                  className={CLASSES.iconBtn}
                 >
-                  <i className="fi fi-sr-angle-left text-[10px] flex items-center" />
+                  <i className={`${ICONS.chevronLeft} text-[10px] flex items-center`} />
                 </button>
                 <button
                   onClick={() =>
@@ -211,8 +212,8 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                 >
                   {headerLabel}
                 </button>
-                <button onClick={goToNext} className="w-7 h-7 rounded-lg flex items-center justify-center text-white/35 hover:text-white hover:bg-white/10 transition-all">
-                  <i className="fi fi-sr-angle-right text-[10px] flex items-center" />
+                <button onClick={goToNext} className={CLASSES.iconBtn}>
+                  <i className={`${ICONS.chevronRight} text-[10px] flex items-center`} />
                 </button>
               </div>
 
@@ -244,7 +245,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                     <div className="grid grid-cols-7">
                       {cells.map((day, idx) => {
                         if (day === null) return <div key={`e-${idx}`} className="h-9" />;
-                        const todF = isToday(day), selF = isSelectedDay(day), dot = datesWithTasks.has(day), wknd = idx % 7 === 0 || idx % 7 === 6;
+                        const todF = isToday(day), selF = isSelectedDay(day), hasDot = datesWithTasks.has(day), isWknd = idx % 7 === 0 || idx % 7 === 6;
                         return (
                           <button
                             key={`d-${day}`}
@@ -254,11 +255,11 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                             <span
                               className={`
                                 w-7 h-7 flex items-center justify-center rounded-full text-[11px] font-semibold transition-all duration-150
-                                ${selF && todayF
+                                ${selF && todF
                                   ? "bg-violet-500 text-white shadow-md shadow-violet-500/50 scale-110"
                                   : selF
                                   ? "bg-white/18 text-white ring-1 ring-white/25"
-                                  : todayF
+                                  : todF
                                   ? "ring-1 ring-violet-400 text-violet-300"
                                   : isWknd
                                   ? "text-violet-300/45 group-hover/cell:bg-white/8 group-hover/cell:text-white/80"
@@ -291,7 +292,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                     className="grid grid-cols-3 gap-1.5 py-1"
                   >
                     {MONTH_NAMES.map((name, mi) => {
-                      const curr = mi === today.getMonth() && viewYear === today.getFullYear(), sel = mi === viewMonth;
+                      const isCurr = mi === today.getMonth() && viewYear === today.getFullYear(), isSel = mi === viewMonth;
                       return (
                         <button
                           key={name}
@@ -321,7 +322,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                     className="grid grid-cols-4 gap-1.5 py-1"
                   >
                     {Array.from({ length: 12 }, (_, i) => decadeStart - 1 + i).map(yr => {
-                      const inDec = yr >= decadeStart && yr <= decadeStart + 9, curr = yr === today.getFullYear(), sel = yr === viewYear;
+                      const inDec = yr >= decadeStart && yr <= decadeStart + 9, isCurr = yr === today.getFullYear(), isSel = yr === viewYear;
                       return (
                         <button
                           key={yr}
@@ -352,10 +353,10 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
             <div className="flex flex-col px-4 pt-3 pb-3 max-h-48 min-h-0">
 
               {/* Tasks header row */}
-              <div className="flex items-center justify-between mb-2 flex-shrink-0">
+              <div className="flex items-center justify-between mb-2 flex-shrink-0 gap-2">
                 <div className="flex items-center gap-1.5">
                   <i className="fi fi-sr-list-check text-[10px] text-violet-400 flex items-center" />
-                  <span className="text-[9px] font-bold uppercase tracking-widest text-white/35">{taskSectionLabel}</span>
+                  <span className={`text-[9px] font-bold uppercase tracking-widest ${TEXT.muted}`}>{taskSectionLabel}</span>
                   {visibleTasks.length > 0 && (
                     <span className="text-[8px] px-1.5 py-0.5 rounded-full bg-violet-500/20 text-violet-300 font-bold ml-1">{visibleTasks.length}</span>
                   )}
@@ -364,15 +365,12 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                 <button
                   onClick={() => setIsAddingTask(a => !a)}
                   title="Add Task"
-                  className={`w-6 h-6 rounded-full flex items-center justify-center border transition-all duration-200 ${isAddingTask
-                    ? "bg-violet-500 border-violet-400 text-white scale-110"
-                    : "bg-white/6 border-white/12 text-white/40 hover:bg-violet-500/20 hover:border-violet-500/40 hover:text-violet-300"
-                  }`}
+                  className={`w-6 h-6 rounded-full flex items-center justify-center border transition-all duration-200 ${isAddingTask ? "bg-brand-500 border-brand-400 text-white scale-110" : "bg-white/[0.06] border-white/[0.12] text-white/40 hover:bg-brand-500/20 hover:border-brand-500/40 hover:text-brand-400"}`}
                 >
                   <motion.i
                     animate={{ rotate: isAddingTask ? 45 : 0 }}
                     transition={{ duration: 0.2 }}
-                    className="fi fi-sr-plus text-[10px] flex items-center"
+                    className={`${ICONS.add} text-[10px] flex items-center`}
                   />
                 </button>
               </div>
@@ -385,7 +383,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                       onBlur={() => { if (!newTaskText.trim()) setIsAddingTask(false); }}
                       onKeyDown={e => e.key === "Escape" && setIsAddingTask(false)}
                       placeholder="New task…"
-                      className="w-full bg-violet-500/10 border border-violet-500/30 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-violet-500/60 text-white placeholder:text-white/25 transition-all"
+                      className={CLASSES.input}
                     />
                   </motion.form>
                 )}
@@ -420,13 +418,13 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                         exit={{ opacity: 0, x: 8, height: 0, marginBottom: 0 }}
                         transition={{ duration: 0.15, delay: i * 0.03 }}
                         onClick={() => toggleTask(task.id)}
-                        className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.07] hover:border-white/10 cursor-pointer transition-all group"
+                        className={`${CLASSES.cardHover} flex items-center gap-2 p-2.5 cursor-pointer group`}
                       >
-                        <div className="w-4 h-4 rounded-[5px] border border-violet-400/35 flex-shrink-0 flex items-center justify-center group-hover:border-violet-400/70 transition-colors">
-                          <i className="fi fi-sr-check text-[7px] text-violet-400 opacity-0 group-hover:opacity-50 flex items-center transition-opacity" />
+                        <div className="w-4 h-4 rounded-[5px] border border-brand-400/35 flex-shrink-0 flex items-center justify-center group-hover:border-brand-400/70 transition-colors">
+                          <i className={`${ICONS.check} text-[7px] text-brand-400 opacity-0 group-hover:opacity-50 flex items-center transition-opacity`} />
                         </div>
                         {/* Accent bar */}
-                        <div className="w-0.5 self-stretch rounded-full flex-shrink-0 bg-violet-400/50" />
+                        <div className="w-0.5 self-stretch rounded-full flex-shrink-0 bg-brand-400/50" />
                         {/* Text */}
                         <p className="text-[11px] font-medium text-white/75 leading-tight truncate flex-1">
                           {task.title}
