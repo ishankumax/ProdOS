@@ -8,7 +8,7 @@ import GoalsRail from "./GoalsRail";
 import CompletedDrawer from "./CompletedDrawer";
 import CalendarOverlay from "./CalendarOverlay";
 import { useEditMode } from "@/contexts/EditModeContext";
-import { ICONS, CLASSES, SURFACE, TRANSITION } from "@/lib/theme";
+import { ICONS, CLASSES, SURFACE } from "@/lib/theme";
 import { GENIE_TOAST, GENIE_TOAST_TRANSITION, WORKSPACE_ENTER, WORKSPACE_EXIT, WORKSPACE_TRANSITION, pressAnimation } from "@/lib/motion";
 
 interface ShellProps {
