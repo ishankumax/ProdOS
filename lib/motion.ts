@@ -70,7 +70,7 @@ export const GENIE_PANEL_VARIANTS: Variants = {
   },
 };
 
-export const GENIE_PANEL_TRANSITION = {
+export const GENIE_PANEL_TRANSITION: Transition = {
   scaleY:   { type: "spring", stiffness: 380, damping: 28, mass: 0.7 },
   scaleX:   { type: "spring", stiffness: 440, damping: 33, mass: 0.55 },
   y:        { type: "spring", stiffness: 380, damping: 28, mass: 0.7 },
@@ -102,7 +102,7 @@ export const GENIE_CARD_VARIANTS: Variants = {
   },
 };
 
-export const GENIE_CARD_TRANSITION = {
+export const GENIE_CARD_TRANSITION: Transition = {
   scale:    SPRING_FLUID,
   y:        SPRING_FLUID,
   clipPath: { type: "spring", stiffness: 300, damping: 28, mass: 0.8 },
@@ -118,7 +118,7 @@ export const GENIE_DRAWER_LEFT: Variants = {
   exit:    { opacity: 0, x: -20, scaleX: 0.92, clipPath: "inset(0% 100% 0% 0% round 0px)" },
 };
 
-export const GENIE_DRAWER_TRANSITION = {
+export const GENIE_DRAWER_TRANSITION: Transition = {
   x:        SPRING_FLUID,
   scaleX:   { type: "spring", stiffness: 400, damping: 35, mass: 0.6 },
   clipPath: { type: "spring", stiffness: 280, damping: 26, mass: 0.9 },
@@ -134,7 +134,7 @@ export const GENIE_LIST_ITEM: Variants = {
   exit:    { opacity: 0, y:  8,  scaleY: 0.7, scaleX: 0.96, height: 0, marginBottom: 0 },
 };
 
-export const GENIE_LIST_TRANSITION = {
+export const GENIE_LIST_TRANSITION: Transition = {
   y:      SPRING_FLUID,
   scaleY: { type: "spring", stiffness: 420, damping: 30, mass: 0.55 },
   scaleX: SPRING_SNAPPY,
@@ -154,7 +154,7 @@ export const GENIE_COLLAPSE: Variants = {
   exit:    { opacity: 0, height: 0, scaleY: 0.95, clipPath: "inset(0% 0% 100% 0% round 12px)" },
 };
 
-export const GENIE_COLLAPSE_TRANSITION = {
+export const GENIE_COLLAPSE_TRANSITION: Transition = {
   height:   { type: "spring", stiffness: 360, damping: 30, mass: 0.7 },
   scaleY:   SPRING_FLUID,
   clipPath: { type: "spring", stiffness: 320, damping: 28, mass: 0.8 },
@@ -170,7 +170,7 @@ export const GENIE_TOAST: Variants = {
   exit:    { opacity: 0, y: -16, scaleX: 0.9,  scaleY: 0.85 },
 };
 
-export const GENIE_TOAST_TRANSITION = {
+export const GENIE_TOAST_TRANSITION: Transition = {
   y:      SPRING_BOUNCE,
   scaleX: { type: "spring", stiffness: 460, damping: 28, mass: 0.5 },
   scaleY: { type: "spring", stiffness: 460, damping: 28, mass: 0.5 },
@@ -193,17 +193,17 @@ export const activeScaleAnimation: TargetAndTransition = {
 // ─── Workspace Transition (switching between workspaces) ──────────────────────
 // Content exits by compressing toward center; new content springs in from edge.
 
-export const WORKSPACE_ENTER: Variants = {
+export const WORKSPACE_ENTER = {
   hidden:  { opacity: 0, x: 32,  scaleX: 0.96, clipPath: "inset(0% 0% 0% 4% round 0px)" },
   visible: { opacity: 1, x: 0,   scaleX: 1,    clipPath: "inset(0% 0% 0% 0% round 0px)" },
-};
+} satisfies Variants;
 
-export const WORKSPACE_EXIT: Variants = {
+export const WORKSPACE_EXIT = {
   visible: { opacity: 1, x: 0,   scaleX: 1    },
   hidden:  { opacity: 0, x: -24, scaleX: 0.96 },
-};
+} satisfies Variants;
 
-export const WORKSPACE_TRANSITION = {
+export const WORKSPACE_TRANSITION: Transition = {
   x:        SPRING_FLUID,
   scaleX:   { type: "spring", stiffness: 380, damping: 32, mass: 0.65 },
   clipPath: { type: "spring", stiffness: 320, damping: 28, mass: 0.8  },
@@ -223,7 +223,7 @@ export const VIEW_SWITCH_EXIT = (direction: 1 | -1): Variants => ({
   hidden:  { opacity: 0, x: direction * -20, scaleX: 0.94 },
 });
 
-export const VIEW_SWITCH_TRANSITION = {
+export const VIEW_SWITCH_TRANSITION: Transition = {
   x:       SPRING_SNAPPY,
   scaleX:  { type: "spring", stiffness: 460, damping: 34, mass: 0.5 },
   opacity: FADE_FAST,
