@@ -24,8 +24,8 @@ interface CalendarOverlayProps {
 
 // ─── Layout constants (sourced from lib/theme.ts LAYOUT token) ────────────────
 const PANEL_TOP    = LAYOUT.headerH + LAYOUT.margin;          // 88px from top
-const PANEL_BOTTOM = LAYOUT.margin;                            // 24px from bottom
-const PANEL_RIGHT  = LAYOUT.margin + LAYOUT.btnStripW + LAYOUT.btnGap; // 80px from right
+const PANEL_BOTTOM = LAYOUT.margin + 40;                      // 64px from bottom (clears 40px status bar)
+const PANEL_RIGHT  = LAYOUT.margin;                           // 24px from right (aligns with status bar buttons)
 const PANEL_WIDTH  = 288;                                      // px
 
 // ─── Main Component ───────────────────────────────────────────────────────────
@@ -126,10 +126,13 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
     tasks.forEach((t) => {
       if (!t.completed && t.dateKey) {
         const parts = t.dateKey.split("-");
-        if (parts.length === 3) {
-          const y = parseInt(parts[0], 10);
-          const m = parseInt(parts[1], 10) - 1; // 0-indexed month
-          const d = parseInt(parts[2], 10);
+        const yStr = parts[0];
+        const mStr = parts[1];
+        const dStr = parts[2];
+        if (yStr !== undefined && mStr !== undefined && dStr !== undefined) {
+          const y = parseInt(yStr, 10);
+          const m = parseInt(mStr, 10) - 1; // 0-indexed month
+          const d = parseInt(dStr, 10);
           if (y === viewYear && m === viewMonth) {
             set.add(d);
           }
@@ -192,11 +195,6 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
             className={`flex flex-col overflow-hidden ${CLASSES.panel}`}
             onMouseDown={e => e.stopPropagation()}
           >
-
-            {/* ══ HEADER: Clock strip ══════════════════════════════════ */}
-            <div className="flex-shrink-0 px-4 pt-4 pb-3 border-b border-white/[0.06]">
-              <LiveClock />
-            </div>
 
             {/* ══ CALENDAR SECTION ════════════════════════════════════ */}
             <div className="flex-shrink-0 px-4 pt-3 pb-2">
