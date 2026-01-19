@@ -452,26 +452,3 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
   );
 }
 
-// ─── Live Clock ───────────────────────────────────────────────────────────────
-function LiveClock() {
-  const [time, setTime] = useState(new Date());
-  useEffect(() => { const t = setInterval(() => setTime(new Date()), 1000); return () => clearInterval(t); }, []);
-
-  const timeStr = time.toLocaleTimeString([], {
-    hour: "2-digit", minute: "2-digit",
-  });
-  const dateStr = time.toLocaleDateString([], {
-    weekday: "short", month: "short", day: "numeric",
-  }).toUpperCase();
-
-  return (
-    <div className="flex items-center justify-between">
-      <p className="text-xl font-light tracking-tight text-white font-mono leading-none">
-        {timeStr}
-      </p>
-      <p className="text-[9px] text-white/35 tracking-widest font-semibold">
-        {dateStr}
-      </p>
-    </div>
-  );
-}

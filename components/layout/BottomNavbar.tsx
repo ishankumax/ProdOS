@@ -1,11 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useData } from "@/components/providers/DataProvider";
 import { useEditMode } from "@/contexts/EditModeContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
+import { signIn, signOut } from "next-auth/react";
 import { ICONS } from "@/lib/theme";
 import { SPRING_BOUNCE, pressAnimation } from "@/lib/motion";
+import { useClickAway } from "@/hooks/useClickAway";
+import { THEME_COLORS } from "@/lib/themeColors";
 
 export type WorkspaceType = string;
 
@@ -38,6 +43,39 @@ export default function BottomNavbar({ activeWorkspace, onWorkspaceChange }: Bot
   const [newWorkspaceName, setNewWorkspaceName] = useState("");
   const [selectedIcon, setSelectedIcon] = useState("fi fi-sr-home");
   const [error, setError] = useState("");
+  
+  const { user } = useAuth();
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+  const { theme, setTheme, availableThemes } = useTheme();
+  const [showThemeMenu, setShowThemeMenu] = useState(false);
+  const [themeSearch, setThemeSearch] = useState("");
+
+  const addModalRef = useRef<HTMLDivElement>(null);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
+  const themeMenuRef = useRef<HTMLDivElement>(null);
+
+  useClickAway(addModalRef, () => setShowAddModal(false));
+  useClickAway(profileMenuRef, () => setShowProfileMenu(false));
+  useClickAway(themeMenuRef, () => setShowThemeMenu(false));
+
+  const filteredThemes = useMemo(() => {
+    if (!themeSearch) return availableThemes;
+    return availableThemes.filter(
+      (t) =>
+        t.name.toLowerCase().includes(themeSearch.toLowerCase()) ||
+        t.id.toLowerCase().includes(themeSearch.toLowerCase())
+    );
+  }, [availableThemes, themeSearch]);
+
+  const handleAuth = async () => {
+    if (user) {
+      await signOut();
+      setShowProfileMenu(false);
+    } else {
+      await signIn("google");
+    }
+  };
 
   const handleCreateWorkspace = (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,86 +102,175 @@ export default function BottomNavbar({ activeWorkspace, onWorkspaceChange }: Bot
     <div className="relative">
       <AnimatePresence>
         {showAddModal && (
-          <>
-            <div
-              className="fixed inset-0 z-40 cursor-default"
-              onClick={() => setShowAddModal(false)}
-            />
-            <motion.div
-              initial={{ opacity: 0, y: 15, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 15, scale: 0.95 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-72 bg-[#0d0d1a]/95 border border-white/[0.09] rounded-2xl backdrop-blur-xl p-4 shadow-[0_8px_32px_rgba(0,0,0,0.6)] z-50"
+          <motion.div
+            ref={addModalRef}
+            initial={{ opacity: 0, y: 15, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 15, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-72 bg-[#0d0d1a]/95 border border-white/[0.09] rounded-2xl backdrop-blur-xl p-4 shadow-[0_8px_32px_rgba(0,0,0,0.6)] z-50"
+          >
+            <form onSubmit={handleCreateWorkspace} className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-white uppercase tracking-wider">New Workspace</span>
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="text-white/40 hover:text-white transition-colors"
+                >
+                  <i className={`${ICONS.close} text-[10px]`} />
+                </button>
+              </div>
+
+              <div>
+                <input
+                  type="text"
+                  placeholder="Workspace Name..."
+                  value={newWorkspaceName}
+                  onChange={(e) => {
+                    setNewWorkspaceName(e.target.value);
+                    if (error) setError("");
+                  }}
+                  className="w-full bg-white/[0.04] border border-white/[0.08] focus:border-brand-500/50 rounded-xl px-3 py-2 text-xs text-white placeholder-white/20 outline-none transition-all"
+                  autoFocus
+                />
+                {error && <p className="text-[10px] text-red-400 mt-1">{error}</p>}
+              </div>
+
+              <div>
+                <span className="text-[9px] font-bold text-white/35 uppercase tracking-wider block mb-2">Select Icon</span>
+                <div className="grid grid-cols-5 gap-2 max-h-36 overflow-y-auto pr-1">
+                  {AVAILABLE_ICONS.map((icon) => {
+                    const isIconSelected = selectedIcon === icon.class;
+                    return (
+                      <button
+                        key={icon.name}
+                        type="button"
+                        onClick={() => setSelectedIcon(icon.class)}
+                        className={`w-10 h-10 rounded-lg flex items-center justify-center text-sm transition-all ${
+                          isIconSelected
+                            ? "bg-brand-500 text-white shadow-[0_0_12px_rgba(var(--brand-500-rgb),0.4)]"
+                            : "bg-white/[0.02] border border-white/[0.05] text-white/40 hover:text-white hover:bg-white/[0.06]"
+                        }`}
+                      >
+                        <i className={icon.class} />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="flex-1 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-white/60 hover:text-white text-xs font-medium transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs font-semibold transition-all shadow-[0_0_12px_rgba(var(--brand-500-rgb),0.25)]"
+                >
+                  Create
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        )}
+
+        {showProfileMenu && user && (
+          <motion.div
+            ref={profileMenuRef}
+            initial={{ opacity: 0, y: 15, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 15, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="absolute bottom-full right-0 mb-4 w-48 bg-[#0d0d1a]/95 border border-white/[0.09] rounded-2xl backdrop-blur-xl p-2 shadow-[0_8px_32px_rgba(0,0,0,0.6)] z-50"
+          >
+            <div className="px-3 py-2 border-b border-white/[0.08] mb-2">
+              <p className="text-xs font-semibold text-white truncate">
+                {user.name || user.email}
+              </p>
+              <p className="text-[10px] text-white/40 truncate">
+                {user.email}
+              </p>
+            </div>
+            <button
+              onClick={handleAuth}
+              className="w-full text-left px-3 py-2 text-xs text-red-400 hover:bg-white/[0.04] rounded-lg transition-colors flex items-center gap-2"
             >
-              <form onSubmit={handleCreateWorkspace} className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-white uppercase tracking-wider">New Workspace</span>
-                  <button
-                    type="button"
-                    onClick={() => setShowAddModal(false)}
-                    className="text-white/40 hover:text-white transition-colors"
-                  >
-                    <i className={`${ICONS.close} text-[10px]`} />
-                  </button>
-                </div>
+              <i className="fi fi-sr-sign-out-alt" />
+              Sign out
+            </button>
+          </motion.div>
+        )}
 
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Workspace Name..."
-                    value={newWorkspaceName}
-                    onChange={(e) => {
-                      setNewWorkspaceName(e.target.value);
-                      if (error) setError("");
+        {showThemeMenu && (
+          <motion.div
+            ref={themeMenuRef}
+            initial={{ opacity: 0, y: 15, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 15, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="absolute bottom-full right-12 mb-4 w-64 bg-[#0d0d1a]/95 border border-white/[0.09] rounded-2xl backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.6)] z-50 flex flex-col overflow-hidden"
+          >
+            <div className="p-3 border-b border-white/[0.08] bg-black/20">
+              <div className="relative flex items-center">
+                <i className="fi fi-sr-search absolute left-3 text-white/40 text-xs" />
+                <input
+                  type="text"
+                  placeholder="Theme..."
+                  value={themeSearch}
+                  onChange={(e) => setThemeSearch(e.target.value)}
+                  className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl pl-8 pr-3 py-1.5 text-xs text-white placeholder-white/30 outline-none focus:border-brand-500/50 transition-colors"
+                  autoFocus
+                />
+              </div>
+            </div>
+            
+            <div className="p-2 overflow-y-auto max-h-[300px] flex flex-col gap-0.5 custom-scrollbar">
+              {filteredThemes.map((t) => {
+                const colors = THEME_COLORS[t.id] || THEME_COLORS["default"];
+                const isSelected = theme === t.id;
+                
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => {
+                      setTheme(t.id);
+                      setShowThemeMenu(false);
                     }}
-                    className="w-full bg-white/[0.04] border border-white/[0.08] focus:border-brand-500/50 rounded-xl px-3 py-2 text-xs text-white placeholder-white/20 outline-none transition-all"
-                    autoFocus
-                  />
-                  {error && <p className="text-[10px] text-red-400 mt-1">{error}</p>}
-                </div>
-
-                <div>
-                  <span className="text-[9px] font-bold text-white/35 uppercase tracking-wider block mb-2">Select Icon</span>
-                  <div className="grid grid-cols-5 gap-2 max-h-36 overflow-y-auto pr-1">
-                    {AVAILABLE_ICONS.map((icon) => {
-                      const isIconSelected = selectedIcon === icon.class;
-                      return (
-                        <button
-                          key={icon.name}
-                          type="button"
-                          onClick={() => setSelectedIcon(icon.class)}
-                          className={`w-10 h-10 rounded-lg flex items-center justify-center text-sm transition-all ${
-                            isIconSelected
-                              ? "bg-brand-500 text-white shadow-[0_0_12px_rgba(var(--brand-500-rgb),0.4)]"
-                              : "bg-white/[0.02] border border-white/[0.05] text-white/40 hover:text-white hover:bg-white/[0.06]"
-                          }`}
-                        >
-                          <i className={icon.class} />
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowAddModal(false)}
-                    className="flex-1 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-white/60 hover:text-white text-xs font-medium transition-all"
+                    className={`w-full flex items-center justify-between px-3 py-2 text-xs rounded-lg transition-colors group ${
+                      isSelected
+                        ? "bg-brand-500/15 text-brand-400 font-semibold"
+                        : "text-white/70 hover:bg-white/[0.06] hover:text-white"
+                    }`}
                   >
-                    Cancel
+                    <div className="flex items-center gap-2">
+                      {isSelected && <i className="fi fi-sr-check text-[10px]" />}
+                      <span className={isSelected ? "" : "group-hover:translate-x-1 transition-transform"}>
+                        {t.name}
+                      </span>
+                    </div>
+                    
+                    {/* Theme Palette Dots */}
+                    <div className="flex items-center gap-[2px] bg-white/5 rounded-full p-1 border border-white/5 group-hover:border-white/10 transition-colors">
+                      <div className="w-3 h-3 rounded-full border border-black/20" style={{ backgroundColor: colors?.bg || "#000" }} title="Background" />
+                      <div className="w-3 h-3 rounded-full border border-black/20" style={{ backgroundColor: colors?.accent || "#000" }} title="Accent" />
+                      <div className="w-3 h-3 rounded-full border border-black/20" style={{ backgroundColor: colors?.text || "#fff" }} title="Text" />
+                    </div>
                   </button>
-                  <button
-                    type="submit"
-                    className="flex-1 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs font-semibold transition-all shadow-[0_0_12px_rgba(var(--brand-500-rgb),0.25)]"
-                  >
-                    Create
-                  </button>
+                );
+              })}
+              
+              {filteredThemes.length === 0 && (
+                <div className="p-4 text-center text-xs text-white/40">
+                  No themes found.
                 </div>
-              </form>
-            </motion.div>
-          </>
+              )}
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
@@ -202,6 +329,70 @@ export default function BottomNavbar({ activeWorkspace, onWorkspaceChange }: Bot
             </motion.button>
           </>
         )}
+
+        <motion.div
+          layout
+          className="w-px h-5 bg-white/[0.09] mx-0.5 flex-shrink-0"
+        />
+
+        <motion.button
+          layout
+          onClick={() => {
+            if (showThemeMenu) {
+              setShowThemeMenu(false);
+            } else {
+              setShowThemeMenu(true);
+              setShowAddModal(false);
+              setShowProfileMenu(false);
+            }
+          }}
+          whileTap={pressAnimation}
+          title="Theme Palette"
+          className="flex items-center justify-center w-9 h-9 rounded-full text-white/40 hover:text-white hover:bg-white/[0.08] transition-all duration-300 ease-in-out"
+        >
+          <i className="fi fi-sr-palette text-sm" />
+        </motion.button>
+
+        <motion.div
+          layout
+          className="w-px h-5 bg-white/[0.09] mx-0.5 flex-shrink-0"
+        />
+
+        <motion.button
+          layout
+          onClick={() => {
+            if (user) {
+              if (showProfileMenu) {
+                setShowProfileMenu(false);
+              } else {
+                setShowProfileMenu(true);
+                setShowThemeMenu(false);
+                setShowAddModal(false);
+              }
+            } else {
+              handleAuth();
+            }
+          }}
+          whileTap={pressAnimation}
+          title={user ? "Profile" : "Sign In"}
+          className={`flex items-center gap-0 group-hover:gap-2 h-9 rounded-full transition-all duration-300 ease-in-out overflow-hidden ${
+            user ? "px-1.5" : "px-2.5 text-white/40 hover:text-white hover:bg-white/[0.08]"
+          }`}
+        >
+          {user ? (
+            <img 
+              src={user.image || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + user.email}
+              alt="Profile"
+              className="w-6 h-6 rounded-full border border-white/20"
+              referrerPolicy="no-referrer"
+            />
+          ) : (
+            <i className="fi fi-sr-user flex items-center text-sm flex-shrink-0" />
+          )}
+          <span className="text-xs font-medium whitespace-nowrap overflow-hidden max-w-0 group-hover:max-w-[60px] opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
+            {user ? "Profile" : "Sign In"}
+          </span>
+        </motion.button>
       </motion.div>
     </div>
   );

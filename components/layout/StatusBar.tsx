@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { WorkspaceType } from "./BottomNavbar";
 import { useEditMode } from "@/contexts/EditModeContext";
-import { useData } from "@/components/providers/DataProvider";
-import { ICONS, CLASSES } from "@/lib/theme";
+import { ICONS } from "@/lib/theme";
 import { pressAnimation } from "@/lib/motion";
 
 // ─── SVG Segmented Progress Bar ───────────────────────────────────────────────
