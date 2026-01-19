@@ -36,10 +36,12 @@ interface DataContextType {
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 const DEFAULT_WORKSPACES: Workspace[] = [
-  { name: "Personal Life",       iconClass: "fi fi-sr-home" },
-  { name: "Skill Check",         iconClass: "fi fi-sr-laptop" },
-  { name: "Financial Dashboard", iconClass: "fi fi-sr-chart-histogram" },
-  { name: "InTheBox",            iconClass: "fi fi-sr-box" },
+  { name: "Dashboard", iconClass: "fi fi-sr-home" },
+  { name: "Finance", iconClass: "fi fi-sr-chart-histogram" },
+  { name: "Goals", iconClass: "fi fi-sr-target" },
+  { name: "Fitness", iconClass: "fi fi-sr-heart" },
+  { name: "Skill Learning", iconClass: "fi fi-sr-graduation-cap" },
+  { name: "Journal", iconClass: "fi fi-sr-book-alt" },
 ];
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
@@ -51,15 +53,20 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   // Load from local storage on mount
   useEffect(() => {
     try {
-      const storedTasks = localStorage.getItem("prod_os_tasks");
-      const storedInvestments = localStorage.getItem("prod_os_investments");
-      const storedWorkspaces = localStorage.getItem("prod_os_workspaces");
+      const storedTasks = localStorage.getItem("prod_os_tasks_v2");
+      const storedInvestments = localStorage.getItem("prod_os_investments_v2");
+      const storedWorkspaces = localStorage.getItem("prod_os_workspaces_v2");
 
       if (storedTasks) setTasks(JSON.parse(storedTasks));
       if (storedInvestments) setInvestments(JSON.parse(storedInvestments));
       
       if (storedWorkspaces) {
-        setWorkspaces(JSON.parse(storedWorkspaces));
+        const parsed = JSON.parse(storedWorkspaces);
+        if (parsed.length === 0) {
+          setWorkspaces(DEFAULT_WORKSPACES);
+        } else {
+          setWorkspaces(parsed);
+        }
       } else {
         setWorkspaces(DEFAULT_WORKSPACES);
       }
@@ -72,9 +79,9 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   // Save to local storage on changes
   useEffect(() => {
     if (isLoaded) {
-      localStorage.setItem("prod_os_tasks", JSON.stringify(tasks));
-      localStorage.setItem("prod_os_investments", JSON.stringify(investments));
-      localStorage.setItem("prod_os_workspaces", JSON.stringify(workspaces));
+      localStorage.setItem("prod_os_tasks_v2", JSON.stringify(tasks));
+      localStorage.setItem("prod_os_investments_v2", JSON.stringify(investments));
+      localStorage.setItem("prod_os_workspaces_v2", JSON.stringify(workspaces));
     }
   }, [tasks, investments, workspaces, isLoaded]);
 

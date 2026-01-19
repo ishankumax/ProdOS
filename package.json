@@ -10,6 +10,9 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.103.3",
     "clsx": "^2.1.1",
@@ -17,6 +20,7 @@
     "ioredis": "^5.10.1",
     "mongoose": "^8.24.1",
     "next": "14.2.35",
+    "next-auth": "^4.24.14",
     "react": "^18",
     "react-dom": "^18",
     "zod": "^4.3.6"
