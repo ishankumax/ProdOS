@@ -1,0 +1,16 @@
+export const THEME_COLORS: Record<string, { bg: string; accent: string; text: string }> = {
+  "default": { bg: "#0d0d14", accent: "#10b981", text: "#ffffff" },
+  "amber": { bg: "#0d0d14", accent: "#f59e0b", text: "#ffffff" },
+  "rose": { bg: "#0d0d14", accent: "#f43f5e", text: "#ffffff" },
+  "mono": { bg: "#0e0f11", accent: "#737373", text: "#ffffff" },
+  "vscode-dark-modern": { bg: "#181818", accent: "#0078d4", text: "#ffffff" },
+  "vscode-dark-plus": { bg: "#1e1e1e", accent: "#0e639c", text: "#ffffff" },
+  "vscode-dark-vs": { bg: "#1e1e1e", accent: "#0e639c", text: "#ffffff" },
+  "vscode-hc-black": { bg: "#000000", accent: "#000000", text: "#ffffff" },
+  "vscode-2026-dark": { bg: "#0f0f0f", accent: "#0078d4", text: "#ffffff" },
+  "vscode-light-modern": { bg: "#fafafa", accent: "#0078d4", text: "#242424" },
+  "vscode-light-plus": { bg: "#ffffff", accent: "#007acc", text: "#000000" },
+  "vscode-light-vs": { bg: "#ffffff", accent: "#007acc", text: "#000000" },
+  "vscode-hc-light": { bg: "#ffffff", accent: "#0f4a85", text: "#000000" },
+  "vscode-2026-light": { bg: "#fdfdfd", accent: "#0078d4", text: "#242424" },
+};
