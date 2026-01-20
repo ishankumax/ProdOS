@@ -17,6 +17,7 @@ export type WorkspaceType = string;
 interface BottomNavbarProps {
   activeWorkspace: WorkspaceType;
   onWorkspaceChange: (w: WorkspaceType) => void;
+  onSettingsOpen?: () => void;
 }
 
 const AVAILABLE_ICONS = [
@@ -36,7 +37,7 @@ const AVAILABLE_ICONS = [
   { name: "Globe", class: "fi fi-sr-globe" },
 ];
 
-export default function BottomNavbar({ activeWorkspace, onWorkspaceChange }: BottomNavbarProps) {
+export default function BottomNavbar({ activeWorkspace, onWorkspaceChange, onSettingsOpen }: BottomNavbarProps) {
   const { workspaces, addWorkspace } = useData();
   const { isEditing } = useEditMode();
   const [showAddModal, setShowAddModal] = useState(false);
@@ -186,9 +187,9 @@ export default function BottomNavbar({ activeWorkspace, onWorkspaceChange }: Bot
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 15, scale: 0.95 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="absolute bottom-full right-0 mb-4 w-48 bg-[#0d0d1a]/95 border border-white/[0.09] rounded-2xl backdrop-blur-xl p-2 shadow-[0_8px_32px_rgba(0,0,0,0.6)] z-50"
+            className="absolute bottom-full right-0 mb-4 w-48 bg-[#0d0d1a]/95 border border-white/[0.09] rounded-2xl backdrop-blur-xl p-2 shadow-[0_8px_32px_rgba(0,0,0,0.6)] z-50 flex flex-col gap-0.5"
           >
-            <div className="px-3 py-2 border-b border-white/[0.08] mb-2">
+            <div className="px-3 py-2 border-b border-white/[0.08] mb-1">
               <p className="text-xs font-semibold text-white truncate">
                 {user.name || user.email}
               </p>
@@ -196,6 +197,16 @@ export default function BottomNavbar({ activeWorkspace, onWorkspaceChange }: Bot
                 {user.email}
               </p>
             </div>
+            <button
+              onClick={() => {
+                onSettingsOpen?.();
+                setShowProfileMenu(false);
+              }}
+              className="w-full text-left px-3 py-2 text-xs text-white/70 hover:bg-white/[0.04] rounded-lg transition-colors flex items-center gap-2"
+            >
+              <i className="fi fi-sr-settings" />
+              Settings
+            </button>
             <button
               onClick={handleAuth}
               className="w-full text-left px-3 py-2 text-xs text-red-400 hover:bg-white/[0.04] rounded-lg transition-colors flex items-center gap-2"

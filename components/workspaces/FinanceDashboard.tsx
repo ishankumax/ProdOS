@@ -9,7 +9,8 @@ export default function FinanceDashboard() {
   const { investments, addInvestment } = useData();
   const { isEditing } = useEditMode();
   const [logText, setLogText] = useState("");
-  
+  const [privacyMode, setPrivacyMode] = useState(false);
+
   const [visibleModules, setVisibleModules] = useState({
     investments: true,
     distribution: true,
@@ -26,6 +27,8 @@ export default function FinanceDashboard() {
         console.error(e);
       }
     }
+    const zen = localStorage.getItem("prod_os_zen_mode_privacy") === "true";
+    setPrivacyMode(zen);
   }, []);
 
   useEffect(() => {
@@ -50,6 +53,9 @@ export default function FinanceDashboard() {
     }
   };
 
+  // Class helper for blur privacy effect
+  const blurClass = privacyMode ? "blur-md hover:blur-none transition-all duration-300" : "";
+
   return (
     <div className="h-full w-full p-8 overflow-auto">
       {/* Header */}
@@ -66,10 +72,18 @@ export default function FinanceDashboard() {
                 Restore Modules
               </button>
             )}
+            <button
+              onClick={() => setPrivacyMode(!privacyMode)}
+              className={`text-xs px-2.5 py-0.5 rounded transition-all ${
+                privacyMode ? "bg-brand-500/20 text-brand-400 border border-brand-500/40" : "bg-white/5 text-white/50"
+              }`}
+            >
+              👁️ Zen Privacy Mode {privacyMode ? "ON" : "OFF"}
+            </button>
           </div>
         </div>
         <div className="text-right">
-          <div className="text-3xl font-mono text-brand-400">₹{totalNetWorth.toLocaleString("en-IN")}</div>
+          <div className={`text-3xl font-mono text-brand-400 ${blurClass}`}>₹{totalNetWorth.toLocaleString("en-IN")}</div>
           <div className={`text-xs uppercase tracking-widest mt-1 ${TEXT.muted}`}>Net Worth</div>
         </div>
       </div>
@@ -105,7 +119,7 @@ export default function FinanceDashboard() {
                       <div className={`text-xs ${TEXT.muted}`}>{inv.type}</div>
                     </div>
                     <div className="text-right">
-                      <div className="font-mono text-white/80">₹{safeAmount.toLocaleString("en-IN")}</div>
+                      <div className={`font-mono text-white/80 ${blurClass}`}>₹{safeAmount.toLocaleString("en-IN")}</div>
                       <div className="text-xs text-brand-400">+0%</div>
                     </div>
                   </div>
@@ -149,7 +163,7 @@ export default function FinanceDashboard() {
             <div>
               <div className="flex justify-between text-sm mb-1">
                 <span className={TEXT.subtle}>Emergency Fund</span>
-                <span className="font-mono">₹3,00,000</span>
+                <span className={`font-mono ${blurClass}`}>₹3,00,000</span>
               </div>
               <div className="h-1.5 w-full bg-white/[0.05] rounded-full overflow-hidden">
                 <div className="h-full bg-amber-500 rounded-full w-full" />
@@ -158,7 +172,7 @@ export default function FinanceDashboard() {
             <div>
               <div className="flex justify-between text-sm mb-1">
                 <span className={TEXT.subtle}>Monthly Savings</span>
-                <span className="font-mono">₹45,000</span>
+                <span className={`font-mono ${blurClass}`}>₹45,000</span>
               </div>
               <div className="h-1.5 w-full bg-white/[0.05] rounded-full overflow-hidden">
                 <div className="h-full bg-brand-500 rounded-full w-[60%]" />

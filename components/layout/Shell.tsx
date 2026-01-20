@@ -9,6 +9,7 @@ import CompletedDrawer from "./CompletedDrawer";
 import CalendarOverlay from "./CalendarOverlay";
 import NotesOverlay from "./NotesOverlay";
 import StatusBar from "./StatusBar";
+import SettingsView from "../settings/SettingsView";
 import { useEditMode } from "@/contexts/EditModeContext";
 import { ICONS, SURFACE } from "@/lib/theme";
 import { GENIE_TOAST, GENIE_TOAST_TRANSITION, WORKSPACE_ENTER, WORKSPACE_EXIT, WORKSPACE_TRANSITION } from "@/lib/motion";
@@ -27,6 +28,7 @@ export default function Shell({ children, activeWorkspace, onWorkspaceChange }: 
   const calBtnRef = useRef<HTMLButtonElement>(null);
   const [notesOpen, setNotesOpen] = useState(false);
   const notesBtnRef = useRef<HTMLButtonElement>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   useEffect(() => {
     if (!isMounted) { setIsMounted(true); return; }
@@ -90,7 +92,7 @@ export default function Shell({ children, activeWorkspace, onWorkspaceChange }: 
 
         {/* ── Floating Bottom Navbar ────────────────────────────── */}
         <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-50">
-          <BottomNavbar activeWorkspace={activeWorkspace} onWorkspaceChange={onWorkspaceChange} />
+          <BottomNavbar activeWorkspace={activeWorkspace} onWorkspaceChange={onWorkspaceChange} onSettingsOpen={() => setSettingsOpen(true)} />
         </div>
 
         {/* ── Fixed Bottom Strip (Status Bar) ──────────────────────── */}
@@ -102,11 +104,13 @@ export default function Shell({ children, activeWorkspace, onWorkspaceChange }: 
           notesOpen={notesOpen}
           setNotesOpen={setNotesOpen}
           notesBtnRef={notesBtnRef}
+          onSettingsOpen={() => setSettingsOpen(true)}
         />
 
         {/* ── Overlays ────────────────────────────────────────────── */}
         <CalendarOverlay isOpen={calOpen} onClose={() => setCalOpen(false)} />
         <NotesOverlay isOpen={notesOpen} onClose={() => setNotesOpen(false)} />
+        <SettingsView isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
       </div>
     </div>
   );
