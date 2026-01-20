@@ -3,8 +3,19 @@
 import { useState } from "react";
 import { CLASSES } from "@/lib/theme";
 
+export interface OnboardingData {
+  wakeTime: string;
+  sleepTime: string;
+  improvements: string[];
+  reminders: {
+    hydration: boolean;
+    posture: boolean;
+    journal: boolean;
+  };
+}
+
 interface OnboardingProps {
-  onComplete: (data: any) => void;
+  onComplete: (data: OnboardingData | null) => void;
 }
 
 export default function OnboardingView({ onComplete }: OnboardingProps) {

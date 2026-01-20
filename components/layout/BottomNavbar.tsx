@@ -7,6 +7,7 @@ import { useEditMode } from "@/contexts/EditModeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { signIn, signOut } from "next-auth/react";
+import Image from "next/image";
 import { ICONS } from "@/lib/theme";
 import { SPRING_BOUNCE, pressAnimation } from "@/lib/motion";
 import { useClickAway } from "@/hooks/useClickAway";
@@ -391,11 +392,14 @@ export default function BottomNavbar({ activeWorkspace, onWorkspaceChange, onSet
           }`}
         >
           {user ? (
-            <img 
+            <Image 
               src={user.image || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + user.email}
               alt="Profile"
+              width={24}
+              height={24}
               className="w-6 h-6 rounded-full border border-white/20"
               referrerPolicy="no-referrer"
+              unoptimized
             />
           ) : (
             <i className="fi fi-sr-user flex items-center text-sm flex-shrink-0" />
