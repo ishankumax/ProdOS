@@ -30,11 +30,11 @@ export default function OnboardingView({ onComplete }: OnboardingProps) {
   });
 
   const categories = [
-    { id: "focus", label: "🎯 Deep Focus & Productivity" },
-    { id: "hydration", label: "💧 Optimal Hydration" },
-    { id: "sleep", label: "😴 Consistent Sleep Cycle" },
-    { id: "budget", label: "🪙 Smart Budgeting" },
-    { id: "mind", label: "🧘 Emotional Awareness" },
+    { id: "focus", label: "Deep Focus & Productivity", iconClass: "fi fi-sr-target" },
+    { id: "hydration", label: "Optimal Hydration", iconClass: "fi fi-sr-water" },
+    { id: "sleep", label: "Consistent Sleep Cycle", iconClass: "fi fi-sr-bed" },
+    { id: "budget", label: "Smart Budgeting", iconClass: "fi fi-sr-coins" },
+    { id: "mind", label: "Emotional Awareness", iconClass: "fi fi-sr-heart" },
   ];
 
   const handleToggleImprovement = (id: string) => {
@@ -78,7 +78,10 @@ export default function OnboardingView({ onComplete }: OnboardingProps) {
 
         {step === 1 && (
           <div className="space-y-4">
-            <h2 className="text-xl font-bold text-white">🌸 Tell us about your sleep cycle</h2>
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <i className="fi fi-sr-spa text-brand-400 text-lg flex items-center" />
+              Tell us about your sleep cycle
+            </h2>
             <p className="text-xs text-white/50">
               We personalize your hourly schedules, reminders, and daily planner templates to align with your natural circadian rhythm.
             </p>
@@ -107,7 +110,10 @@ export default function OnboardingView({ onComplete }: OnboardingProps) {
 
         {step === 2 && (
           <div className="space-y-4">
-            <h2 className="text-xl font-bold text-white">🎯 What areas do you want to focus on?</h2>
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <i className="fi fi-sr-target text-brand-400 text-lg flex items-center" />
+              What areas do you want to focus on?
+            </h2>
             <p className="text-xs text-white/50">
               Select your primary goals. We will customize your recommendations and metrics accordingly.
             </p>
@@ -124,7 +130,10 @@ export default function OnboardingView({ onComplete }: OnboardingProps) {
                         : "bg-white/[0.02] border-white/10 text-white/60 hover:border-white/20"
                     }`}
                   >
-                    <span>{c.label}</span>
+                    <span className="flex items-center gap-2">
+                      <i className={`${c.iconClass} text-brand-400 text-xs flex items-center`} />
+                      <span>{c.label}</span>
+                    </span>
                     {selected && <i className="fi fi-sr-check text-brand-400 text-xs" />}
                   </button>
                 );
@@ -135,7 +144,10 @@ export default function OnboardingView({ onComplete }: OnboardingProps) {
 
         {step === 3 && (
           <div className="space-y-4">
-            <h2 className="text-xl font-bold text-white">🔔 Zen Reminders</h2>
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <i className="fi fi-sr-bell text-brand-400 text-lg flex items-center" />
+              Zen Reminders
+            </h2>
             <p className="text-xs text-white/50">
               Enable subtle reminders to support your daily wellness goals.
             </p>
