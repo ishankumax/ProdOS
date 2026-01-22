@@ -32,7 +32,7 @@ export default function Login() {
       <div className="w-full max-w-md p-8 bg-[#12121c]/90 border border-white/10 rounded-2xl relative z-10 mx-4 flex flex-col items-center gap-6 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-xl">
         <div className="text-center space-y-2">
           <div className="text-emerald-400 text-3xl font-bold tracking-wider flex items-center justify-center gap-2">
-            <span className="text-2xl">🌸</span> ProdOS
+            <i className="fi fi-sr-spa text-emerald-400 text-xl flex items-center" /> ProdOS
           </div>
           <p className="text-[10px] text-white/40 tracking-wide uppercase font-semibold">Zen-inspired productivity dashboard</p>
         </div>
