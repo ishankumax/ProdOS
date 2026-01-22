@@ -67,7 +67,10 @@ export default function FocusView() {
   return (
     <div className="h-full w-full flex flex-col pt-4 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold tracking-tight">⏳ Focus Coach</h1>
+        <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+          <i className="fi fi-sr-stopwatch text-brand-400 text-xl flex items-center" />
+          Focus Coach
+        </h1>
         <span className="text-xs text-white/40 uppercase tracking-widest">Deep Work Companion</span>
       </div>
 
@@ -118,9 +121,9 @@ export default function FocusView() {
           
           <div className="space-y-2">
             {[
-              { id: "lofi", name: "Chill Lofi Beats 🎧" },
-              { id: "rain", name: "Soft Rain Loops 🌧️" },
-              { id: "wind", name: "Forest Wind 🍃" },
+              { id: "lofi", name: "Chill Lofi Beats", iconClass: "fi fi-sr-music" },
+              { id: "rain", name: "Soft Rain Loops", iconClass: "fi fi-sr-cloud" },
+              { id: "wind", name: "Forest Wind", iconClass: "fi fi-sr-wind" },
             ].map((sound) => {
               const active = soundLoop === sound.id;
               return (
@@ -133,7 +136,10 @@ export default function FocusView() {
                       : "bg-white/[0.02] border-white/10 text-white/60 hover:border-white/20"
                   }`}
                 >
-                  <span>{sound.name}</span>
+                  <span className="flex items-center gap-2">
+                    <i className={`${sound.iconClass} text-white/40 text-xs flex items-center`} />
+                    <span>{sound.name}</span>
+                  </span>
                   {active && <span className="text-[10px] uppercase font-bold text-brand-400">Playing</span>}
                 </button>
               );
