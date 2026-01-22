@@ -198,7 +198,7 @@ export default function DailyTasksGrid({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-base">✅</span>
+          <i className="fi fi-sr-list-check text-brand-400 text-sm flex items-center" />
           <h3 className="text-sm font-bold text-white/85">Daily Tasks</h3>
           <span className="text-[10px] font-bold text-brand-400 bg-brand-500/10 px-2 py-0.5 rounded-full">
             {completed}/{total}
@@ -209,9 +209,10 @@ export default function DailyTasksGrid({
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={SPRING_SNAPPY}
-            className="text-xs font-bold text-brand-400 flex items-center gap-1"
+            className="text-xs font-bold text-brand-400 flex items-center gap-1.5"
           >
-            🎉 All done!
+            <i className="fi fi-sr-sparkles text-brand-400 text-[10px] flex items-center animate-pulse" />
+            All done!
           </motion.span>
         )}
       </div>

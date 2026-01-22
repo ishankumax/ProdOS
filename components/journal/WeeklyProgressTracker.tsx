@@ -45,7 +45,7 @@ export default function WeeklyProgressTracker({
     <div className={`p-5 ${CLASSES.card} h-full flex flex-col`}>
       {/* Header */}
       <div className="flex items-center gap-2 mb-4">
-        <span className="text-base">📊</span>
+        <i className="fi fi-sr-chart-histogram text-brand-400 text-sm flex items-center" />
         <h3 className="text-sm font-bold text-white/85">Weekly Progress</h3>
       </div>
 

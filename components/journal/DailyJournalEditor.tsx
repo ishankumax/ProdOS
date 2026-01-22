@@ -27,13 +27,18 @@ function formatDateDisplay(dateKey: string): string {
   });
 }
 
-function getTimeGreeting(): string {
+interface GreetingData {
+  icon: string;
+  text: string;
+}
+
+function getTimeGreeting(): GreetingData {
   const hour = new Date().getHours();
-  if (hour < 5) return "🌙 Late Night Thoughts";
-  if (hour < 12) return "🌅 Good Morning";
-  if (hour < 17) return "☀️ Good Afternoon";
-  if (hour < 21) return "🌇 Good Evening";
-  return "🌙 Night Reflections";
+  if (hour < 5) return { icon: "fi fi-sr-moon", text: "Late Night Thoughts" };
+  if (hour < 12) return { icon: "fi fi-sr-sunrise", text: "Good Morning" };
+  if (hour < 17) return { icon: "fi fi-sr-sun", text: "Good Afternoon" };
+  if (hour < 21) return { icon: "fi fi-sr-sunset", text: "Good Evening" };
+  return { icon: "fi fi-sr-moon", text: "Night Reflections" };
 }
 
 // ── Main Component ─────────────────────────────────────────────────────────────
@@ -49,6 +54,8 @@ export default function DailyJournalEditor({
   const [isSaving, setIsSaving] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const greeting = getTimeGreeting();
 
   // Sync external content changes (e.g., switching dates)
   useEffect(() => {
@@ -87,7 +94,7 @@ export default function DailyJournalEditor({
       <div className="flex items-center justify-between mb-4">
         {/* Left Side: Title */}
         <div className="flex items-center gap-2">
-          <span className="text-base">📖</span>
+          <i className="fi fi-sr-book-alt text-brand-400 text-sm flex items-center" />
           <h3 className="text-sm font-bold text-white/85">Daily Journal</h3>
         </div>
 
@@ -98,8 +105,9 @@ export default function DailyJournalEditor({
           </span>
           <div className="flex items-center gap-2 mt-0.5">
             {isToday && (
-              <span className="text-[10px] text-brand-400/70 font-semibold">
-                {getTimeGreeting()}
+              <span className="text-[10px] text-brand-400/70 font-semibold flex items-center gap-1">
+                <i className={`${greeting.icon} text-[9px] flex items-center`} />
+                {greeting.text}
               </span>
             )}
             
@@ -152,8 +160,9 @@ export default function DailyJournalEditor({
       <div className="flex items-center justify-between mt-2">
         <div className="flex items-center gap-2">
           {!isToday && (
-            <span className="text-[9px] font-bold bg-white/[0.06] text-white/40 px-2 py-0.5 rounded-full">
-              📅 Past Entry
+            <span className="text-[9px] font-bold bg-white/[0.06] text-white/40 px-2 py-0.5 rounded-full flex items-center gap-1">
+              <i className="fi fi-sr-calendar text-[8px] flex items-center" />
+              Past Entry
             </span>
           )}
         </div>
