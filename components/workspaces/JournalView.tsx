@@ -37,14 +37,23 @@ export default function JournalView() {
 
   return (
     <div className="h-full w-full flex flex-col pt-4 relative">
-      {/* Go to Today button (only when viewing a past date) */}
+      {/* Go to Today banner (only when viewing a past date) */}
       {!isToday && (
         <motion.div
-          className="flex justify-end mb-4"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
+          className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 mb-6 rounded-2xl bg-brand-500/8 border border-brand-500/20 shadow-[0_4px_24px_rgba(0,0,0,0.5)] backdrop-blur-md gap-4"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={SPRING_FLUID}
         >
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-brand-500/15 border border-brand-500/30 flex items-center justify-center text-brand-400 shrink-0">
+              <i className="fi fi-sr-calendar text-sm flex items-center" />
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-white/95">Viewing Past Journal Entry</p>
+              <p className="text-[10px] text-white/40">You are browsing historical records. Journal entry and tasks are in read-only mode.</p>
+            </div>
+          </div>
           <button
             onClick={() => {
               const now = new Date();
@@ -53,9 +62,9 @@ export default function JournalView() {
               const d = now.getDate();
               navigateToDate(`${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`);
             }}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-500/15 border border-brand-500/30 text-brand-400 text-xs font-semibold hover:bg-brand-500/25 transition-all"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold transition-all shadow-[0_0_12px_rgba(var(--brand-500-rgb),0.3)] hover:scale-[1.02] active:scale-[0.98] shrink-0"
           >
-            <i className="fi fi-sr-calendar-day text-[10px]" />
+            <i className="fi fi-sr-calendar-day text-xs flex items-center" />
             Go to Today
           </button>
         </motion.div>
