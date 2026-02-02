@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 const THEMES = [
@@ -14,6 +14,17 @@ const THEMES = [
 export default function FloatingThemeSelector() {
   const [activeTheme, setActiveTheme] = useState<string>("default");
   const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    const theme = localStorage.getItem("prod_os_theme") || "default";
+    setActiveTheme(theme);
+  }, []);
+
+  const changeTheme = (themeName: string) => {
+    setActiveTheme(themeName);
+    document.documentElement.setAttribute("data-theme", themeName);
+    localStorage.setItem("prod_os_theme", themeName);
+  };
 
   return (
     <div
@@ -35,6 +46,7 @@ export default function FloatingThemeSelector() {
         {THEMES.map((themeOpt) => (
           <button
             key={themeOpt.name}
+            onClick={() => changeTheme(themeOpt.name)}
             title={themeOpt.title}
             className={cn(
               "flex items-center gap-1 px-1.5 py-1 rounded transition-all duration-200 border font-mono text-[9px] font-bold active:scale-95",
