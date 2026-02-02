@@ -18,12 +18,22 @@ export default function FloatingThemeSelector() {
   useEffect(() => {
     const theme = localStorage.getItem("prod_os_theme") || "default";
     setActiveTheme(theme);
+
+    const handleThemeChange = (e: CustomEvent<string>) => {
+      setActiveTheme(e.detail);
+    };
+
+    window.addEventListener("theme-change", handleThemeChange as EventListener);
+    return () => {
+      window.removeEventListener("theme-change", handleThemeChange as EventListener);
+    };
   }, []);
 
   const changeTheme = (themeName: string) => {
     setActiveTheme(themeName);
     document.documentElement.setAttribute("data-theme", themeName);
     localStorage.setItem("prod_os_theme", themeName);
+    window.dispatchEvent(new CustomEvent("theme-change", { detail: themeName }));
   };
 
   return (
