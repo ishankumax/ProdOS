@@ -2,42 +2,34 @@ import type { NavItem, Feature } from "@/types";
 
 export const APP_NAME = "Productivity OS" as const;
 export const APP_DESCRIPTION =
-  "A unified workspace to manage tasks, focus, and goals.";
+  "Your goals, habits, and progress — managed in one execution system.";
 
 export const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/dashboard" },
-  { label: "Tasks", href: "/tasks" },
-  { label: "Focus", href: "/focus" },
   { label: "Goals", href: "/goals" },
+  { label: "Habits", href: "/habits" },
 ];
 
 export const FEATURES: Feature[] = [
   {
-    id: "tasks",
-    title: "Smart Task Management",
-    description:
-      "Capture, organize, and prioritize tasks with intelligent sorting and deadline tracking.",
-    icon: "✓",
-  },
-  {
-    id: "focus",
-    title: "Deep Focus Mode",
-    description:
-      "Block distractions and enter a flow state with a built-in Pomodoro timer and ambient sounds.",
-    icon: "⏱",
-  },
-  {
     id: "goals",
-    title: "Goal Tracking",
+    title: "Daily Goal Tracking",
     description:
-      "Set meaningful milestones, visualize progress, and stay accountable with weekly reviews.",
+      "Set what matters each day and actually follow through. No noise — just clarity on what to execute.",
     icon: "◎",
   },
   {
-    id: "analytics",
-    title: "Productivity Analytics",
+    id: "habits",
+    title: "Habit Streak System",
     description:
-      "Understand your patterns with detailed charts and personalized insights.",
+      "Build consistency that compounds. Track streaks, spot gaps, and reinforce the behaviors that stick.",
+    icon: "⟳",
+  },
+  {
+    id: "insights",
+    title: "Weekly Progress Insights",
+    description:
+      "See your output in context. Weekly summaries surface patterns so you can iterate, not just repeat.",
     icon: "↗",
   },
 ];

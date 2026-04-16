@@ -20,8 +20,8 @@ export const metadata: Metadata = {
     template: "%s | Productivity OS",
   },
   description:
-    "A unified productivity workspace to manage tasks, focus, and goals — all in one place.",
-  keywords: ["productivity", "task management", "focus", "goals", "workspace"],
+    "Your goals, habits, and weekly progress in one unified system. Productivity OS is built for people who execute — not just plan.",
+  keywords: ["productivity", "goal tracking", "habit tracker", "execution", "focus", "workspace"],
   authors: [{ name: "Ishan Kumar" }],
   creator: "Ishan Kumar",
   openGraph: {

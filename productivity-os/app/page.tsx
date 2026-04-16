@@ -6,7 +6,9 @@ import FeatureCard from "@/components/FeatureCard";
 import { FEATURES } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Productivity OS — Your Unified Workspace",
+  title: "Productivity OS — Execution over Intention",
+  description:
+    "Your goals, habits, and progress in one place. A system built for people who execute — not just plan.",
 };
 
 export default function HomePage() {
@@ -16,49 +18,48 @@ export default function HomePage() {
 
       <main className="flex-1 flex flex-col">
         {/* Hero */}
-        <section className="relative flex flex-col items-center justify-center text-center px-4 pt-40 pb-28 overflow-hidden">
-          {/* Mesh background */}
+        <section className="relative flex flex-col items-center justify-center text-center px-4 pt-40 pb-32 overflow-hidden">
+          {/* Subtle radial glow — restrained */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-gradient-mesh opacity-60"
-          />
-          {/* Glow orb */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-brand-500/10 blur-3xl"
+            className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-brand-500/8 blur-3xl"
           />
 
-          <div className="relative z-10 flex flex-col items-center gap-6 max-w-3xl mx-auto">
+          <div className="relative z-10 flex flex-col items-center gap-5 max-w-2xl mx-auto">
             <span className="chip animate-fade-in">
-              ✦ Now in public beta
+              ✦ Built for execution
             </span>
 
-            <h1 className="animate-fade-up text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.08] text-transparent bg-clip-text bg-gradient-to-br from-white via-white/90 to-white/50">
-              Productivity OS
+            <h1 className="animate-fade-up text-5xl sm:text-6xl font-bold tracking-tight leading-[1.1] text-white">
+              Execution over{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-300 to-brand-500">
+                intention.
+              </span>
             </h1>
 
             <p
-              className="animate-fade-up animation-delay-100 text-lg sm:text-xl text-subtle max-w-xl leading-relaxed"
+              className="animate-fade-up animation-delay-100 text-base sm:text-lg text-white/60 max-w-lg leading-relaxed"
               style={{ animationFillMode: "forwards" }}
             >
-              One workspace for your tasks, focus sessions, and long-term goals.
-              Built for deep workers who value clarity.
+              Productivity OS is a unified system — not another to-do app.
+              Goals, habits, and weekly progress in one place, built for people
+              who follow through.
             </p>
 
             <div
               className="animate-fade-up animation-delay-200 flex flex-col sm:flex-row items-center gap-3 mt-2"
               style={{ animationFillMode: "forwards" }}
             >
-              <Link href="/signup" className="btn-primary px-7 py-3 text-base">
+              <Link href="/signup" className="btn-primary px-6 py-2.5 text-sm">
                 Start for free
               </Link>
-              <Link href="/demo" className="btn-ghost px-7 py-3 text-base">
+              <Link href="/demo" className="btn-ghost px-6 py-2.5 text-sm">
                 View demo →
               </Link>
             </div>
 
             <p
-              className="animate-fade-up animation-delay-300 text-xs text-muted mt-1"
+              className="animate-fade-up animation-delay-300 text-xs text-white/35 mt-1"
               style={{ animationFillMode: "forwards" }}
             >
               No credit card required · Free forever plan available
@@ -67,15 +68,15 @@ export default function HomePage() {
         </section>
 
         {/* Features */}
-        <section className="px-4 sm:px-6 lg:px-8 pb-28 max-w-7xl mx-auto w-full">
-          <div className="text-center mb-14">
-            <h2 className="section-heading">Everything you need to ship focus</h2>
-            <p className="text-subtle mt-3 max-w-md mx-auto text-base">
-              Purpose-built tools that work together — not a dozen tabs scattered across your browser.
+        <section className="px-4 sm:px-6 lg:px-8 pb-28 max-w-5xl mx-auto w-full">
+          <div className="text-center mb-12">
+            <h2 className="section-heading">One system. Three pillars.</h2>
+            <p className="text-white/50 mt-3 max-w-sm mx-auto text-sm">
+              No bloat. Every feature earns its place.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {FEATURES.map((feature, i) => (
               <FeatureCard key={feature.id} feature={feature} index={i} />
             ))}
@@ -83,19 +84,21 @@ export default function HomePage() {
         </section>
 
         {/* CTA */}
-        <section className="px-4 sm:px-6 lg:px-8 pb-28 max-w-7xl mx-auto w-full">
-          <div className="relative overflow-hidden rounded-3xl glass p-12 text-center">
+        <section className="px-4 sm:px-6 lg:px-8 pb-28 max-w-5xl mx-auto w-full">
+          <div className="relative overflow-hidden rounded-2xl glass p-10 text-center">
             <div
               aria-hidden="true"
-              className="absolute inset-0 bg-gradient-to-br from-brand-900/60 via-surface-overlay/40 to-transparent pointer-events-none"
+              className="absolute inset-0 bg-gradient-to-br from-brand-900/50 via-transparent to-transparent pointer-events-none"
             />
-            <div className="relative z-10 flex flex-col items-center gap-6 max-w-xl mx-auto">
-              <h2 className="section-heading">Ready to focus?</h2>
-              <p className="text-subtle text-base leading-relaxed">
-                Join thousands of deep workers who have reclaimed their time and
-                energy with Productivity OS.
+            <div className="relative z-10 flex flex-col items-center gap-5 max-w-md mx-auto">
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                Stop planning. Start executing.
+              </h2>
+              <p className="text-white/55 text-sm leading-relaxed">
+                Join people who use Productivity OS as their daily operating
+                system — not just another app they open and forget.
               </p>
-              <Link href="/signup" className="btn-primary px-8 py-3 text-base">
+              <Link href="/signup" className="btn-primary px-7 py-2.5 text-sm">
                 Get started — it&apos;s free
               </Link>
             </div>
