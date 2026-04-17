@@ -16,10 +16,13 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [needsConfirmation, setNeedsConfirmation] = useState(false);
+  const [resendStatus, setResendStatus] = useState<"idle" | "sending" | "sent">("idle");
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setNeedsConfirmation(false);
     setLoading(true);
 
     const { error } = await supabase.auth.signInWithPassword({
@@ -28,13 +31,29 @@ export default function LoginPage() {
     });
 
     if (error) {
-      setError(error.message);
+      // Supabase returns this when signup email hasn't been confirmed yet
+      if (error.message.toLowerCase().includes("email not confirmed") ||
+          error.message.toLowerCase().includes("email_not_confirmed")) {
+        setNeedsConfirmation(true);
+      } else {
+        setError(error.message);
+      }
       setLoading(false);
       return;
     }
 
     router.push("/dashboard");
     router.refresh();
+  }
+
+  async function handleResendConfirmation() {
+    if (!email.trim()) {
+      setError("Enter your email address above, then click resend.");
+      return;
+    }
+    setResendStatus("sending");
+    await supabase.auth.resend({ type: "signup", email: email.trim() });
+    setResendStatus("sent");
   }
 
   return (
@@ -67,7 +86,25 @@ export default function LoginPage() {
           onSubmit={handleLogin}
           className="rounded-2xl border border-white/8 bg-white/[0.03] p-6 space-y-4"
         >
-          {/* Error */}
+          {/* Email not confirmed callout */}
+          {needsConfirmation && (
+            <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 px-4 py-3 text-sm text-amber-300 space-y-2">
+              <p className="font-medium">Email not confirmed</p>
+              <p className="text-amber-300/70 text-xs leading-relaxed">
+                Please check your inbox for a confirmation link. If you can&apos;t find it, resend below.
+              </p>
+              <button
+                type="button"
+                onClick={handleResendConfirmation}
+                disabled={resendStatus !== "idle"}
+                className="text-xs font-medium text-amber-300 hover:text-amber-200 underline-offset-2 underline disabled:opacity-60 transition-colors"
+              >
+                {resendStatus === "sending" ? "Sending…" : resendStatus === "sent" ? "✓ Confirmation email sent!" : "Resend confirmation email"}
+              </button>
+            </div>
+          )}
+
+          {/* General error */}
           {error && (
             <div className="rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
               {error}

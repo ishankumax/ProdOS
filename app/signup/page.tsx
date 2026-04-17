@@ -50,12 +50,10 @@ export default function SignupPage() {
       return;
     }
 
-    // If email confirmation is disabled in Supabase, redirect immediately
+    // Email confirmation is disabled — session is active immediately
     setSuccess(true);
     setLoading(false);
-
-    // Give user a moment to read the success message, then redirect
-    setTimeout(() => router.push("/dashboard"), 2000);
+    setTimeout(() => router.push("/dashboard"), 1200);
   }
 
   return (
@@ -87,14 +85,25 @@ export default function SignupPage() {
 
         {/* Success state */}
         {success ? (
-          <div className="rounded-2xl border border-green-500/20 bg-green-500/10 p-6 text-center space-y-2">
-            <p className="text-sm font-medium text-green-400">
-              Account created!
-            </p>
-            <p className="text-xs text-white/50">
-              Check your email to confirm your account, then you&apos;ll be
-              redirected to your dashboard.
-            </p>
+          <div className="rounded-2xl border border-green-500/20 bg-green-500/10 p-6 text-center space-y-4">
+            <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center mx-auto">
+              <svg className="w-5 h-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-semibold text-green-400">Check your inbox!</p>
+              <p className="text-xs text-white/50 leading-relaxed">
+                We sent a confirmation link to <span className="text-white/70 font-medium">{email}</span>.
+                Click it to activate your account, then sign in.
+              </p>
+            </div>
+            <Link
+              href="/login"
+              className="inline-block mt-2 text-sm text-brand-400 hover:text-brand-300 transition-colors"
+            >
+              Go to sign in →
+            </Link>
           </div>
         ) : (
           /* Form card */
