@@ -28,68 +28,68 @@ export default function GoalsSection({ initialGoals }: GoalsSectionProps) {
   const totalCount = filtered.length;
 
   return (
-    <section aria-labelledby="goals-heading" className="space-y-5">
-      {/* Section header */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
-        <div>
-          <h2 id="goals-heading" className="text-lg font-semibold text-white">
-            Your Goals
-          </h2>
-          {totalCount > 0 && (
-            <p className="text-xs text-white/40 mt-0.5">
-              {completedCount} / {totalCount} completed
-            </p>
-          )}
+    <div className="space-y-8">
+      {/* Header Area */}
+      <div className="flex flex-col gap-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+              <span className="opacity-30">◎</span> Your Goals
+            </h2>
+            <p className="text-xs text-white/30 mt-1">Focus on what matters today.</p>
+          </div>
+          
+          <div className="hidden sm:flex items-center gap-1 p-1 rounded-xl bg-white/[0.02] border border-white/5">
+            {FILTERS.map((f) => (
+              <button
+                key={f.value}
+                onClick={() => setFilter(f.value)}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  filter === f.value
+                    ? "bg-white/5 text-white shadow-sm"
+                    : "text-white/30 hover:text-white/60"
+                }`}
+              >
+                {f.label.toUpperCase()}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Filter tabs */}
-        <div className="flex gap-1 p-1 rounded-lg border border-white/10 bg-white/5 w-fit">
-          {FILTERS.map((f) => (
-            <button
-              key={f.value}
-              onClick={() => setFilter(f.value)}
-              className={`px-3 py-1 rounded-md text-xs font-medium transition-all duration-150 ${
-                filter === f.value
-                  ? "bg-white/10 text-white"
-                  : "text-white/40 hover:text-white/70"
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
+        {/* Action Row: Form */}
+        <div className="p-1">
+           <GoalForm />
         </div>
       </div>
 
-      {/* Add goal form */}
-      <GoalForm />
+      {/* List Area */}
+      <div className="space-y-4">
+        {totalCount > 0 && (
+          <div className="flex items-center gap-3">
+            <div className="flex-1 h-1 rounded-full bg-white/[0.03] overflow-hidden">
+               <div
+                className="h-full bg-brand-500 transition-all duration-700 ease-out"
+                style={{ width: `${(completedCount / totalCount) * 100}%` }}
+              />
+            </div>
+            <span className="text-[10px] font-bold text-white/20 whitespace-nowrap uppercase tracking-widest">
+              {completedCount} / {totalCount} Done
+            </span>
+          </div>
+        )}
 
-      {/* Progress bar */}
-      {totalCount > 0 && (
-        <div className="h-1 rounded-full bg-white/5 overflow-hidden">
-          <div
-            className="h-full rounded-full bg-brand-500 transition-all duration-500"
-            style={{ width: `${(completedCount / totalCount) * 100}%` }}
-          />
-        </div>
-      )}
-
-      {/* Goals list */}
-      {filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-14 rounded-xl border border-dashed border-white/10 text-center space-y-2">
-          <span className="text-3xl opacity-30">◎</span>
-          <p className="text-sm text-white/40">
-            {filter === "all"
-              ? "No goals yet. Add one above to get started."
-              : `No ${filter} goals. Add one or switch the filter.`}
-          </p>
-        </div>
-      ) : (
-        <ul className="space-y-2">
-          {filtered.map((goal) => (
-            <GoalItem key={goal.id} goal={goal} />
-          ))}
-        </ul>
-      )}
-    </section>
+        {filtered.length === 0 ? (
+          <div className="py-20 rounded-2xl border border-dashed border-white/5 bg-white/[0.01] flex flex-col items-center justify-center text-center">
+            <p className="text-sm text-white/20">No tasks in this category.</p>
+          </div>
+        ) : (
+          <ul className="grid grid-cols-1 gap-3">
+            {filtered.map((goal) => (
+              <GoalItem key={goal.id} goal={goal} />
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
   );
 }

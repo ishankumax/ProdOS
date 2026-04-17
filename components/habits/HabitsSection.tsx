@@ -10,28 +10,34 @@ interface HabitsSectionProps {
 
 export default function HabitsSection({ habits }: HabitsSectionProps) {
   return (
-    <section className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8">
+      {/* Header Area */}
+      <div className="flex flex-col gap-6">
         <div>
-          <h2 className="text-lg font-semibold text-white">Your Habits</h2>
-          <p className="text-xs text-white/40 mt-0.5">Build consistency daily</p>
+          <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+            <span className="opacity-30">⟳</span> Your Habits
+          </h2>
+          <p className="text-xs text-white/30 mt-1">Consistency is the only metric that matters.</p>
+        </div>
+
+        {/* Action Row: Form */}
+        <div className="p-1">
+           <HabitForm />
         </div>
       </div>
 
-      <HabitForm />
-
+      {/* List Area */}
       {habits.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-10 rounded-xl border border-dashed border-white/10 text-center">
-          <span className="text-2xl opacity-20 mb-2">⟳</span>
-          <p className="text-xs text-white/30">No habits tracked yet. Start one today!</p>
+        <div className="py-20 rounded-2xl border border-dashed border-white/5 bg-white/[0.01] flex flex-col items-center justify-center text-center">
+          <p className="text-sm text-white/20">Establishing your first routine...</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4">
           {habits.map((habit) => (
             <HabitItem key={habit.id} habit={habit} />
           ))}
         </div>
       )}
-    </section>
+    </div>
   );
 }

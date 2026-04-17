@@ -36,7 +36,7 @@ export default function GoalForm() {
     <form
       ref={formRef}
       onSubmit={handleSubmit}
-      className="flex flex-col sm:flex-row gap-3"
+      className="flex flex-col xl:flex-row gap-4 xl:items-start"
     >
       {/* Title input */}
       <div className="flex-[2] min-w-[200px]">
