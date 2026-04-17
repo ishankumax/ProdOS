@@ -42,17 +42,21 @@ export default function Sidebar({ userEmail }: { userEmail?: string }) {
 
         <div className="space-y-1">
           <p className="px-3 text-[10px] font-bold text-white/20 uppercase tracking-widest mb-2">
-            Quick Filters
+            System Identity
           </p>
-          {FILTERS.map((filter) => (
-            <button
-              key={filter}
-              className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-white/40 hover:text-white/70 hover:bg-white/5 transition-all"
-            >
-              {filter}
-              <span className="text-[10px] opacity-20">→</span>
-            </button>
-          ))}
+          <div className="mx-3 p-3 rounded-lg bg-white/[0.02] border border-white/5 space-y-2">
+            <div className="flex justify-between items-center text-[10px]">
+              <span className="text-white/20 uppercase tracking-tighter">Status</span>
+              <div className="flex items-center gap-1.5">
+                <span className="w-1 h-1 rounded-full bg-brand-500 animate-pulse" />
+                <span className="text-brand-400 font-bold uppercase">Online</span>
+              </div>
+            </div>
+            <div className="flex justify-between items-center text-[10px]">
+              <span className="text-white/20 uppercase tracking-tighter">Runtime</span>
+              <span className="text-white/40 uppercase">Prod OS V1.0.4</span>
+            </div>
+          </div>
         </div>
       </nav>
 

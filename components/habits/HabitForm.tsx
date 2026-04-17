@@ -27,7 +27,7 @@ export default function HabitForm() {
     <form
       ref={formRef}
       onSubmit={handleSubmit}
-      className="flex flex-col sm:flex-row gap-3"
+      className="flex flex-col xl:flex-row gap-4 xl:items-start"
     >
       <div className="flex-grow min-w-[200px]">
         <input
