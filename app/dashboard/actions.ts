@@ -6,6 +6,11 @@ import {
   toggleGoal as dbToggle,
   deleteGoal as dbDelete,
 } from "@/lib/queries/goals";
+import {
+  createHabit as dbCreateHabit,
+  toggleHabitToday as dbToggleHabit,
+  deleteHabit as dbDeleteHabit,
+} from "@/lib/queries/habits";
 import type { GoalType } from "@/types/goals";
 
 /**
@@ -50,6 +55,44 @@ export async function toggleGoalAction(id: string, completed: boolean) {
 export async function deleteGoalAction(id: string) {
   try {
     await dbDelete(id);
+  } catch (e) {
+    return { error: (e as Error).message };
+  }
+
+  revalidatePath("/dashboard");
+  return { error: null };
+}
+
+// --- Habit Actions ---
+
+export async function createHabitAction(formData: FormData) {
+  const name = (formData.get("name") as string | null)?.trim();
+  if (!name || name.length === 0) return { error: "Name is required." };
+
+  try {
+    await dbCreateHabit(name);
+  } catch (e) {
+    return { error: (e as Error).message };
+  }
+
+  revalidatePath("/dashboard");
+  return { error: null };
+}
+
+export async function toggleHabitAction(habitId: string, completed: boolean) {
+  try {
+    await dbToggleHabit(habitId, completed);
+  } catch (e) {
+    return { error: (e as Error).message };
+  }
+
+  revalidatePath("/dashboard");
+  return { error: null };
+}
+
+export async function deleteHabitAction(id: string) {
+  try {
+    await dbDeleteHabit(id);
   } catch (e) {
     return { error: (e as Error).message };
   }

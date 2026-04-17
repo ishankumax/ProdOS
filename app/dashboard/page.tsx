@@ -2,7 +2,9 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase-server";
 import LogoutButton from "@/components/LogoutButton";
 import GoalsSection from "@/components/goals/GoalsSection";
+import HabitsSection from "@/components/habits/HabitsSection";
 import { getUserGoals } from "@/lib/queries/goals";
+import { getUserHabitsWithStats } from "@/lib/queries/habits";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -18,11 +20,19 @@ export default async function DashboardPage() {
 
   if (!user) redirect("/login");
 
-  // Fetch goals server-side — RLS ensures only this user's data
-  const goals = await getUserGoals();
+  // Fetch goals and habits server-side
+  const [goals, habits] = await Promise.all([
+    getUserGoals(),
+    getUserHabitsWithStats(),
+  ]);
 
   const totalGoals = goals.length;
   const completedGoals = goals.filter((g) => g.completed).length;
+
+  const totalHabits = habits.length;
+  const bestStreak = habits.length > 0
+    ? Math.max(...habits.map(h => h.current_streak))
+    : 0;
 
   return (
     <div className="min-h-dvh bg-surface flex flex-col">
@@ -64,8 +74,18 @@ export default async function DashboardPage() {
               sub: completedGoals > 0 ? `${completedGoals} done` : "none yet",
               icon: "◎",
             },
-            { label: "Habits", count: "—", sub: "coming soon", icon: "⟳" },
-            { label: "Streak", count: "—", sub: "coming soon", icon: "↗" },
+            {
+              label: "Habits",
+              count: totalHabits > 0 ? String(totalHabits) : "—",
+              sub: totalHabits > 0 ? "tracking" : "none yet",
+              icon: "⟳",
+            },
+            {
+              label: "Best Streak",
+              count: bestStreak > 0 ? `${bestStreak}` : "—",
+              sub: "days running",
+              icon: "↗",
+            },
           ].map((item) => (
             <div
               key={item.label}
@@ -86,8 +106,11 @@ export default async function DashboardPage() {
         {/* Divider */}
         <div className="border-t border-white/8" />
 
-        {/* Goals section */}
-        <GoalsSection initialGoals={goals} />
+        {/* Goals & Habits Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+          <GoalsSection initialGoals={goals} />
+          <HabitsSection habits={habits} />
+        </div>
       </main>
     </div>
   );
