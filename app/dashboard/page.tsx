@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase-server";
-import Sidebar from "@/components/dashboard/Sidebar";
-import RightPanel from "@/components/dashboard/RightPanel";
+import DashboardShell from "@/components/dashboard/DashboardShell";
 import GoalsSection from "@/components/goals/GoalsSection";
 import HabitsSection from "@/components/habits/HabitsSection";
 import WeeklyCalendar from "@/components/calendar/WeeklyCalendar";
@@ -25,14 +24,7 @@ export default async function DashboardPage() {
   if (!user) redirect("/login");
 
   return (
-    <div className="flex h-dvh bg-surface overflow-hidden">
-      {/* 1. Left Sidebar (~20%) */}
-      <div className="w-[20%] min-w-[240px] hidden md:block">
-        <Sidebar userEmail={user.email} />
-      </div>
-
-      {/* 2. Main Content Area (~65%) */}
-      <main className="flex-1 h-full overflow-y-auto overflow-x-hidden">
+    <DashboardShell userEmail={user.email}>
         <div className="max-w-[1200px] mx-auto px-10 py-12 space-y-12">
           {/* Header & Stats */}
           <HeaderInfo userEmail={user.email} />
@@ -65,15 +57,10 @@ export default async function DashboardPage() {
              End of Feed
           </div>
         </div>
-      </main>
-
-      {/* 3. Right Panel (~15%) */}
-      <div className="w-[15%] min-w-[200px] hidden xl:block">
-        <RightPanel />
-      </div>
-    </div>
+    </DashboardShell>
   );
 }
+
 
 async function HeaderInfo({ userEmail }: { userEmail?: string }) {
   const [goals, habits] = await Promise.all([
