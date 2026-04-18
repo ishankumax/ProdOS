@@ -4,6 +4,7 @@ import Sidebar from "@/components/dashboard/Sidebar";
 import RightPanel from "@/components/dashboard/RightPanel";
 import GoalsSection from "@/components/goals/GoalsSection";
 import HabitsSection from "@/components/habits/HabitsSection";
+import WeeklyCalendar from "@/components/calendar/WeeklyCalendar";
 import { getUserGoals } from "@/lib/queries/goals";
 import { getUserHabitsWithStats } from "@/lib/queries/habits";
 import type { Metadata } from "next";
@@ -70,6 +71,11 @@ export default async function DashboardPage() {
               ))}
             </div>
           </div>
+
+          <div className="h-px bg-white/5" />
+
+          {/* Weekly Calendar View */}
+          <WeeklyCalendar />
 
           <div className="h-px bg-white/5" />
 
