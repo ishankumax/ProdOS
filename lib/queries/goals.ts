@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase-server";
 import type { Goal, GoalType } from "@/types/goals";
+import { GoalSchema } from "@/lib/validation/schemas";
+import { z } from "zod";
 
 /**
  * Fetch all goals for the authenticated user, newest first.
@@ -13,8 +15,17 @@ export async function getUserGoals(): Promise<Goal[]> {
     .order("created_at", { ascending: false });
 
   if (error) throw new Error(error.message);
-  return (data ?? []) as Goal[];
+  
+  // Validate array of goals
+  const validated = z.array(GoalSchema).safeParse(data);
+  if (!validated.success) {
+    console.error("Goals validation failed:", validated.error.format());
+    return (data ?? []) as Goal[]; // Fallback to raw data if validation fails in prod to avoid crashing
+  }
+  
+  return validated.data as Goal[];
 }
+
 
 /**
  * Insert a new goal for the authenticated user.

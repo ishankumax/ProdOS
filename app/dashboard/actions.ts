@@ -11,19 +11,30 @@ import {
   toggleHabitToday as dbToggleHabit,
   deleteHabit as dbDeleteHabit,
 } from "@/lib/queries/habits";
-import type { GoalType } from "@/types/goals";
+import { GoalTypeSchema } from "@/lib/validation/schemas";
+import { z } from "zod";
+
+const CreateGoalSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  type: GoalTypeSchema,
+});
 
 /**
  * Server Action: create a new goal.
  * Called from GoalForm via form action / startTransition.
  */
 export async function createGoalAction(formData: FormData) {
-  const title = (formData.get("title") as string | null)?.trim();
-  const type = formData.get("type") as GoalType | null;
+  const rawData = {
+    title: formData.get("title"),
+    type: formData.get("type"),
+  };
 
-  if (!title || title.length === 0) return { error: "Title is required." };
-  if (!type || !["daily", "weekly", "monthly"].includes(type))
-    return { error: "Invalid goal type." };
+  const validated = CreateGoalSchema.safeParse(rawData);
+  if (!validated.success) {
+    return { error: validated.error.errors[0].message };
+  }
+
+  const { title, type } = validated.data;
 
   try {
     await dbCreate(title, type);
@@ -34,6 +45,7 @@ export async function createGoalAction(formData: FormData) {
   revalidatePath("/dashboard");
   return { error: null };
 }
+
 
 /**
  * Server Action: toggle a goal's completed state.
@@ -65,12 +77,20 @@ export async function deleteGoalAction(id: string) {
 
 // --- Habit Actions ---
 
+const CreateHabitSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+});
+
 export async function createHabitAction(formData: FormData) {
-  const name = (formData.get("name") as string | null)?.trim();
-  if (!name || name.length === 0) return { error: "Name is required." };
+  const name = formData.get("name");
+  
+  const validated = CreateHabitSchema.safeParse({ name });
+  if (!validated.success) {
+    return { error: validated.error.errors[0].message };
+  }
 
   try {
-    await dbCreateHabit(name);
+    await dbCreateHabit(validated.data.name);
   } catch (e) {
     return { error: (e as Error).message };
   }
@@ -78,6 +98,7 @@ export async function createHabitAction(formData: FormData) {
   revalidatePath("/dashboard");
   return { error: null };
 }
+
 
 export async function toggleHabitAction(habitId: string, completed: boolean) {
   try {

@@ -1,53 +1,79 @@
-
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useOptimistic, useTransition } from "react";
 import DayCard from "./DayCard";
 import { getDaysInWeek, getStartOfWeek, getEndOfWeek, getMonthYear } from "@/lib/utils/date";
 import { fetchWeeklyDataClient } from "@/lib/utils/calendar-fetch";
 import { Goal } from "@/types/goals";
 import { Habit, HabitLog } from "@/types/habits";
 import { cn } from "@/lib/utils";
+import { useRealtime } from "@/hooks/useRealtime";
+import { CalendarSkeleton } from "@/components/skeletons/DashboardSkeletons";
 
 export default function WeeklyCalendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [data, setData] = useState<{ goals: Goal[], habits: Habit[], logs: HabitLog[] } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isPending, startTransition] = useTransition();
 
-  const days = getDaysInWeek(currentDate);
+  // Optimistic date for instant header updates
+  const [optimisticDate, setOptimisticDate] = useOptimistic(
+    currentDate,
+    (state, newDate: Date) => newDate
+  );
+
+  const loadData = useCallback(async (date: Date) => {
+    setLoading(true);
+    try {
+      const start = getStartOfWeek(date);
+      const end = getEndOfWeek(date);
+      const result = await fetchWeeklyDataClient(start, end);
+      setData(result);
+    } catch (err) {
+      console.error("Failed to fetch calendar data:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    async function loadData() {
-      setLoading(true);
-      try {
-        const start = getStartOfWeek(currentDate);
-        const end = getEndOfWeek(currentDate);
-        const result = await fetchWeeklyDataClient(start, end);
-        setData(result);
-      } catch (err) {
-        console.error("Failed to fetch calendar data:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadData();
-  }, [currentDate]);
+    loadData(currentDate);
+  }, [currentDate, loadData]);
+
+  // Real-time sync
+  useRealtime(["goals", "habits", "habit_logs"], () => {
+    loadData(currentDate);
+  });
 
   const handlePrevWeek = () => {
     const prev = new Date(currentDate);
     prev.setDate(prev.getDate() - 7);
+    startTransition(() => {
+      setOptimisticDate(prev);
+    });
     setCurrentDate(prev);
   };
 
   const handleNextWeek = () => {
     const next = new Date(currentDate);
     next.setDate(next.getDate() + 7);
+    startTransition(() => {
+      setOptimisticDate(next);
+    });
     setCurrentDate(next);
   };
 
   const handleToday = () => {
-    setCurrentDate(new Date());
+    const today = new Date();
+    startTransition(() => {
+      setOptimisticDate(today);
+    });
+    setCurrentDate(today);
   };
+
+  const days = getDaysInWeek(optimisticDate);
+
+  if (loading && !data) return <CalendarSkeleton />;
 
   return (
     <section className="space-y-6">
@@ -55,8 +81,11 @@ export default function WeeklyCalendar() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-3">
-            {getMonthYear(currentDate)}
-            <span className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse" />
+            {getMonthYear(optimisticDate)}
+            <span className={cn(
+              "w-1.5 h-1.5 rounded-full",
+              loading ? "bg-white/20" : "bg-brand-500 animate-pulse"
+            )} />
           </h2>
           <p className="text-[10px] font-medium text-white/20 uppercase tracking-[0.2em]">
             Weekly Activity View
@@ -91,8 +120,8 @@ export default function WeeklyCalendar() {
 
       {/* Grid Layout */}
       <div className={cn(
-        "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 transition-opacity duration-500",
-        loading ? "opacity-50 pointer-events-none" : "opacity-100"
+        "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 transition-opacity duration-300",
+        loading ? "opacity-50" : "opacity-100"
       )}>
         {days.map(day => (
           <DayCard 
@@ -105,13 +134,7 @@ export default function WeeklyCalendar() {
           />
         ))}
       </div>
-
-      {/* Mobile Loading Indicator */}
-      {loading && (
-        <div className="flex justify-center pt-4">
-          <div className="w-4 h-4 rounded-full border-2 border-brand-500/20 border-t-brand-500 animate-spin" />
-        </div>
-      )}
     </section>
   );
 }
+

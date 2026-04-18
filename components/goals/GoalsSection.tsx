@@ -4,6 +4,8 @@ import { useState } from "react";
 import GoalForm from "./GoalForm";
 import GoalItem from "./GoalItem";
 import type { Goal, GoalFilter, GoalType } from "@/types/goals";
+import { useRealtime } from "@/hooks/useRealtime";
+import { useRouter } from "next/navigation";
 
 const FILTERS: { value: GoalFilter; label: string }[] = [
   { value: "all", label: "All" },
@@ -18,6 +20,13 @@ interface GoalsSectionProps {
 
 export default function GoalsSection({ initialGoals }: GoalsSectionProps) {
   const [filter, setFilter] = useState<GoalFilter>("all");
+  const router = useRouter();
+
+  // Sync with database changes
+  useRealtime(["goals"], () => {
+    router.refresh();
+  });
+
 
   const filtered =
     filter === "all"

@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase-server";
 import { Habit, HabitLog, HabitWithStats } from "@/types/habits";
 import { calculateCurrentStreak, get7DayHistory } from "@/lib/utils/streak";
+import { HabitSchema, HabitLogSchema } from "@/lib/validation/schemas";
+import { z } from "zod";
 
 export async function getUserHabitsWithStats(): Promise<HabitWithStats[]> {
   const supabase = createClient();
@@ -14,6 +16,12 @@ export async function getUserHabitsWithStats(): Promise<HabitWithStats[]> {
   if (habitsError) throw new Error(habitsError.message);
   if (!habits || habits.length === 0) return [];
 
+  // Validate habits
+  const validatedHabits = z.array(HabitSchema).safeParse(habits);
+  if (!validatedHabits.success) {
+    console.error("Habits validation failed:", validatedHabits.error.format());
+  }
+
   // Fetch all logs for these habits (efficient to do one query for all)
   const { data: logs, error: logsError } = await supabase
     .from("habit_logs")
@@ -23,6 +31,12 @@ export async function getUserHabitsWithStats(): Promise<HabitWithStats[]> {
     .order("date", { ascending: false });
 
   if (logsError) throw new Error(logsError.message);
+
+  // Validate logs
+  const validatedLogs = z.array(HabitLogSchema).safeParse(logs);
+  if (!validatedLogs.success) {
+    console.error("Habit logs validation failed:", validatedLogs.error.format());
+  }
 
   const today = new Date().toISOString().split("T")[0];
 

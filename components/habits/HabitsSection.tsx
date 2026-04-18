@@ -3,12 +3,20 @@
 import HabitItem from "./HabitItem";
 import HabitForm from "./HabitForm";
 import type { HabitWithStats } from "@/types/habits";
+import { useRealtime } from "@/hooks/useRealtime";
+import { useRouter } from "next/navigation";
 
 interface HabitsSectionProps {
   habits: HabitWithStats[];
 }
 
 export default function HabitsSection({ habits }: HabitsSectionProps) {
+  const router = useRouter();
+
+  useRealtime(["habits", "habit_logs"], () => {
+    router.refresh();
+  });
+
   return (
     <div className="space-y-8">
       {/* Header Area */}
