@@ -33,57 +33,55 @@ export default function GoalForm() {
   }
 
   return (
-    <form
-      ref={formRef}
-      onSubmit={handleSubmit}
-      className="flex flex-col xl:flex-row gap-4 xl:items-start"
-    >
-      {/* Title input */}
-      <div className="flex-[2] min-w-[200px]">
-        <input
-          name="title"
-          type="text"
-          required
-          placeholder="e.g. Read for 30 minutes"
-          maxLength={120}
-          className="w-full h-11 rounded-lg border border-white/10 bg-white/5 px-3.5 py-2.5 text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500/50 transition-all border-solid"
-        />
-      </div>
-
-      {/* Action group */}
-      <div className="flex items-center gap-2 flex-shrink-0">
-        {/* Type selector */}
-        <div className="flex gap-1 p-1 rounded-lg border border-white/10 bg-white/5 h-10">
-          {TYPES.map((t) => (
-            <button
-              key={t.value}
-              type="button"
-              onClick={() => setType(t.value)}
-              className={`px-3 rounded-md text-[10px] font-bold transition-all duration-150 ${
-                type === t.value
-                  ? "bg-brand-500 text-white"
-                  : "text-white/40 hover:text-white hover:bg-white/10"
-              }`}
-            >
-              {t.label.toUpperCase()}
-            </button>
-          ))}
+    <div className="space-y-2">
+      <form
+        ref={formRef}
+        onSubmit={handleSubmit}
+        className="flex flex-col sm:flex-row gap-3 items-stretch p-3 rounded-2xl bg-white/[0.02] border border-white/5 focus-within:border-brand-500/40 focus-within:bg-white/[0.04] transition-all"
+      >
+        <div className="flex-1">
+          <input
+            name="title"
+            type="text"
+            required
+            placeholder="Next execution target..."
+            maxLength={120}
+            className="w-full bg-transparent border-none px-3 py-2 text-[13px] text-white placeholder:text-white/20 focus:outline-none focus:ring-0"
+          />
         </div>
 
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={isPending}
-          className="btn-primary h-10 px-4 text-[10px] font-bold whitespace-nowrap disabled:opacity-50"
-        >
-          {isPending ? "..." : "ADD GOAL"}
-        </button>
-      </div>
+        <div className="flex items-center gap-2">
+          {/* Type selector - Ghost style */}
+          <div className="flex gap-0.5 p-1 rounded-xl bg-white/5">
+            {TYPES.map((t) => (
+              <button
+                key={t.value}
+                type="button"
+                onClick={() => setType(t.value)}
+                className={`px-3 py-1.5 rounded-lg text-[9px] font-black transition-all ${
+                  type === t.value
+                    ? "bg-brand-500 text-white shadow-lg"
+                    : "text-white/20 hover:text-white hover:bg-white/5 uppercase"
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
 
-      {/* Inline error */}
+          <button
+            type="submit"
+            disabled={isPending}
+            className="h-9 px-5 bg-white/[0.05] border border-white/10 hover:bg-white/10 hover:border-white/20 text-white text-[9px] font-black rounded-xl transition-all disabled:opacity-50 whitespace-nowrap tracking-wider"
+          >
+            {isPending ? "SYNCING..." : "COMMIT"}
+          </button>
+        </div>
+      </form>
+
       {error && (
-        <p className="text-xs text-red-400 mt-1 sm:col-span-full">{error}</p>
+        <p className="px-4 text-[10px] font-bold text-red-500 uppercase tracking-widest">{error}</p>
       )}
-    </form>
+    </div>
   );
 }

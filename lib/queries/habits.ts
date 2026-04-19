@@ -1,8 +1,9 @@
 import { createClient } from "@/lib/supabase-server";
 import { Habit, HabitLog, HabitWithStats } from "@/types/habits";
-import { calculateCurrentStreak, get7DayHistory } from "@/lib/utils/streak";
+import { computeHabitStreaks } from "@/lib/analytics";
 import { HabitSchema, HabitLogSchema } from "@/lib/validation/schemas";
 import { z } from "zod";
+import { invalidateCache } from "@/lib/cache/redis";
 
 export async function getUserHabitsWithStats(): Promise<HabitWithStats[]> {
   const supabase = createClient();
@@ -22,7 +23,7 @@ export async function getUserHabitsWithStats(): Promise<HabitWithStats[]> {
     console.error("Habits validation failed:", validatedHabits.error.format());
   }
 
-  // Fetch all logs for these habits (efficient to do one query for all)
+  // Fetch all completed logs for these habits
   const { data: logs, error: logsError } = await supabase
     .from("habit_logs")
     .select("*")
@@ -38,15 +39,27 @@ export async function getUserHabitsWithStats(): Promise<HabitWithStats[]> {
     console.error("Habit logs validation failed:", validatedLogs.error.format());
   }
 
-  const today = new Date().toISOString().split("T")[0];
+  // Use the analytics layer to compute streaks and status
+  const streakStats = computeHabitStreaks(habits, (logs ?? []) as HabitLog[]);
 
   return habits.map((habit) => {
+    const stats = streakStats.find(s => s.habit_id === habit.id);
     const habitLogs = (logs ?? []).filter((l) => l.habit_id === habit.id);
+    
+    // We keep history_7_days here because it's used by the UI for the mini graph
+    // but the logic can be moved to analytics as well.
+    const logMap = new Map(habitLogs.map(l => [l.date, true]));
+    const history_7_days: boolean[] = [];
+    for (let i = 6; i >= 0; i--) {
+       const d = new Date(Date.now() - i * 86400000).toISOString().split("T")[0];
+       history_7_days.push(logMap.has(d));
+    }
+
     return {
       ...habit,
-      current_streak: calculateCurrentStreak(habitLogs),
-      today_completed: habitLogs.some((l) => l.date === today),
-      history_7_days: get7DayHistory(habitLogs),
+      current_streak: stats?.current_streak ?? 0,
+      today_completed: stats?.is_completed_today ?? false,
+      history_7_days,
     };
   });
 }
@@ -63,11 +76,18 @@ export async function createHabit(name: string): Promise<Habit> {
     .single();
 
   if (error) throw new Error(error.message);
+
+  // Invalidate cache
+  await invalidateCache(`user:${user.id}:analytics`);
+
   return data;
 }
 
 export async function toggleHabitToday(habitId: string, completed: boolean): Promise<void> {
   const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
   const today = new Date().toISOString().split("T")[0];
 
   if (completed) {
@@ -85,10 +105,19 @@ export async function toggleHabitToday(habitId: string, completed: boolean): Pro
       .eq("date", today);
     if (error) throw new Error(error.message);
   }
+
+  // Invalidate cache
+  await invalidateCache(`user:${user.id}:analytics`);
 }
 
 export async function deleteHabit(id: string): Promise<void> {
   const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
   const { error } = await supabase.from("habits").delete().eq("id", id);
   if (error) throw new Error(error.message);
+
+  // Invalidate cache
+  await invalidateCache(`user:${user.id}:analytics`);
 }

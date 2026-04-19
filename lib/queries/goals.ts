@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase-server";
 import type { Goal, GoalType } from "@/types/goals";
 import { GoalSchema } from "@/lib/validation/schemas";
 import { z } from "zod";
+import { invalidateCache } from "@/lib/cache/redis";
 
 /**
  * Fetch all goals for the authenticated user, newest first.
@@ -20,7 +21,7 @@ export async function getUserGoals(): Promise<Goal[]> {
   const validated = z.array(GoalSchema).safeParse(data);
   if (!validated.success) {
     console.error("Goals validation failed:", validated.error.format());
-    return (data ?? []) as Goal[]; // Fallback to raw data if validation fails in prod to avoid crashing
+    return (data ?? []) as Goal[]; 
   }
   
   return validated.data as Goal[];
@@ -29,8 +30,6 @@ export async function getUserGoals(): Promise<Goal[]> {
 
 /**
  * Insert a new goal for the authenticated user.
- * user_id is injected server-side via auth.uid() through RLS;
- * we still pass it explicitly so the insert is unambiguous.
  */
 export async function createGoal(
   title: string,
@@ -38,10 +37,7 @@ export async function createGoal(
 ): Promise<Goal> {
   const supabase = createClient();
 
-  // Resolve authenticated user
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
 
   const { data, error } = await supabase
@@ -51,29 +47,46 @@ export async function createGoal(
     .single();
 
   if (error) throw new Error(error.message);
+
+  // Invalidate cache
+  await invalidateCache(`user:${user.id}:analytics`);
+
   return data as Goal;
 }
 
 /**
  * Toggle the completed status of a goal.
- * RLS prevents any user from toggling another user's goal.
  */
 export async function toggleGoal(id: string, completed: boolean): Promise<void> {
   const supabase = createClient();
+
+  // Get user to build cache key
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
   const { error } = await supabase
     .from("goals")
     .update({ completed })
     .eq("id", id);
 
   if (error) throw new Error(error.message);
+
+  // Invalidate cache
+  await invalidateCache(`user:${user.id}:analytics`);
 }
 
 /**
  * Delete a goal by ID.
- * RLS prevents cross-user deletes.
  */
 export async function deleteGoal(id: string): Promise<void> {
   const supabase = createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
   const { error } = await supabase.from("goals").delete().eq("id", id);
   if (error) throw new Error(error.message);
+
+  // Invalidate cache
+  await invalidateCache(`user:${user.id}:analytics`);
 }

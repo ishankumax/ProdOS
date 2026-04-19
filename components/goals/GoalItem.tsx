@@ -35,81 +35,61 @@ export default function GoalItem({ goal }: GoalItemProps) {
 
   return (
     <li
-      className={`group flex items-center gap-3 px-4 py-3 rounded-xl border transition-all duration-200 ${
+      className={`group flex items-center gap-4 px-5 py-4 rounded-2xl border transition-all duration-300 ${
         optimisticCompleted
-          ? "border-white/5 bg-white/[0.015] opacity-60"
-          : "border-white/8 bg-white/[0.03] hover:bg-white/[0.05] hover:border-white/12"
+          ? "border-white/5 bg-white/[0.01] opacity-40 translate-y-0.5"
+          : "border-white/10 bg-white/[0.03] hover:bg-white/[0.05] hover:border-brand-500/30 hover:shadow-[0_4px_20px_-10px_rgba(139,92,246,0.3)]"
       }`}
     >
-      {/* Checkbox */}
+      {/* Checkbox Trigger */}
       <button
         onClick={handleToggle}
         disabled={isPending}
-        aria-label={optimisticCompleted ? "Mark incomplete" : "Mark complete"}
-        className={`flex-shrink-0 w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-150 ${
+        className={`flex-shrink-0 w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all duration-300 ${
           optimisticCompleted
-            ? "bg-brand-500 border-brand-500"
-            : "border-white/20 hover:border-brand-400"
+            ? "bg-brand-500 border-brand-500 scale-95"
+            : "border-white/20 group-hover:border-brand-400 group-hover:scale-105"
         }`}
       >
         {optimisticCompleted && (
-          <svg
-            className="w-3 h-3 text-white"
-            fill="none"
-            viewBox="0 0 12 12"
-            stroke="currentColor"
-            strokeWidth={2.5}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M2 6l3 3 5-5"
-            />
+          <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 12 12" stroke="currentColor" strokeWidth={3}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M2 6l3 3 5-5" />
           </svg>
         )}
       </button>
 
-      {/* Title */}
-      <span
-        className={`flex-1 text-sm transition-all duration-150 ${
-          optimisticCompleted
-            ? "line-through text-white/30"
-            : "text-white/85"
-        }`}
-      >
-        {goal.title}
-      </span>
+      {/* Target Description */}
+      <div className="flex-1 min-w-0">
+        <span className={`block text-[13px] font-medium transition-all duration-300 truncate ${
+          optimisticCompleted ? "line-through text-white/20" : "text-white/80 group-hover:text-white"
+        }`}>
+          {goal.title}
+        </span>
+        {!optimisticCompleted && (
+          <span className="text-[10px] text-brand-400 opacity-0 group-hover:opacity-100 transition-opacity">
+            Ready for execution
+          </span>
+        )}
+      </div>
 
-      {/* Type badge */}
-      <span
-        className={`hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium border capitalize ${
-          TYPE_STYLES[goal.type] ?? "bg-white/10 text-white/50 border-white/10"
-        }`}
-      >
-        {goal.type}
-      </span>
+      {/* Metadata & Actions */}
+      <div className="flex items-center gap-3">
+        <span className={`hidden sm:inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-bold border uppercase tracking-tighter ${
+          TYPE_STYLES[goal.type] ?? "bg-white/10"
+        }`}>
+          {goal.type}
+        </span>
 
-      {/* Delete */}
-      <button
-        onClick={handleDelete}
-        disabled={isPending}
-        aria-label="Delete goal"
-        className="flex-shrink-0 opacity-0 group-hover:opacity-100 p-1 rounded-md text-white/30 hover:text-red-400 hover:bg-red-500/10 transition-all duration-150 disabled:pointer-events-none"
-      >
-        <svg
-          className="w-3.5 h-3.5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
+        <button
+          onClick={handleDelete}
+          disabled={isPending}
+          className="p-1.5 rounded-lg text-white/20 hover:text-red-400 hover:bg-red-500/10 transition-all opacity-0 group-hover:opacity-100"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-          />
-        </svg>
-      </button>
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        </button>
+      </div>
     </li>
   );
 }
