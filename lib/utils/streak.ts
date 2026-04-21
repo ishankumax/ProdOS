@@ -15,8 +15,8 @@ export function calculateCurrentStreak(logs: HabitLog[]): number {
   if (logs.length === 0) return 0;
 
   // Assume logs are filtered for the specific habit and sorted by date DESC
-  const today = new Date().toISOString().split("T")[0];
-  const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+  const today = new Date().toISOString().split("T")[0]!;
+  const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0]!;
 
   const logMap = new Map<string, boolean>();
   logs.forEach((log) => {
@@ -41,7 +41,7 @@ export function calculateCurrentStreak(logs: HabitLog[]): number {
   while (logMap.has(currentDateStr)) {
     streak++;
     const prevDate = new Date(new Date(currentDateStr).getTime() - 86400000);
-    currentDateStr = prevDate.toISOString().split("T")[0];
+    currentDateStr = prevDate.toISOString().split("T")[0]!;
   }
 
   return streak;
@@ -60,7 +60,7 @@ export function get7DayHistory(logs: HabitLog[]): boolean[] {
   });
 
   for (let i = 6; i >= 0; i--) {
-    const d = new Date(Date.now() - i * 86400000).toISOString().split("T")[0];
+    const d = new Date(Date.now() - i * 86400000).toISOString().split("T")[0]!;
     history.push(logMap.has(d));
   }
 

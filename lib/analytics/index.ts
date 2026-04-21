@@ -17,8 +17,8 @@ export function computeGoalStats(goals: Goal[]): GoalStats {
 
 export function computeHabitStreaks(habits: Habit[], logs: HabitLog[]): HabitStreakStats[] {
   const now = new Date();
-  const today = now.toISOString().split("T")[0];
-  const yesterday = new Date(now.getTime() - 86400000).toISOString().split("T")[0];
+  const today = now.toISOString().split("T")[0]!;
+  const yesterday = new Date(now.getTime() - 86400000).toISOString().split("T")[0]!;
 
   return habits.map(habit => {
     const habitLogs = logs.filter(l => l.habit_id === habit.id && l.completed);
@@ -52,11 +52,11 @@ export function computeDayActivity(
   habits: Habit[], 
   logs: HabitLog[]
 ): DayActivity {
-  const dateISO = date.toISOString().split("T")[0];
+  const dateISO = date.toISOString().split("T")[0]!;
   
   const goalsCompleted = goals.filter(g => 
     g.completed && 
-    new Date(g.created_at).toISOString().split("T")[0] === dateISO
+    new Date(g.created_at).toISOString().split("T")[0]! === dateISO
   ).length;
 
   const habitsCompleted = logs.filter(l => 

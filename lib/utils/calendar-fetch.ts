@@ -32,8 +32,8 @@ export async function fetchWeeklyDataClient(startDate: Date, endDate: Date) {
   if (habitsError) throw new Error(habitsError.message);
 
   // Fetch logs for these habits in the date range
-  const startDay = startStr.split("T")[0];
-  const endDay = endStr.split("T")[0];
+  const startDay = startStr.split("T")[0]!;
+  const endDay = endStr.split("T")[0]!;
 
   const { data: logsData, error: logsError } = await supabase
     .from("habit_logs")

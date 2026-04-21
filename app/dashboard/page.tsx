@@ -30,7 +30,7 @@ export default async function DashboardPage() {
         <section>
            <h1 className="text-3xl font-bold text-white tracking-tight">System Identity</h1>
            <p className="text-white/40 text-sm mt-1">
-             Operational status for {user.email?.split("@")[0]}.
+              Operational status for {user.email?.split("@")?.[0] ?? "User"}.
            </p>
         </section>
 

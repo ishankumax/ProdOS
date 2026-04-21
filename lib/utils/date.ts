@@ -34,7 +34,7 @@ export function formatToISODate(date: Date): string {
   // Returns YYYY-MM-DD in local time
   const offset = date.getTimezoneOffset();
   const adjustedDate = new Date(date.getTime() - (offset * 60 * 1000));
-  return adjustedDate.toISOString().split("T")[0];
+  return adjustedDate.toISOString().split("T")[0]!;
 }
 
 export function isSameDay(d1: Date, d2: Date): boolean {

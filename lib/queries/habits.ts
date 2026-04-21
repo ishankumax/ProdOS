@@ -51,7 +51,7 @@ export async function getUserHabitsWithStats(): Promise<HabitWithStats[]> {
     const logMap = new Map(habitLogs.map(l => [l.date, true]));
     const history_7_days: boolean[] = [];
     for (let i = 6; i >= 0; i--) {
-       const d = new Date(Date.now() - i * 86400000).toISOString().split("T")[0];
+       const d = new Date(Date.now() - i * 86400000).toISOString().split("T")[0]!;
        history_7_days.push(logMap.has(d));
     }
 
@@ -88,7 +88,7 @@ export async function toggleHabitToday(habitId: string, completed: boolean): Pro
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split("T")[0]!;
 
   if (completed) {
     // Upsert completion log
