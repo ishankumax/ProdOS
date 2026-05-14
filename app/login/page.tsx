@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
+import { cn } from "@/lib/utils";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -183,16 +184,30 @@ export default function LoginPage() {
 
 
           {/* Remember me */}
-          <label className="flex items-center gap-2.5 cursor-pointer group">
-            <input
-              id="login-remember"
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-              className="w-4 h-4 rounded border-white/20 bg-white/5 accent-brand-500 cursor-pointer"
-            />
+          <label className="flex items-center gap-3 cursor-pointer group select-none">
+            <div className="relative">
+              <input
+                id="login-remember"
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="sr-only"
+              />
+              <div className={cn(
+                "w-4 h-4 rounded border transition-all duration-200 flex items-center justify-center",
+                rememberMe 
+                  ? "bg-brand-500 border-brand-500 shadow-[0_0_10px_rgba(var(--brand-500-rgb),0.3)]" 
+                  : "bg-white/5 border-white/10 group-hover:border-white/20"
+              )}>
+                {rememberMe && (
+                  <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+              </div>
+            </div>
             <span className="text-sm text-white/50 group-hover:text-white/70 transition-colors">
-              Remember me
+              Maintain active protocol
             </span>
           </label>
 
