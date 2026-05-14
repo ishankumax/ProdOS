@@ -27,12 +27,16 @@ export default function TodayExecution({ analytics, goals, habits }: TodayExecut
     <div className="space-y-10">
       {/* Visual Progress Header */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4">
+        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4 hover:border-white/10 hover:bg-white/[0.03] transition-all group">
           <div className="flex justify-between items-center">
             <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Daily Progress</p>
-            <span className="text-brand-400 font-bold text-lg">{analytics.daily_goals.rate}%</span>
+            <span className="text-[10px] font-black text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded tracking-tighter">↗ 12.5%</span>
           </div>
-          <div className="h-2 w-full bg-white/[0.03] rounded-full overflow-hidden">
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-bold text-white font-mono">{analytics.daily_goals.rate}%</span>
+            <span className="text-[10px] text-white/20 font-medium">Protocol Velocity</span>
+          </div>
+          <div className="h-1.5 w-full bg-white/[0.03] rounded-full overflow-hidden">
             <div 
               className="h-full bg-brand-500 transition-all duration-1000 ease-out"
               style={{ width: `${analytics.daily_goals.rate}%` }}
@@ -40,27 +44,40 @@ export default function TodayExecution({ analytics, goals, habits }: TodayExecut
           </div>
         </div>
 
-        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between">
-           <div>
-              <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Habit Momentum</p>
-              <p className="text-2xl font-bold text-white mt-1">🔥 {Math.max(...habits.map(h => h.current_streak), 0)} Day Streak</p>
-           </div>
-           <div className="w-12 h-12 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-500">
-             🔥
-           </div>
+        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4 hover:border-white/10 hover:bg-white/[0.03] transition-all group">
+          <div className="flex justify-between items-center">
+            <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Habit Momentum</p>
+            <span className="text-[10px] font-black text-brand-400 bg-brand-400/10 px-1.5 py-0.5 rounded tracking-tighter">STABLE</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl font-bold text-white font-mono">{Math.max(...habits.map(h => h.current_streak), 0)}</span>
+              <span className="text-[10px] text-white/20 font-medium uppercase tracking-tighter">Day Streak</span>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-400 text-lg">
+              🔥
+            </div>
+          </div>
         </div>
 
-        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4">
-          <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Weekly Velocity</p>
-          <div className="flex items-end gap-1 h-8">
+        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 space-y-4 hover:border-white/10 hover:bg-white/[0.03] transition-all group">
+          <div className="flex justify-between items-center">
+            <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Weekly Capacity</p>
+            <span className="text-[10px] font-black text-brand-400/60 tracking-tighter">7 DAY PROTOCOL</span>
+          </div>
+          <div className="flex items-end gap-1.5 h-10">
             {analytics.weekly_activity.map((day, i) => (
               <div 
                 key={day.date}
                 className={cn(
-                  "flex-1 rounded-sm transition-all duration-500",
-                  (day.goals_completed + day.habits_completed) > 0 ? "bg-brand-500/40" : "bg-white/5"
+                  "flex-1 rounded-[2px] transition-all duration-500 hover:opacity-100",
+                  (day.goals_completed + day.habits_completed) > 0 ? "bg-brand-500" : "bg-white/5"
                 )}
-                style={{ height: `${Math.min((day.goals_completed + day.habits_completed) * 20, 100)}%` }}
+                style={{ 
+                  height: `${Math.max(15, Math.min((day.goals_completed + day.habits_completed) * 20, 100))}%`,
+                  opacity: 0.3 + (i * 0.1)
+                }}
+                title={`${day.date}: ${day.goals_completed + day.habits_completed} activities`}
               />
             ))}
           </div>

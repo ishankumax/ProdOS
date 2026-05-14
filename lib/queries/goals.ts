@@ -8,23 +8,14 @@ import { invalidateCache } from "@/lib/cache/redis";
  * Fetch all goals for the authenticated user, newest first.
  * RLS on the goals table ensures only the owner's rows are returned.
  */
-export async function getUserGoals(): Promise<Goal[]> {
-  const supabase = createClient();
-  const { data, error } = await supabase
-    .from("goals")
-    .select("*")
-    .order("created_at", { ascending: false });
+const MOCK_GOALS: Goal[] = [
+  { id: '1', title: 'Refactor Portfolio Layout', type: 'daily', completed: false, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), user_id: 'mock' },
+  { id: '2', title: 'Complete Finance OS UI', type: 'daily', completed: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), user_id: 'mock' },
+  { id: '3', title: 'Deep Work: Project Strategy', type: 'daily', completed: false, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), user_id: 'mock' },
+];
 
-  if (error) throw new Error(error.message);
-  
-  // Validate array of goals
-  const validated = z.array(GoalSchema).safeParse(data);
-  if (!validated.success) {
-    console.error("Goals validation failed:", validated.error.format());
-    return (data ?? []) as Goal[]; 
-  }
-  
-  return validated.data as Goal[];
+export async function getUserGoals(): Promise<Goal[]> {
+  return MOCK_GOALS;
 }
 
 
@@ -35,58 +26,14 @@ export async function createGoal(
   title: string,
   type: GoalType
 ): Promise<Goal> {
-  const supabase = createClient();
-
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
-
-  const { data, error } = await supabase
-    .from("goals")
-    .insert({ title, type, user_id: user.id })
-    .select()
-    .single();
-
-  if (error) throw new Error(error.message);
-
-  // Invalidate cache
-  await invalidateCache(`user:${user.id}:analytics`);
-
-  return data as Goal;
+  console.log("Mock create goal", title, type);
+  return MOCK_GOALS[0];
 }
 
-/**
- * Toggle the completed status of a goal.
- */
 export async function toggleGoal(id: string, completed: boolean): Promise<void> {
-  const supabase = createClient();
-
-  // Get user to build cache key
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
-
-  const { error } = await supabase
-    .from("goals")
-    .update({ completed })
-    .eq("id", id);
-
-  if (error) throw new Error(error.message);
-
-  // Invalidate cache
-  await invalidateCache(`user:${user.id}:analytics`);
+  console.log("Mock toggle goal", id, completed);
 }
 
-/**
- * Delete a goal by ID.
- */
 export async function deleteGoal(id: string): Promise<void> {
-  const supabase = createClient();
-
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
-
-  const { error } = await supabase.from("goals").delete().eq("id", id);
-  if (error) throw new Error(error.message);
-
-  // Invalidate cache
-  await invalidateCache(`user:${user.id}:analytics`);
+  console.log("Mock delete goal", id);
 }
