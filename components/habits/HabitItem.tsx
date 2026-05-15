@@ -3,6 +3,7 @@
 import { useOptimistic, useTransition } from "react";
 import { toggleHabitAction, deleteHabitAction } from "@/app/dashboard/actions";
 import type { HabitWithStats } from "@/types/habits";
+import { cn } from "@/lib/utils";
 
 interface HabitItemProps {
   habit: HabitWithStats;

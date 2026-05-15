@@ -52,7 +52,7 @@ export default async function DashboardPage() {
           </Suspense>
         </div>
 
-        <div id="insights" className="pt-20 pb-10 text-center opacity-10 text-[9px] uppercase font-bold tracking-[0.4em]">
+        <div id="insights" className="pt-20 pb-10 text-center opacity-10 text-[9px] uppercase font-bold tracking-[0.4em] scroll-mt-24">
            Continuous Improvement Protocol active
         </div>
       </div>

@@ -41,15 +41,16 @@ export async function middleware(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
 
-  // Protected routes → redirect to login if no session
+  // Bypassing all authentication checks for development as requested
+  // Original logic commented out below:
+  /*
   if (!user && pathname.startsWith("/dashboard")) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
-
-  // Authenticated users don't need to see auth pages
   if (user && (pathname === "/login" || pathname === "/signup")) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
+  */
 
   return response;
 }
