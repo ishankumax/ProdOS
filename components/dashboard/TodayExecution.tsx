@@ -86,7 +86,7 @@ export default function TodayExecution({ analytics, goals, habits }: TodayExecut
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Left Col: Goals */}
-        <div className="space-y-6">
+        <div id="goals" className="space-y-6 scroll-mt-24">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-white tracking-tight">Today's Execution</h2>
             <button className="text-[10px] font-bold text-brand-400 uppercase tracking-widest hover:text-brand-300 transition-colors">
@@ -109,7 +109,7 @@ export default function TodayExecution({ analytics, goals, habits }: TodayExecut
         </div>
 
         {/* Right Col: Habits */}
-        <div className="space-y-6">
+        <div id="habits" className="space-y-6 scroll-mt-24">
           <h2 className="text-xl font-bold text-white tracking-tight">Active Routines</h2>
           <div className="grid gap-4">
              {incompleteHabits.length > 0 && (
