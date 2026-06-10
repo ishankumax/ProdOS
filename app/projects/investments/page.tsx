@@ -254,14 +254,14 @@ export default function InvestmentsPage() {
             <div className="p-5 rounded-2xl bg-white/[0.01] border border-white/5 space-y-2 hover:bg-white/[0.02] transition-colors">
               <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest block">Total Invested</span>
               <span className="text-xl font-bold font-mono text-white">
-                ${totalInvested.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                ₹{totalInvested.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
               </span>
             </div>
             {/* Total Value */}
             <div className="p-5 rounded-2xl bg-white/[0.01] border border-white/5 space-y-2 hover:bg-white/[0.02] transition-colors">
               <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest block">Current Value</span>
               <span className="text-xl font-bold font-mono text-white">
-                ${totalValue.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                ₹{totalValue.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
               </span>
             </div>
             {/* Profit/Loss */}
@@ -271,7 +271,7 @@ export default function InvestmentsPage() {
                 "text-xl font-bold font-mono",
                 totalProfitLoss >= 0 ? "text-emerald-400" : "text-rose-400"
               )}>
-                {totalProfitLoss >= 0 ? "+" : ""}${totalProfitLoss.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                {totalProfitLoss >= 0 ? "+" : ""}₹{totalProfitLoss.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
               </span>
             </div>
             {/* Net ROI */}
@@ -288,7 +288,7 @@ export default function InvestmentsPage() {
             <div className="p-5 rounded-2xl bg-white/[0.01] border border-white/5 space-y-2 hover:bg-white/[0.02] transition-colors col-span-2 md:col-span-1">
               <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest block">Future Expected</span>
               <span className="text-xl font-bold font-mono text-brand-400">
-                ${totalFutureExpectation.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                ₹{totalFutureExpectation.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
               </span>
             </div>
           </div>
@@ -307,7 +307,7 @@ export default function InvestmentsPage() {
                 <EditableText
                   value={selectedCategory.invested}
                   type="number"
-                  prefix="$"
+                  prefix="₹"
                   onSave={async (val) => updateField("invested", parseFloat(val) || 0)}
                   className="text-2xl font-bold font-mono text-white hover:text-brand-400 transition-colors"
                   inputClassName="text-2xl font-bold font-mono text-white bg-white/10 border-b border-brand-500 w-32 p-0 outline-none"
@@ -321,7 +321,7 @@ export default function InvestmentsPage() {
                 <EditableText
                   value={selectedCategory.currentValue}
                   type="number"
-                  prefix="$"
+                  prefix="₹"
                   onSave={async (val) => updateField("currentValue", parseFloat(val) || 0)}
                   className="text-2xl font-bold font-mono text-white hover:text-brand-400 transition-colors"
                   inputClassName="text-2xl font-bold font-mono text-white bg-white/10 border-b border-brand-500 w-32 p-0 outline-none"
@@ -335,7 +335,7 @@ export default function InvestmentsPage() {
                 <EditableText
                   value={selectedCategory.futureExpectation}
                   type="number"
-                  prefix="$"
+                  prefix="₹"
                   onSave={async (val) => updateField("futureExpectation", parseFloat(val) || 0)}
                   className="text-2xl font-bold font-mono text-white hover:text-brand-400 transition-colors"
                   inputClassName="text-2xl font-bold font-mono text-white bg-white/10 border-b border-brand-500 w-32 p-0 outline-none"
@@ -349,7 +349,7 @@ export default function InvestmentsPage() {
                 "text-2xl font-bold font-mono block py-0.5",
                 catProfitLoss >= 0 ? "text-emerald-400" : "text-rose-400"
               )}>
-                {catProfitLoss >= 0 ? "+" : ""}${catProfitLoss.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                {catProfitLoss >= 0 ? "+" : ""}₹{catProfitLoss.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
             {/* ROI */}
@@ -453,7 +453,7 @@ export default function InvestmentsPage() {
                 {/* Invested */}
                 <div className="flex flex-col items-center gap-2 group/bar w-12">
                   <span className="text-[9px] font-mono text-white/50 opacity-0 group-hover/bar:opacity-100 transition-opacity">
-                    ${selectedCategory.invested.toLocaleString()}
+                    ₹{selectedCategory.invested.toLocaleString()}
                   </span>
                   <div
                     className="w-5 bg-white/10 border border-white/10 rounded-t-sm transition-all duration-700 origin-bottom"
@@ -465,7 +465,7 @@ export default function InvestmentsPage() {
                 {/* Current Value */}
                 <div className="flex flex-col items-center gap-2 group/bar w-12">
                   <span className="text-[9px] font-mono text-emerald-400 opacity-0 group-hover/bar:opacity-100 transition-opacity">
-                    ${selectedCategory.currentValue.toLocaleString()}
+                    ₹{selectedCategory.currentValue.toLocaleString()}
                   </span>
                   <div
                     className={cn(
@@ -482,7 +482,7 @@ export default function InvestmentsPage() {
                 {/* Future Expectation */}
                 <div className="flex flex-col items-center gap-2 group/bar w-12">
                   <span className="text-[9px] font-mono text-brand-400 opacity-0 group-hover/bar:opacity-100 transition-opacity">
-                    ${selectedCategory.futureExpectation.toLocaleString()}
+                    ₹{selectedCategory.futureExpectation.toLocaleString()}
                   </span>
                   <div
                     className="w-5 bg-brand-500/20 border border-brand-500/30 rounded-t-sm transition-all duration-700 origin-bottom"
