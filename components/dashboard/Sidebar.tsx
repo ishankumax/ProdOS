@@ -73,6 +73,21 @@ export default function Sidebar({ userEmail }: { userEmail?: string }) {
             )}>＄</span>
             Finance OS
           </Link>
+          <Link
+            href="/projects/investments"
+            className={cn(
+              "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all group",
+              pathname === "/projects/investments"
+                ? "text-brand-400 bg-brand-500/5 border border-brand-500/10"
+                : "text-white/50 hover:text-white hover:bg-white/5 border border-transparent"
+            )}
+          >
+            <span className={cn(
+              "text-lg transition-opacity",
+              pathname === "/projects/investments" ? "opacity-100" : "opacity-40 group-hover:opacity-100"
+            )}>⎋</span>
+            Investment OS
+          </Link>
         </div>
 
         <div className="space-y-1">
