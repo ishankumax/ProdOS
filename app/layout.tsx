@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import FloatingThemeSelector from "@/components/ui/FloatingThemeSelector";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -73,6 +74,7 @@ export default function RootLayout({
         className={`${inter.variable} ${jetbrainsMono.variable} font-sans bg-surface text-white antialiased`}
       >
         {children}
+        <FloatingThemeSelector />
       </body>
     </html>
   );
