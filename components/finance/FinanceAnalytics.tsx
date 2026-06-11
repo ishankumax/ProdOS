@@ -20,7 +20,7 @@ export default function FinanceAnalytics({ earnings, expenses }: FinanceAnalytic
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-brand-400 shadow-[0_0_10px_rgba(139,92,246,0.5)]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-brand-400 shadow-[0_0_10px_rgba(var(--brand-500-rgb),0.5)]" />
           Revenue Distribution
         </h2>
       </div>
@@ -38,7 +38,7 @@ export default function FinanceAnalytics({ earnings, expenses }: FinanceAnalytic
                 </div>
                 <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-brand-500 shadow-[0_0_10px_rgba(139,92,246,0.3)] transition-all duration-1000 ease-out"
+                    className="h-full bg-brand-500 shadow-[0_0_10px_rgba(var(--brand-500-rgb),0.3)] transition-all duration-1000 ease-out"
                     style={{ width: `${percentage}%` }}
                   />
                 </div>

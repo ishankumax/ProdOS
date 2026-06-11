@@ -38,7 +38,7 @@ export default function GoalItem({ goal }: GoalItemProps) {
       className={`group flex items-center gap-4 px-5 py-4 rounded-2xl border transition-all duration-300 ${
         optimisticCompleted
           ? "border-white/5 bg-white/[0.01] opacity-40 translate-y-0.5"
-          : "border-white/10 bg-white/[0.03] hover:bg-white/[0.05] hover:border-brand-500/30 hover:shadow-[0_4px_20px_-10px_rgba(139,92,246,0.3)]"
+          : "border-white/10 bg-white/[0.03] hover:bg-white/[0.05] hover:border-brand-500/30 hover:shadow-[0_4px_20px_-10px_rgba(var(--brand-500-rgb),0.3)]"
       }`}
     >
       {/* Checkbox Trigger */}

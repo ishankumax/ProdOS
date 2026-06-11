@@ -14,28 +14,28 @@ const config: Config = {
       },
       colors: {
         brand: {
-          50: "hsl(250 100% 97%)",
-          100: "hsl(250 95% 92%)",
-          200: "hsl(250 90% 84%)",
-          300: "hsl(250 85% 72%)",
-          400: "hsl(250 80% 60%)",
-          500: "hsl(250 75% 50%)",
-          600: "hsl(250 70% 42%)",
-          700: "hsl(250 68% 34%)",
-          800: "hsl(250 65% 24%)",
-          900: "hsl(250 60% 14%)",
-          950: "hsl(250 55% 8%)",
+          50: "hsl(var(--brand-50) / <alpha-value>)",
+          100: "hsl(var(--brand-100) / <alpha-value>)",
+          200: "hsl(var(--brand-200) / <alpha-value>)",
+          300: "hsl(var(--brand-300) / <alpha-value>)",
+          400: "hsl(var(--brand-400) / <alpha-value>)",
+          500: "hsl(var(--brand-500) / <alpha-value>)",
+          600: "hsl(var(--brand-600) / <alpha-value>)",
+          700: "hsl(var(--brand-700) / <alpha-value>)",
+          800: "hsl(var(--brand-800) / <alpha-value>)",
+          900: "hsl(var(--brand-900) / <alpha-value>)",
+          950: "hsl(var(--brand-950) / <alpha-value>)",
         },
         surface: {
-          DEFAULT: "hsl(240 6% 10%)",
-          raised: "hsl(240 5% 13%)",
-          overlay: "hsl(240 4% 16%)",
+          DEFAULT: "hsl(var(--surface-default) / <alpha-value>)",
+          raised: "hsl(var(--surface-raised) / <alpha-value>)",
+          overlay: "hsl(var(--surface-overlay) / <alpha-value>)",
         },
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-mesh":
-          "radial-gradient(at 40% 20%, hsl(250 75% 20%) 0px, transparent 50%), radial-gradient(at 80% 0%, hsl(210 80% 15%) 0px, transparent 50%), radial-gradient(at 0% 50%, hsl(270 60% 15%) 0px, transparent 50%)",
+          "radial-gradient(at 40% 20%, hsl(var(--mesh-color-1)) 0px, transparent 50%), radial-gradient(at 80% 0%, hsl(var(--mesh-color-2)) 0px, transparent 50%), radial-gradient(at 0% 50%, hsl(var(--mesh-color-3)) 0px, transparent 50%)",
       },
       keyframes: {
         "fade-up": {
