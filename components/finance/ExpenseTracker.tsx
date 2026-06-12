@@ -28,7 +28,7 @@ export default function ExpenseTracker({ expenses, onUpdate, onAdd, onDelete }: 
         </button>
       </div>
 
-      <div className="rounded-2xl border border-white/5 bg-white/[0.01] overflow-hidden">
+      <div className="prod-card overflow-hidden p-0">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b border-white/5">

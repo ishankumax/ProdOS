@@ -25,7 +25,7 @@ export default async function DashboardPage() {
 
   return (
     <DashboardShell userEmail={user.email}>
-      <div className="max-w-[1200px] mx-auto px-6 sm:px-10 py-12 space-y-20">
+      <div className="prod-container">
         {/* Header Area */}
         <section>
            <h1 className="text-3xl font-bold text-white tracking-tight">System Identity</h1>

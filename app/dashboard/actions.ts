@@ -31,7 +31,7 @@ export async function createGoalAction(formData: FormData) {
 
   const validated = CreateGoalSchema.safeParse(rawData);
   if (!validated.success) {
-    return { error: validated.error.errors[0].message };
+    return { error: validated.error.issues[0]!.message };
   }
 
   const { title, type } = validated.data;
@@ -86,7 +86,7 @@ export async function createHabitAction(formData: FormData) {
   
   const validated = CreateHabitSchema.safeParse({ name });
   if (!validated.success) {
-    return { error: validated.error.errors[0].message };
+    return { error: validated.error.issues[0]!.message };
   }
 
   try {

@@ -36,7 +36,7 @@ export default function HabitsSection({ habits }: HabitsSectionProps) {
 
       {/* List Area */}
       {habits.length === 0 ? (
-        <div className="py-20 rounded-2xl border border-dashed border-white/5 bg-white/[0.01] flex flex-col items-center justify-center text-center">
+        <div className="py-20 prod-card-dashed flex flex-col items-center justify-center text-center">
           <p className="text-sm text-white/20">Establishing your first routine...</p>
         </div>
       ) : (

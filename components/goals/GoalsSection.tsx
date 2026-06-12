@@ -88,7 +88,7 @@ export default function GoalsSection({ initialGoals }: GoalsSectionProps) {
         )}
 
         {filtered.length === 0 ? (
-          <div className="py-20 rounded-2xl border border-dashed border-white/5 bg-white/[0.01] flex flex-col items-center justify-center text-center">
+          <div className="py-20 prod-card-dashed flex flex-col items-center justify-center text-center">
             <p className="text-sm text-white/20">No tasks in this category.</p>
           </div>
         ) : (

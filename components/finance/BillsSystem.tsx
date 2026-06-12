@@ -30,7 +30,7 @@ export default function BillsSystem({ bills, onUpdate, onAdd, onDelete }: BillsS
         {bills.map((bill) => (
           <div 
             key={bill.id} 
-            className="group p-5 rounded-2xl border border-white/5 bg-white/[0.01] hover:bg-white/[0.02] transition-all relative overflow-hidden"
+            className="prod-card-interactive relative overflow-hidden group p-5"
           >
             <div className="flex justify-between items-start mb-4">
               <div className="space-y-1">
@@ -85,7 +85,7 @@ export default function BillsSystem({ bills, onUpdate, onAdd, onDelete }: BillsS
           </div>
         ))}
         {bills.length === 0 && (
-          <div className="col-span-full py-12 text-center text-sm text-white/10 italic border border-dashed border-white/5 rounded-2xl">
+          <div className="col-span-full py-12 text-center text-sm text-white/10 italic prod-card-dashed">
             No bills scheduled.
           </div>
         )}

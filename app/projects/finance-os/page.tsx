@@ -48,7 +48,7 @@ export default async function FinanceOSPage() {
 
   return (
     <DashboardShell userEmail={user.email}>
-      <div className="max-w-[1200px] mx-auto px-6 sm:px-10 py-12 space-y-16">
+      <div className="prod-container">
         {/* Header */}
         <div className="space-y-2">
           <h1 className="text-3xl font-bold text-white tracking-tight">Finance Management System</h1>

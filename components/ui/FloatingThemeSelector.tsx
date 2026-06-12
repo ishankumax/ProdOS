@@ -60,9 +60,7 @@ export default function FloatingThemeSelector() {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       className={cn(
-        "fixed bottom-6 right-6 z-50 flex flex-col justify-end items-center w-12 overflow-hidden cursor-default select-none transition-all duration-500 ease-out rounded-full border backdrop-blur-md",
-        "bg-surface-raised/80 border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]",
-        "hover:border-brand-500/30 hover:shadow-[0_0_20px_rgba(var(--brand-500-rgb),0.15)]",
+        "fixed bottom-6 right-6 z-50 flex flex-col justify-end items-center w-12 overflow-hidden prod-dock",
         isHovered ? "h-[268px]" : "h-12"
       )}
     >
@@ -93,9 +91,9 @@ export default function FloatingThemeSelector() {
 
       {/* Trigger Dot / Icon - Shows active theme abbreviation in its color */}
       {(() => {
-        const currentTheme = THEMES.find((t) => t.name === activeTheme) || THEMES[0];
+        const currentTheme = THEMES.find((t) => t.name === activeTheme) || THEMES[0]!;
         return (
-          <div className="w-full h-12 flex items-center justify-center cursor-pointer pointer-events-none shrink-0 select-none">
+          <div className="w-full h-[46px] flex items-center justify-center cursor-pointer pointer-events-none shrink-0 select-none">
             <span className="text-[10px] font-bold text-brand-400 font-mono uppercase">
               {currentTheme.label}
             </span>

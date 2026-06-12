@@ -17,7 +17,7 @@ export async function getUserHabitsWithStats(): Promise<HabitWithStats[]> {
 
 export async function createHabit(name: string): Promise<Habit> {
   console.log("Mock create habit", name);
-  return MOCK_HABITS[0];
+  return MOCK_HABITS[0]!;
 }
 
 export async function toggleHabitToday(habitId: string, completed: boolean): Promise<void> {

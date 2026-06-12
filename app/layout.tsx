@@ -75,7 +75,6 @@ export default function RootLayout({
         className={`${montserrat.variable} ${spaceMono.variable} font-sans bg-surface text-white antialiased`}
       >
         {children}
-        <FloatingThemeSelector />
       </body>
     </html>
   );

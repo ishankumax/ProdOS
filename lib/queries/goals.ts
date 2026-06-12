@@ -27,7 +27,7 @@ export async function createGoal(
   type: GoalType
 ): Promise<Goal> {
   console.log("Mock create goal", title, type);
-  return MOCK_GOALS[0];
+  return MOCK_GOALS[0]!;
 }
 
 export async function toggleGoal(id: string, completed: boolean): Promise<void> {
