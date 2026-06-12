@@ -83,7 +83,7 @@ export default function WeeklyCalendar() {
           <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-3">
             {getMonthYear(optimisticDate)}
             <span className={cn(
-              "w-1.5 h-1.5 rounded-full",
+              "w-2 h-2 shrink-0 rounded-full",
               loading ? "bg-white/20" : "bg-brand-500 animate-pulse"
             )} />
           </h2>

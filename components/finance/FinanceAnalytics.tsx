@@ -20,7 +20,7 @@ export default function FinanceAnalytics({ earnings, expenses }: FinanceAnalytic
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-brand-400 shadow-[0_0_10px_rgba(var(--brand-500-rgb),0.5)]" />
+          <span className="w-2 h-2 shrink-0 rounded-full bg-brand-400 shadow-[0_0_10px_rgba(var(--brand-500-rgb),0.5)]" />
           Revenue Distribution
         </h2>
       </div>
