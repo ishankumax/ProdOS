@@ -1,16 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { Montserrat, Space_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import FloatingThemeSelector from "@/components/ui/FloatingThemeSelector";
 
-const montserrat = Montserrat({
+const inter = Inter({
   subsets: ["latin"],
   variable: "--font-montserrat",
   display: "swap",
 });
 
-const spaceMono = Space_Mono({
-  weight: ["400", "700"],
+const jetbrainsMono = JetBrains_Mono({
+  weight: ["400", "500", "700"],
   subsets: ["latin"],
   variable: "--font-space-mono",
   display: "swap",
@@ -72,7 +72,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${montserrat.variable} ${spaceMono.variable} font-sans bg-surface text-white antialiased`}
+        className={`${inter.variable} ${jetbrainsMono.variable} font-sans bg-surface text-white antialiased`}
       >
         {children}
       </body>
