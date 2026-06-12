@@ -63,13 +63,13 @@ export default function FloatingThemeSelector() {
         "fixed bottom-6 right-6 z-50 flex items-center h-12 overflow-hidden cursor-default select-none transition-all duration-500 ease-out rounded-full border backdrop-blur-md",
         "bg-surface-raised/80 border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]",
         "hover:border-brand-500/30 hover:shadow-[0_0_20px_rgba(var(--brand-500-rgb),0.15)]",
-        isHovered ? "w-[300px]" : "w-12"
+        isHovered ? "w-[340px]" : "w-12"
       )}
     >
       {/* Expanded Theme Selection Grid */}
       <div
         className={cn(
-          "flex items-center gap-1.5 pl-4 pr-12 transition-all duration-300 w-full justify-between",
+          "flex items-center gap-1 pl-4 pr-12 transition-all duration-300 w-full justify-between",
           isHovered ? "opacity-100 pointer-events-auto delay-100" : "opacity-0 pointer-events-none"
         )}
       >
@@ -79,7 +79,7 @@ export default function FloatingThemeSelector() {
             onClick={() => changeTheme(themeOpt.name)}
             title={themeOpt.title}
             className={cn(
-              "flex items-center gap-1 px-1.5 py-1 rounded transition-all duration-200 border font-mono text-[9px] font-bold active:scale-95",
+              "flex items-center gap-1 px-1.5 py-1 rounded transition-all duration-200 border font-sans text-[10px] font-medium tracking-wider active:scale-95",
               activeTheme === themeOpt.name
                 ? "border-brand-500/30 bg-brand-500/10 text-brand-400 shadow-[0_0_8px_rgba(var(--brand-500-rgb),0.1)]"
                 : "border-transparent text-white/40 hover:text-white/80 hover:bg-white/[0.02]"

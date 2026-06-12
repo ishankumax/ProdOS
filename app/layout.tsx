@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Outfit, Space_Mono } from "next/font/google";
+import { Montserrat, Space_Mono } from "next/font/google";
 import "./globals.css";
 import FloatingThemeSelector from "@/components/ui/FloatingThemeSelector";
 
-const outfit = Outfit({
+const montserrat = Montserrat({
   subsets: ["latin"],
-  variable: "--font-outfit",
+  variable: "--font-montserrat",
   display: "swap",
 });
 
@@ -72,7 +72,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${outfit.variable} ${spaceMono.variable} font-sans bg-surface text-white antialiased`}
+        className={`${montserrat.variable} ${spaceMono.variable} font-sans bg-surface text-white antialiased`}
       >
         {children}
         <FloatingThemeSelector />
