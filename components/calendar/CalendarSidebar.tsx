@@ -10,10 +10,11 @@ export default function CalendarSidebar() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [clock, setClock] = useState(new Date());
 
-  // Focus Timer States
-  const [focusDuration, setFocusDuration] = useState(30); // in minutes
-  const [isFocusActive, setIsFocusActive] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(30 * 60); // in seconds
+  // Navigation Views: "days" | "months" | "years"
+  const [calendarView, setCalendarView] = useState<"days" | "months" | "years">("days");
+
+  // 9 Editable Slots State
+  const [slots, setSlots] = useState<string[]>(Array(9).fill(""));
 
   const panelRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -22,6 +23,21 @@ export default function CalendarSidebar() {
   useEffect(() => {
     const timer = setInterval(() => setClock(new Date()), 1000);
     return () => clearInterval(timer);
+  }, []);
+
+  // Load slots from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("prod_os_calendar_slots");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length === 9) {
+          setSlots(parsed);
+        }
+      } catch (err) {
+        console.error("Failed to parse slots", err);
+      }
+    }
   }, []);
 
   // Listen to FloatingThemeSelector hover updates
@@ -51,48 +67,18 @@ export default function CalendarSidebar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Focus session countdown logic
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (isFocusActive && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
-    } else if (timeLeft === 0 && isFocusActive) {
-      setIsFocusActive(false);
-      // Play a soft synth beep
-      try {
-        const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        osc.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(800, audioCtx.currentTime); // 800 Hz
-        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.3);
-      } catch (err) {
-        console.warn("AudioContext block", err);
-      }
-      alert("[System Focus]: Session complete! Time to rest.");
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isFocusActive, timeLeft]);
+  const updateSlot = (index: number, val: string) => {
+    const nextSlots = [...slots];
+    nextSlots[index] = val;
+    setSlots(nextSlots);
+    localStorage.setItem("prod_os_calendar_slots", JSON.stringify(nextSlots));
+  };
 
-  // Adjust remaining time when focus duration changes (and not active)
-  useEffect(() => {
-    if (!isFocusActive) {
-      setTimeLeft(focusDuration * 60);
-    }
-  }, [focusDuration, isFocusActive]);
-
-  // Calendar calculations
+  // Calendar Calculations
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
+  // 1. Day View Calculations
   const firstDayOfMonth = new Date(year, month, 1);
   const startDayOfWeek = firstDayOfMonth.getDay(); // 0 (Sunday) to 6 (Saturday)
   const totalDays = new Date(year, month + 1, 0).getDate();
@@ -117,37 +103,77 @@ export default function CalendarSidebar() {
 
   const allDays = [...prevMonthDays, ...currentMonthDays, ...nextMonthDays];
 
-  const handlePrevMonth = () => {
-    setCurrentDate(new Date(year, month - 1, 1));
+  // 2. Month View Calculations (16-cell grid: 12 current year + 4 next year padding)
+  const monthsList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const allMonthsCells = [
+    ...monthsList.map((m, i) => ({ label: m, monthIdx: i, yearOffset: 0 })),
+    ...monthsList.slice(0, 4).map((m, i) => ({ label: m, monthIdx: i, yearOffset: 1 }))
+  ];
+
+  // 3. Year View Calculations (16-cell grid: startDecade - 2 to startDecade + 13)
+  const startDecade = Math.floor(year / 10) * 10;
+  const allYearsCells = Array.from({ length: 16 }, (_, i) => startDecade - 2 + i);
+
+  // Navigation Handlers based on Active View
+  const handlePrev = () => {
+    if (calendarView === "days") {
+      setCurrentDate(new Date(year, month - 1, 1));
+    } else if (calendarView === "months") {
+      setCurrentDate(new Date(year - 1, month, 1));
+    } else if (calendarView === "years") {
+      setCurrentDate(new Date(year - 10, month, 1));
+    }
   };
 
-  const handleNextMonth = () => {
-    setCurrentDate(new Date(year, month + 1, 1));
+  const handleNext = () => {
+    if (calendarView === "days") {
+      setCurrentDate(new Date(year, month + 1, 1));
+    } else if (calendarView === "months") {
+      setCurrentDate(new Date(year + 1, month, 1));
+    } else if (calendarView === "years") {
+      setCurrentDate(new Date(year + 10, month, 1));
+    }
   };
 
+  // Selection Actions
   const selectDay = (date: Date) => {
     setSelectedDate(date);
-    // If selecting a date outside current month, shift view
-    if (date.getMonth() !== month) {
+    if (date.getMonth() !== month || date.getFullYear() !== year) {
       setCurrentDate(new Date(date.getFullYear(), date.getMonth(), 1));
     }
   };
 
-  // Focus timer actions
-  const toggleFocus = () => {
-    setIsFocusActive(!isFocusActive);
+  const selectMonth = (monthIdx: number, yearOffset: number) => {
+    const targetYear = year + yearOffset;
+    setCurrentDate(new Date(targetYear, monthIdx, 1));
+    setCalendarView("days");
   };
 
-  const adjustDuration = (amount: number) => {
-    if (isFocusActive) return;
-    setFocusDuration((prev) => Math.max(5, Math.min(240, prev + amount)));
+  const selectYear = (targetYear: number) => {
+    setCurrentDate(new Date(targetYear, month, 1));
+    setCalendarView("months");
   };
 
-  // Helper formatting
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  // Header click handler to zoom out calendar view
+  const handleHeaderClick = () => {
+    if (calendarView === "days") {
+      setCalendarView("months");
+    } else if (calendarView === "months") {
+      setCalendarView("years");
+    } else {
+      setCalendarView("days");
+    }
+  };
+
+  // Helper formats
+  const getHeaderLabel = () => {
+    if (calendarView === "days") {
+      return currentDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+    } else if (calendarView === "months") {
+      return `${year}`;
+    } else {
+      return `${startDecade} - ${startDecade + 9}`;
+    }
   };
 
   return (
@@ -161,12 +187,12 @@ export default function CalendarSidebar() {
           themeHovered ? "bottom-[298px]" : "bottom-[78px]",
           isOpen ? "border-brand-500/30 bg-brand-500/10 text-brand-400 shadow-[0_0_12px_rgba(var(--brand-500-rgb),0.15)]" : ""
         )}
-        title="Calendar & Focus"
+        title="Calendar & Workspace Notes"
       >
         <span className="text-lg select-none">📅</span>
       </button>
 
-      {/* Windows 11 Style Calendar & Notification Sidebar */}
+      {/* Windows 11 Style Calendar & Workspace Notes Sidebar */}
       <div
         ref={panelRef}
         className={cn(
@@ -193,23 +219,30 @@ export default function CalendarSidebar() {
           </button>
         </div>
 
-        {/* Month Navigation & Grid */}
-        <div className="p-4 flex-1 flex flex-col min-h-0 overflow-y-auto space-y-4">
+        {/* Panel Content Area */}
+        <div className="p-4 flex-1 flex flex-col min-h-0 overflow-y-auto space-y-5">
+          
+          {/* Multi-Panel Calendar Selector Block */}
           <div className="space-y-3">
-            {/* Header selector */}
+            {/* View Header */}
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold font-mono text-white/90">
-                {currentDate.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
-              </span>
+              <button
+                onClick={handleHeaderClick}
+                className="text-xs font-bold font-mono text-white/90 hover:text-brand-400 hover:bg-white/5 px-2 py-1 rounded-lg transition-colors flex items-center gap-1"
+                title="Zoom Out Calendar View"
+              >
+                {getHeaderLabel()}
+                <span className="text-[8px] text-white/40">▼</span>
+              </button>
               <div className="flex items-center gap-1.5">
                 <button
-                  onClick={handlePrevMonth}
+                  onClick={handlePrev}
                   className="w-7 h-7 rounded-lg flex items-center justify-center bg-white/[0.02] border border-white/5 text-white/40 hover:text-white hover:bg-white/5 transition-colors text-xs font-mono"
                 >
                   ▲
                 </button>
                 <button
-                  onClick={handleNextMonth}
+                  onClick={handleNext}
                   className="w-7 h-7 rounded-lg flex items-center justify-center bg-white/[0.02] border border-white/5 text-white/40 hover:text-white hover:bg-white/5 transition-colors text-xs font-mono"
                 >
                   ▼
@@ -217,113 +250,138 @@ export default function CalendarSidebar() {
               </div>
             </div>
 
-            {/* Weekdays Header */}
-            <div className="grid grid-cols-7 gap-1 text-center">
-              {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
-                <span key={day} className="text-[10px] font-bold font-mono text-white/25 uppercase">
-                  {day}
-                </span>
-              ))}
-            </div>
+            {/* 1. DAYS VIEW */}
+            {calendarView === "days" && (
+              <div className="space-y-2">
+                <div className="grid grid-cols-7 gap-1 text-center">
+                  {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((d) => (
+                    <span key={d} className="text-[10px] font-bold font-mono text-white/25 uppercase">
+                      {d}
+                    </span>
+                  ))}
+                </div>
+                <div className="grid grid-cols-7 gap-1">
+                  {allDays.map((day, idx) => {
+                    const isSelected =
+                      day.getDate() === selectedDate.getDate() &&
+                      day.getMonth() === selectedDate.getMonth() &&
+                      day.getFullYear() === selectedDate.getFullYear();
+                    const isCurrentMonth = day.getMonth() === month;
+                    const isToday =
+                      day.getDate() === new Date().getDate() &&
+                      day.getMonth() === new Date().getMonth() &&
+                      day.getFullYear() === new Date().getFullYear();
 
-            {/* Monthly Calendar Grid */}
-            <div className="grid grid-cols-7 gap-1">
-              {allDays.map((day, idx) => {
-                const isSelected =
-                  day.getDate() === selectedDate.getDate() &&
-                  day.getMonth() === selectedDate.getMonth() &&
-                  day.getFullYear() === selectedDate.getFullYear();
-                const isCurrentMonth = day.getMonth() === month;
-                const isToday =
-                  day.getDate() === new Date().getDate() &&
-                  day.getMonth() === new Date().getMonth() &&
-                  day.getFullYear() === new Date().getFullYear();
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => selectDay(day)}
+                        className={cn(
+                          "w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-semibold font-mono transition-all relative",
+                          isCurrentMonth ? "text-white/80" : "text-white/20",
+                          isSelected
+                            ? "bg-brand-500 text-white shadow-[0_0_12px_rgba(var(--brand-500-rgb),0.3)] scale-105"
+                            : "hover:bg-white/5",
+                          isToday && !isSelected ? "border border-brand-500/40 text-brand-400" : ""
+                        )}
+                      >
+                        {day.getDate()}
+                        {isToday && (
+                          <span className={cn(
+                            "absolute bottom-1.5 w-1 h-1 rounded-full",
+                            isSelected ? "bg-white" : "bg-brand-500"
+                          )} />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => selectDay(day)}
-                    className={cn(
-                      "w-10 h-10 rounded-full flex items-center justify-center text-[11px] font-semibold font-mono transition-all relative",
-                      isCurrentMonth ? "text-white/80" : "text-white/20",
-                      isSelected
-                        ? "bg-brand-500 text-white shadow-[0_0_12px_rgba(var(--brand-500-rgb),0.3)] scale-105"
-                        : "hover:bg-white/5",
-                      isToday && !isSelected ? "border border-brand-500/40 text-brand-400" : ""
-                    )}
-                  >
-                    {day.getDate()}
-                    {isToday && (
-                      <span className={cn(
-                        "absolute bottom-1.5 w-1 h-1 rounded-full",
-                        isSelected ? "bg-white" : "bg-brand-500"
-                      )} />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
+            {/* 2. MONTHS VIEW (4x4 Grid) */}
+            {calendarView === "months" && (
+              <div className="grid grid-cols-4 gap-2 pt-1">
+                {allMonthsCells.map((cell, idx) => {
+                  const isSelected =
+                    selectedDate.getMonth() === cell.monthIdx &&
+                    selectedDate.getFullYear() === year + cell.yearOffset;
+                  const isOutsideYear = cell.yearOffset > 0;
+
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => selectMonth(cell.monthIdx, cell.yearOffset)}
+                      className={cn(
+                        "h-12 rounded-xl flex items-center justify-center text-xs font-semibold font-mono transition-all",
+                        isOutsideYear ? "text-white/20" : "text-white/80",
+                        isSelected
+                          ? "bg-brand-500 text-white shadow-[0_0_12px_rgba(var(--brand-500-rgb),0.3)] scale-105"
+                          : "hover:bg-white/5"
+                      )}
+                    >
+                      {cell.label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* 3. YEARS VIEW (4x4 Grid) */}
+            {calendarView === "years" && (
+              <div className="grid grid-cols-4 gap-2 pt-1">
+                {allYearsCells.map((cellYear, idx) => {
+                  const isSelected = selectedDate.getFullYear() === cellYear;
+                  const isOutsideDecade = cellYear < startDecade || cellYear > startDecade + 9;
+
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => selectYear(cellYear)}
+                      className={cn(
+                        "h-12 rounded-xl flex items-center justify-center text-xs font-semibold font-mono transition-all",
+                        isOutsideDecade ? "text-white/20" : "text-white/80",
+                        isSelected
+                          ? "bg-brand-500 text-white shadow-[0_0_12px_rgba(var(--brand-500-rgb),0.3)] scale-105"
+                          : "hover:bg-white/5"
+                      )}
+                    >
+                      {cellYear}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
 
           <div className="h-px bg-white/5 shrink-0" />
 
-          {/* Windows-like Focus Session Section */}
+          {/* 9 Editable Slots / Quick Protocol Panels Grid */}
           <div className="space-y-3 shrink-0">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold font-mono text-white/35 uppercase tracking-widest">
-                Focus Session
-              </span>
-              {isFocusActive && (
-                <span className="text-[9px] font-bold font-mono text-brand-400 bg-brand-500/10 px-1.5 py-0.5 rounded animate-pulse">
-                  ACTIVE
-                </span>
-              )}
+            <span className="text-[10px] font-bold font-mono text-white/35 uppercase tracking-widest">
+              Protocol Configuration
+            </span>
+            <div className="grid grid-cols-3 gap-2">
+              {slots.map((slot, idx) => (
+                <div
+                  key={idx}
+                  className="bg-white/[0.01] border border-white/5 rounded-xl p-1.5 flex flex-col focus-within:border-brand-500/25 focus-within:bg-white/[0.02] transition-all"
+                >
+                  <span className="text-[8px] font-bold font-mono text-brand-500/50 block select-none">
+                    SLOT 0{idx + 1}
+                  </span>
+                  <input
+                    type="text"
+                    value={slot}
+                    onChange={(e) => updateSlot(idx, e.target.value)}
+                    placeholder="—"
+                    className="w-full bg-transparent border-none outline-none font-mono text-xs text-white/85 focus:text-white placeholder-white/10 text-center mt-0.5"
+                  />
+                </div>
+              ))}
             </div>
-
-            {isFocusActive ? (
-              <div className="p-3.5 rounded-xl border border-brand-500/20 bg-brand-500/5 flex flex-col items-center justify-center gap-2">
-                <div className="text-3xl font-black font-mono text-white tracking-wide">
-                  {formatTime(timeLeft)}
-                </div>
-                <div className="text-[9px] font-mono text-white/30 uppercase tracking-widest">
-                  Remaining Session Time
-                </div>
-                <button
-                  onClick={toggleFocus}
-                  className="mt-1 w-full py-1.5 rounded-lg bg-rose-500/15 border border-rose-500/20 text-rose-400 font-mono text-xs hover:bg-rose-500/25 transition-all active:scale-95"
-                >
-                  ■ Stop Focus
-                </button>
-              </div>
-            ) : (
-              <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.01] flex items-center justify-between gap-3">
-                <div className="flex items-center gap-1.5">
-                  <button
-                    onClick={() => adjustDuration(-5)}
-                    className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/[0.02] border border-white/5 text-white/60 hover:text-white hover:bg-white/5 transition-colors text-sm font-semibold font-mono"
-                  >
-                    -
-                  </button>
-                  <div className="w-16 text-center">
-                    <div className="text-sm font-bold font-mono text-white">{focusDuration}</div>
-                    <div className="text-[9px] font-mono text-white/30 uppercase">mins</div>
-                  </div>
-                  <button
-                    onClick={() => adjustDuration(5)}
-                    className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/[0.02] border border-white/5 text-white/60 hover:text-white hover:bg-white/5 transition-colors text-sm font-semibold font-mono"
-                  >
-                    +
-                  </button>
-                </div>
-                <button
-                  onClick={toggleFocus}
-                  className="flex-1 py-2 rounded-xl bg-brand-500 text-white font-mono text-xs hover:bg-brand-400 transition-all active:scale-95 flex items-center justify-center gap-1.5 font-bold shadow-[0_4px_16px_rgba(var(--brand-500-rgb),0.25)]"
-                >
-                  <span>▶</span> Focus
-                </button>
-              </div>
-            )}
           </div>
+
         </div>
       </div>
     </>
