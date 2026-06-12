@@ -34,13 +34,6 @@ export default async function DashboardPage() {
            </p>
         </section>
 
-        {/* Primary Execution Layer */}
-        <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-3xl" />}>
-           <TodayWrapper />
-        </Suspense>
-
-        <div className="h-px bg-white/5" />
-
         {/* Weekly Context View */}
         <div className="space-y-8">
           <div>
@@ -51,6 +44,13 @@ export default async function DashboardPage() {
              <WeeklyCalendar />
           </Suspense>
         </div>
+
+        <div className="h-px bg-white/5" />
+
+        {/* Primary Execution Layer */}
+        <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-3xl" />}>
+           <TodayWrapper />
+        </Suspense>
 
         <div id="insights" className="pt-20 pb-10 text-center opacity-10 text-[9px] uppercase font-bold tracking-[0.4em] scroll-mt-24">
            Continuous Improvement Protocol active
