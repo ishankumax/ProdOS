@@ -16,6 +16,10 @@ export default function FloatingThemeSelector() {
   const [isHovered, setIsHovered] = useState(false);
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("theme-selector-hover", { detail: isHovered }));
+  }, [isHovered]);
+
   const handleMouseEnter = () => {
     if (closeTimeoutRef.current) {
       clearTimeout(closeTimeoutRef.current);
