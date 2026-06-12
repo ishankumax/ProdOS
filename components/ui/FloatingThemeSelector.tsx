@@ -60,16 +60,16 @@ export default function FloatingThemeSelector() {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       className={cn(
-        "fixed bottom-6 right-6 z-50 flex items-center h-12 overflow-hidden cursor-default select-none transition-all duration-500 ease-out rounded-full border backdrop-blur-md",
+        "fixed bottom-6 right-6 z-50 flex flex-col justify-end items-center w-12 overflow-hidden cursor-default select-none transition-all duration-500 ease-out rounded-full border backdrop-blur-md",
         "bg-surface-raised/80 border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]",
         "hover:border-brand-500/30 hover:shadow-[0_0_20px_rgba(var(--brand-500-rgb),0.15)]",
-        isHovered ? "w-[340px]" : "w-12"
+        isHovered ? "h-[268px]" : "h-12"
       )}
     >
-      {/* Expanded Theme Selection Grid */}
+      {/* Expanded Theme Selection Stack */}
       <div
         className={cn(
-          "flex items-center gap-1 pl-4 pr-12 transition-all duration-300 w-full justify-between",
+          "absolute top-3 flex flex-col items-center gap-1.5 transition-all duration-300 w-full",
           isHovered ? "opacity-100 pointer-events-auto delay-100" : "opacity-0 pointer-events-none"
         )}
       >
@@ -79,29 +79,29 @@ export default function FloatingThemeSelector() {
             onClick={() => changeTheme(themeOpt.name)}
             title={themeOpt.title}
             className={cn(
-              "flex items-center gap-1 px-1.5 py-1 rounded transition-all duration-200 border font-sans text-[10px] font-medium tracking-wider active:scale-95",
+              "flex flex-col items-center justify-center w-9 h-9 rounded-xl transition-all duration-200 border font-mono text-[9px] tracking-tighter active:scale-95 shrink-0",
               activeTheme === themeOpt.name
                 ? "border-brand-500/30 bg-brand-500/10 text-brand-400 shadow-[0_0_8px_rgba(var(--brand-500-rgb),0.1)]"
                 : "border-transparent text-white/40 hover:text-white/80 hover:bg-white/[0.02]"
             )}
           >
-            <span className={cn("w-1.5 h-1.5 rounded-full shadow-sm", themeOpt.color)} />
+            <span className={cn("w-2 h-2 rounded-full mb-0.5 shadow-sm shrink-0", themeOpt.color)} />
             {themeOpt.label}
           </button>
         ))}
       </div>
 
-      {/* Trigger Dot / Icon */}
-      <div className="absolute right-0 top-0 w-12 h-12 flex items-center justify-center cursor-pointer pointer-events-none text-white/60">
-        <span
-          className={cn(
-            "text-base transition-transform duration-500 ease-out font-mono leading-none",
-            isHovered ? "rotate-180 text-brand-400" : "text-white/40"
-          )}
-        >
-          ❖
-        </span>
-      </div>
+      {/* Trigger Dot / Icon - Shows active theme abbreviation in its color */}
+      {(() => {
+        const currentTheme = THEMES.find((t) => t.name === activeTheme) || THEMES[0];
+        return (
+          <div className="w-full h-12 flex items-center justify-center cursor-pointer pointer-events-none shrink-0 select-none">
+            <span className="text-[10px] font-bold text-brand-400 font-mono uppercase">
+              {currentTheme.label}
+            </span>
+          </div>
+        );
+      })()}
     </div>
   );
 }
