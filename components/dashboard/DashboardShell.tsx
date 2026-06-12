@@ -3,6 +3,7 @@
 import Sidebar from "./Sidebar";
 import FloatingThemeSelector from "@/components/ui/FloatingThemeSelector";
 import ContextSwitcher from "./ContextSwitcher";
+import CalendarSidebar from "@/components/calendar/CalendarSidebar";
 import { cn } from "@/lib/utils";
 
 interface DashboardShellProps {
@@ -28,6 +29,9 @@ export default function DashboardShell({ userEmail, children }: DashboardShellPr
 
       {/* 4. Floating Top-Right Context Switcher */}
       <ContextSwitcher />
+
+      {/* 5. Floating Windows-style Calendar Sidebar */}
+      <CalendarSidebar />
     </div>
   );
 }

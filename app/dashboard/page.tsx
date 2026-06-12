@@ -1,13 +1,11 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase-server";
 import DashboardShell from "@/components/dashboard/DashboardShell";
-import WeeklyCalendar from "@/components/calendar/WeeklyCalendar";
 import TodayExecution from "@/components/dashboard/TodayExecution";
 import { getUserGoals } from "@/lib/queries/goals";
 import { getUserHabitsWithStats } from "@/lib/queries/habits";
 import { getUserAnalytics } from "@/lib/queries/analytics";
 import { Suspense } from "react";
-import { CalendarSkeleton } from "@/components/skeletons/DashboardSkeletons";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -33,19 +31,6 @@ export default async function DashboardPage() {
               Operational status for {user.email?.split("@")?.[0] ?? "User"}.
            </p>
         </section>
-
-        {/* Weekly Context View */}
-        <div className="space-y-8">
-          <div>
-            <h2 className="text-xl font-bold text-white tracking-tight">Weekly Context</h2>
-            <p className="text-xs text-white/30 mt-1">Reviewing current momentum and upcoming commitments.</p>
-          </div>
-          <Suspense fallback={<CalendarSkeleton />}>
-             <WeeklyCalendar />
-          </Suspense>
-        </div>
-
-        <div className="h-px bg-white/5" />
 
         {/* Primary Execution Layer */}
         <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-3xl" />}>
