@@ -8,7 +8,7 @@ export default function CalendarSidebar() {
   const [themeHovered, setThemeHovered] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [clock, setClock] = useState(new Date());
+  const [clock, setClock] = useState<Date | null>(null);
 
   // Navigation Views: "days" | "months" | "years"
   const [calendarView, setCalendarView] = useState<"days" | "months" | "years">("days");
@@ -19,8 +19,9 @@ export default function CalendarSidebar() {
   const panelRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  // Sync clock time
+  // Sync clock time — initialize only on client to prevent SSR hydration mismatch
   useEffect(() => {
+    setClock(new Date());
     const timer = setInterval(() => setClock(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
@@ -203,11 +204,11 @@ export default function CalendarSidebar() {
         {/* Dynamic Windows-like Time/Date Header */}
         <div className="p-4 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
           <div>
-            <div className="text-sm font-semibold font-mono text-white/95">
-              {clock.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
+            <div className="text-sm font-semibold font-mono text-white/95" suppressHydrationWarning>
+              {clock ? clock.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit" }) : "--:--:--"}
             </div>
-            <div className="text-[10px] font-bold font-mono text-brand-400 mt-0.5 uppercase tracking-wider">
-              {clock.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+            <div className="text-[10px] font-bold font-mono text-brand-400 mt-0.5 uppercase tracking-wider" suppressHydrationWarning>
+              {clock ? clock.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }) : "Loading..."}
             </div>
           </div>
           <button
