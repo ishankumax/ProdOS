@@ -9,7 +9,8 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Dashboard — Productivity OS",
+  title: "Dashboard — ProdOS",
+  description: "Your unified life operating system — goals, habits, and execution in one command center.",
 };
 
 export default async function DashboardPage() {
@@ -23,17 +24,34 @@ export default async function DashboardPage() {
 
   return (
     <DashboardShell userEmail={user.email}>
+      {/* Scanline Effect Overlay */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 z-[999] overflow-hidden"
+      >
+        <div className="w-full h-0.5 bg-white/[0.04] animate-scanline absolute top-0 left-0" />
+      </div>
+
       <div className="prod-container">
-        {/* Header Area */}
-        <section>
-           <h1 className="text-3xl font-bold text-white tracking-tight">System Identity</h1>
-           <p className="text-white/40 text-sm mt-1">
-              Operational status for {user.email?.split("@")?.[0] ?? "User"}.
-           </p>
+        {/* Page Header — Stitch Design */}
+        <section className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <h1 className="text-2xl font-bold text-white tracking-tight font-mono">ProdOS</h1>
+            <div className="h-4 w-px bg-white/10 mx-1" />
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-[11px] uppercase tracking-widest text-brand-400 font-bold">
+                SYSTEM ACTIVE
+              </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse block" />
+            </div>
+          </div>
+          <p className="text-white/25 text-[11px] font-mono uppercase tracking-widest hidden md:block">
+            {user.email?.split("@")?.[0] ?? "User"}_session
+          </p>
         </section>
 
         {/* Primary Execution Layer */}
-        <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-3xl" />}>
+        <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-[2px]" />}>
            <TodayWrapper />
         </Suspense>
 

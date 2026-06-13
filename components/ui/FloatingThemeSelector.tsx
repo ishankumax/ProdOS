@@ -7,7 +7,7 @@ const THEMES = [
   { name: "default", label: "NOR", color: "bg-indigo-500", title: "Nordic Blue (Default)" },
   { name: "amber", label: "AMB", color: "bg-amber-500", title: "Cyberpunk Amber" },
   { name: "green", label: "MAT", color: "bg-emerald-500", title: "Matrix Green" },
-  { name: "rose", label: "DRC", color: "bg-rose-500", title: "Dracula Rose" },
+  { name: "rose", label: "DRC", color: "#D61F87", title: "Dracula Rose" },
   { name: "mono", label: "GHO", color: "bg-zinc-400", title: "Ghost Monochrome" },
 ];
 
@@ -87,7 +87,10 @@ export default function FloatingThemeSelector() {
                 : "border-transparent text-white/40 hover:text-white/80 hover:bg-white/[0.02]"
             )}
           >
-            <span className={cn("w-2 h-2 rounded-full mb-0.5 shadow-sm shrink-0", themeOpt.color)} />
+            <span
+                className={cn("w-2 h-2 rounded-full mb-0.5 shadow-sm shrink-0", !themeOpt.color.startsWith("#") && themeOpt.color)}
+                style={themeOpt.color.startsWith("#") ? { backgroundColor: themeOpt.color } : undefined}
+              />
             {themeOpt.label}
           </button>
         ))}
