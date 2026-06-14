@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase-server";
 import DashboardShell from "@/components/dashboard/DashboardShell";
-import TodayExecution from "@/components/dashboard/TodayExecution";
+import DashboardContent from "@/components/dashboard/DashboardContent";
 import { getUserGoals } from "@/lib/queries/goals";
 import { getUserHabitsWithStats } from "@/lib/queries/habits";
 import { getUserAnalytics } from "@/lib/queries/analytics";
@@ -33,26 +33,9 @@ export default async function DashboardPage() {
       </div>
 
       <div className="prod-container">
-        {/* Page Header — Stitch Design */}
-        <section className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold text-white tracking-tight font-mono">ProdOS</h1>
-            <div className="h-4 w-px bg-white/10 mx-1" />
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-[11px] uppercase tracking-widest text-brand-400 font-bold">
-                SYSTEM ACTIVE
-              </span>
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse block" />
-            </div>
-          </div>
-          <p className="text-white/25 text-[11px] font-mono uppercase tracking-widest hidden md:block">
-            {user.email?.split("@")?.[0] ?? "User"}_session
-          </p>
-        </section>
-
-        {/* Primary Execution Layer */}
+        {/* Primary Execution Layer (includes Header with Version switcher) */}
         <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-[2px]" />}>
-           <TodayWrapper />
+           <TodayWrapper userEmail={user.email} />
         </Suspense>
 
         <div id="insights" className="pt-20 pb-10 text-center opacity-10 text-[9px] uppercase font-bold tracking-[0.4em] scroll-mt-24">
@@ -63,12 +46,12 @@ export default async function DashboardPage() {
   );
 }
 
-async function TodayWrapper() {
+async function TodayWrapper({ userEmail }: { userEmail: string }) {
   const [analytics, goals, habits] = await Promise.all([
     getUserAnalytics(),
     getUserGoals(),
     getUserHabitsWithStats()
   ]);
 
-  return <TodayExecution analytics={analytics} goals={goals} habits={habits} />;
+  return <DashboardContent analytics={analytics} goals={goals} habits={habits} userEmail={userEmail} />;
 }
