@@ -1,8 +1,8 @@
 "use client";
 
 import { useVersion } from "@/hooks/use-version";
-import TodayExecution from "./TodayExecution";
-import TodayExecutionMark2 from "./TodayExecutionMark2";
+import TodayExecution from "@/components/mark1/TodayExecution";
+import TodayExecutionMark2 from "@/components/mark2/TodayExecutionMark2";
 import { UserAnalytics } from "@/types/analytics";
 import { Goal } from "@/types/goals";
 import { HabitWithStats } from "@/types/habits";

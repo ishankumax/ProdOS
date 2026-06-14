@@ -4,9 +4,9 @@ import { useTransition } from "react";
 import { UserAnalytics } from "@/types/analytics";
 import { Goal } from "@/types/goals";
 import { HabitWithStats } from "@/types/habits";
-import GoalItem from "@/components/goals/GoalItem";
-import HabitItem from "@/components/habits/HabitItem";
-import GoalForm from "@/components/goals/GoalForm";
+import GoalItem from "./GoalItem";
+import HabitItem from "./HabitItem";
+import GoalForm from "./GoalForm";
 import { cn } from "@/lib/utils";
 
 interface TodayExecutionProps {
@@ -97,13 +97,13 @@ export default function TodayExecution({ analytics, goals, habits }: TodayExecut
           <div className="space-y-4">
              <GoalForm />
              <div className="grid gap-3">
-               {todayGoals.length === 0 ? (
-                 <p className="text-sm text-white/10 italic">No goals defined for today.</p>
-               ) : (
-                 todayGoals.map(goal => (
-                   <GoalItem key={goal.id} goal={goal} />
-                 ))
-               )}
+                {todayGoals.length === 0 ? (
+                  <p className="text-sm text-white/10 italic">No goals defined for today.</p>
+                ) : (
+                  todayGoals.map(goal => (
+                    <GoalItem key={goal.id} goal={goal} />
+                  ))
+                )}
              </div>
           </div>
         </div>
@@ -113,22 +113,22 @@ export default function TodayExecution({ analytics, goals, habits }: TodayExecut
           <h2 className="text-xl font-bold text-white tracking-tight">Active Routines</h2>
           <div className="grid gap-4">
              {incompleteHabits.length > 0 && (
-               <div className="grid grid-cols-1 gap-3">
-                 {incompleteHabits.map(habit => (
-                   <HabitItem key={habit.id} habit={habit} />
-                 ))}
-               </div>
+                <div className="grid grid-cols-1 gap-3">
+                  {incompleteHabits.map(habit => (
+                    <HabitItem key={habit.id} habit={habit} />
+                  ))}
+                </div>
              )}
              
              {completedHabits.length > 0 && (
-               <div className="space-y-3 opacity-40">
-                 <p className="text-[9px] font-bold text-white/20 uppercase tracking-widest px-2">Completed</p>
-                 <div className="grid grid-cols-1 gap-3">
-                   {completedHabits.map(habit => (
-                     <HabitItem key={habit.id} habit={habit} />
-                   ))}
-                 </div>
-               </div>
+                <div className="space-y-3 opacity-40">
+                  <p className="text-[9px] font-bold text-white/20 uppercase tracking-widest px-2">Completed</p>
+                  <div className="grid grid-cols-1 gap-3">
+                    {completedHabits.map(habit => (
+                      <HabitItem key={habit.id} habit={habit} />
+                    ))}
+                  </div>
+                </div>
              )}
           </div>
         </div>
