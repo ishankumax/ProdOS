@@ -47,27 +47,33 @@ export default function RightColumn({ domains, kpiDefinitions, kpiLogs, activeDo
     if (!newDomainName.trim() || !newDomainColor.trim()) return;
 
     setIsAddingDomain(true);
-    const response = await createDomain({
-      name: newDomainName.trim(),
-      colorHex: newDomainColor.trim(),
-      description: newDomainDesc.trim() || undefined,
-      priority: newDomainPriority,
-      status: "active",
-      iconKey: "circle",
-    });
-    setIsAddingDomain(false);
+    try {
+      const response = await createDomain({
+        name: newDomainName.trim(),
+        colorHex: newDomainColor.trim(),
+        description: newDomainDesc.trim() || undefined,
+        priority: newDomainPriority,
+        status: "active",
+        iconKey: "circle",
+      });
+      setIsAddingDomain(false);
 
-    if (response.success) {
-      setNewDomainName("");
-      setNewDomainColor("#10B981");
-      setNewDomainDesc("");
-      setNewDomainPriority("medium");
-      
-      // Notify ContextSwitcher to reload options list
-      window.dispatchEvent(new CustomEvent("domain-change"));
-      if (onRefresh) onRefresh();
-    } else {
-      alert(response.error?.message || "Failed to define domain");
+      if (response.success) {
+        setNewDomainName("");
+        setNewDomainColor("#10B981");
+        setNewDomainDesc("");
+        setNewDomainPriority("medium");
+        
+        // Notify ContextSwitcher to reload options list
+        window.dispatchEvent(new CustomEvent("domain-change"));
+        if (onRefresh) onRefresh();
+      } else {
+        alert(response.error?.message || "Failed to define domain");
+      }
+    } catch (err: any) {
+      setIsAddingDomain(false);
+      console.error("Error defining domain:", err);
+      alert(err.message || "An unexpected error occurred while defining the domain.");
     }
   };
 
@@ -75,21 +81,27 @@ export default function RightColumn({ domains, kpiDefinitions, kpiLogs, activeDo
     if (!confirm("Are you sure you want to archive this focus domain?")) return;
 
     setIsArchivingDomainId(id);
-    const response = await archiveDomain(id);
-    setIsArchivingDomainId(null);
+    try {
+      const response = await archiveDomain(id);
+      setIsArchivingDomainId(null);
 
-    if (response.success) {
-      // If the archived domain was the active context, switch back to Global View
-      if (activeDomainId === id) {
-        await setActiveDomain(null);
-        window.dispatchEvent(new CustomEvent("context-change", { detail: null }));
+      if (response.success) {
+        // If the archived domain was the active context, switch back to Global View
+        if (activeDomainId === id) {
+          await setActiveDomain(null);
+          window.dispatchEvent(new CustomEvent("context-change", { detail: null }));
+        }
+
+        // Notify ContextSwitcher to reload options list
+        window.dispatchEvent(new CustomEvent("domain-change"));
+        if (onRefresh) onRefresh();
+      } else {
+        alert(response.error?.message || "Failed to archive domain");
       }
-
-      // Notify ContextSwitcher to reload options list
-      window.dispatchEvent(new CustomEvent("domain-change"));
-      if (onRefresh) onRefresh();
-    } else {
-      alert(response.error?.message || "Failed to archive domain");
+    } catch (err: any) {
+      setIsArchivingDomainId(null);
+      console.error("Error archiving domain:", err);
+      alert(err.message || "An unexpected error occurred while archiving the domain.");
     }
   };
 
