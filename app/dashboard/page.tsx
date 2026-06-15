@@ -8,6 +8,13 @@ import { getUserAnalytics } from "@/lib/queries/analytics";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 
+// V2 Queries
+import { getGoalsHierarchy } from "@/features/goals/queries/getGoalsHierarchy";
+import { getDomains } from "@/features/domains/queries/getDomains";
+import { getTasks } from "@/features/tasks/queries/getTasks";
+import { getKpiDefinitions } from "@/features/kpis/queries/getKpiDefinitions";
+import { getAllKpiLogs } from "@/features/kpis/queries/getAllKpiLogs";
+
 export const metadata: Metadata = {
   title: "Dashboard — ProdOS",
   description: "Your unified life operating system — goals, habits, and execution in one command center.",
@@ -18,7 +25,6 @@ export default async function DashboardPage() {
   // const {
   //   data: { user },
   // } = await supabase.auth.getUser();
-
   // if (!user) redirect("/login");
   const user = { email: "demo@workspace.ai" };
 
@@ -47,11 +53,37 @@ export default async function DashboardPage() {
 }
 
 async function TodayWrapper({ userEmail }: { userEmail: string }) {
-  const [analytics, goals, habits] = await Promise.all([
+  const [
+    analytics,
+    goals,
+    habits,
+    v2Goals,
+    v2Domains,
+    v2Tasks,
+    v2Kpis,
+    v2Logs
+  ] = await Promise.all([
     getUserAnalytics(),
     getUserGoals(),
-    getUserHabitsWithStats()
+    getUserHabitsWithStats(),
+    getGoalsHierarchy(),
+    getDomains(),
+    getTasks(),
+    getKpiDefinitions(),
+    getAllKpiLogs()
   ]);
 
-  return <DashboardContent analytics={analytics} goals={goals} habits={habits} userEmail={userEmail} />;
+  return (
+    <DashboardContent
+      analytics={analytics}
+      goals={goals}
+      habits={habits}
+      userEmail={userEmail}
+      v2Goals={v2Goals}
+      v2Domains={v2Domains}
+      v2Tasks={v2Tasks}
+      v2Kpis={v2Kpis}
+      v2Logs={v2Logs}
+    />
+  );
 }

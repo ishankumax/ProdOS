@@ -7,12 +7,21 @@ import { UserAnalytics } from "@/types/analytics";
 import { Goal } from "@/types/goals";
 import { HabitWithStats } from "@/types/habits";
 import { cn } from "@/lib/utils";
+import { GoalHierarchyNode } from "@/features/goals/queries/getGoalsHierarchy";
+import { Domain } from "@/types/domain";
+import { Task } from "@/types/task";
+import { KpiDefinition, KpiLog } from "@/types/kpi";
 
 interface DashboardContentProps {
   analytics: UserAnalytics;
   goals: Goal[];
   habits: HabitWithStats[];
   userEmail?: string;
+  v2Goals: GoalHierarchyNode[];
+  v2Domains: Domain[];
+  v2Tasks: Task[];
+  v2Kpis: KpiDefinition[];
+  v2Logs: KpiLog[];
 }
 
 export default function DashboardContent({
@@ -20,6 +29,11 @@ export default function DashboardContent({
   goals,
   habits,
   userEmail,
+  v2Goals,
+  v2Domains,
+  v2Tasks,
+  v2Kpis,
+  v2Logs,
 }: DashboardContentProps) {
   const { version, setVersion } = useVersion();
 
@@ -73,7 +87,13 @@ export default function DashboardContent({
       {version === "Mark 1" ? (
         <TodayExecution analytics={analytics} goals={goals} habits={habits} />
       ) : (
-        <TodayExecutionMark2 analytics={analytics} goals={goals} habits={habits} />
+        <TodayExecutionMark2
+          v2Goals={v2Goals}
+          v2Domains={v2Domains}
+          v2Tasks={v2Tasks}
+          v2Kpis={v2Kpis}
+          v2Logs={v2Logs}
+        />
       )}
     </div>
   );
