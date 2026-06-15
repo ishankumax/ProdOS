@@ -28,10 +28,47 @@ export default function TodayExecutionMark2({
   v2Logs,
 }: TodayExecutionMark2Props) {
   const router = useRouter();
+  const [activeDomainId, setActiveDomainId] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    // 1. Read active domain cookie on mount
+    const match = document.cookie.match(/v2_active_domain_id=([^;]+)/);
+    setActiveDomainId(match ? match[1] : null);
+
+    // 2. Listen to changes in context switcher
+    const handleContextChange = (e: CustomEvent<string | null>) => {
+      setActiveDomainId(e.detail);
+    };
+
+    window.addEventListener("context-change", handleContextChange as EventListener);
+    return () => {
+      window.removeEventListener("context-change", handleContextChange as EventListener);
+    };
+  }, []);
 
   const handleRefresh = () => {
     router.refresh();
   };
+
+  // Perform dynamic filtering based on the active domain context
+  const filteredGoals = activeDomainId
+    ? v2Goals.filter((g) => g.domainId === activeDomainId)
+    : v2Goals;
+
+  const filteredTasks = activeDomainId
+    ? v2Tasks.filter((t) => t.domainId === activeDomainId)
+    : v2Tasks;
+
+  const filteredKpis = activeDomainId
+    ? v2Kpis.filter((k) => k.domainId === activeDomainId)
+    : v2Kpis;
+
+  const filteredLogs = activeDomainId
+    ? v2Logs.filter((l) => {
+        const kpi = v2Kpis.find((k) => k.id === l.kpiDefinitionId);
+        return kpi ? kpi.domainId === activeDomainId : false;
+      })
+    : v2Logs;
 
   return (
     <EditModeProvider>
@@ -40,20 +77,21 @@ export default function TodayExecutionMark2({
         
         {/* Left Column (25%) - Strategy */}
         <section className="w-full lg:w-1/4 flex flex-col gap-6 lg:overflow-y-auto pr-1">
-          <LeftColumn goals={v2Goals} onRefresh={handleRefresh} />
+          <LeftColumn goals={filteredGoals} domains={v2Domains} onRefresh={handleRefresh} />
         </section>
 
         {/* Center Column (50%) - Execution */}
         <section className="w-full lg:w-1/2 flex flex-col gap-6 lg:overflow-y-auto px-1">
-          <CenterColumn tasks={v2Tasks} domains={v2Domains} onRefresh={handleRefresh} />
+          <CenterColumn tasks={filteredTasks} domains={v2Domains} onRefresh={handleRefresh} />
         </section>
 
         {/* Right Column (25%) - Intelligence */}
         <section className="w-full lg:w-1/4 flex flex-col gap-6 lg:overflow-y-auto pl-1">
           <RightColumn
             domains={v2Domains}
-            kpiDefinitions={v2Kpis}
-            kpiLogs={v2Logs}
+            kpiDefinitions={filteredKpis}
+            kpiLogs={filteredLogs}
+            activeDomainId={activeDomainId}
             onRefresh={handleRefresh}
           />
         </section>

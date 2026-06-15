@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase-server";
 
 export interface GoalHierarchyNode {
   id: string;
+  domainId: string;
   title: string;
   startDate: string;
   endDate: string;
@@ -112,6 +113,7 @@ export async function getGoalsHierarchy(): Promise<GoalHierarchyNode[]> {
 
     return {
       id: g.id,
+      domainId: g.domain_id,
       title: g.title,
       startDate: g.start_date,
       endDate: g.end_date,

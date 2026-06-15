@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -13,6 +14,16 @@ const NAV_ITEMS = [
 
 export default function Sidebar({ userEmail }: { userEmail?: string }) {
   const pathname = usePathname();
+  const [hash, setHash] = useState("");
+
+  useEffect(() => {
+    setHash(window.location.hash);
+    const handleHashChange = () => {
+      setHash(window.location.hash);
+    };
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
 
   return (
     <div className="flex items-center gap-3 sm:gap-4 md:gap-6 px-4 prod-dock">
@@ -30,7 +41,10 @@ export default function Sidebar({ userEmail }: { userEmail?: string }) {
       {/* Core Pages Section */}
       <nav className="flex items-center gap-1">
         {NAV_ITEMS.map((item) => {
-          const isActive = pathname === item.href || (item.href.startsWith("/dashboard#") && pathname === "/dashboard");
+          const itemHash = item.href.split("#")[1];
+          const isActive = itemHash 
+            ? pathname === "/dashboard" && hash === `#${itemHash}`
+            : pathname === item.href && !hash;
           return (
             <Link
               key={item.label}

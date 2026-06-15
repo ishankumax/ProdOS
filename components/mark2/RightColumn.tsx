@@ -6,16 +6,20 @@ import { Domain } from "@/types/domain";
 import { KpiDefinition, KpiLog } from "@/types/kpi";
 import { defineKpi } from "@/features/kpis/actions/defineKpi";
 import { logKpiValue } from "@/features/kpis/actions/logKpiValue";
+import { createDomain } from "@/features/domains/actions/createDomain";
+import { archiveDomain } from "@/features/domains/actions/archiveDomain";
+import { setActiveDomain } from "@/features/domains/actions/setActiveDomain";
 import { cn } from "@/lib/utils";
 
 interface RightColumnProps {
   domains: Domain[];
   kpiDefinitions: KpiDefinition[];
   kpiLogs: KpiLog[];
+  activeDomainId?: string | null;
   onRefresh?: () => void;
 }
 
-export default function RightColumn({ domains, kpiDefinitions, kpiLogs, onRefresh }: RightColumnProps) {
+export default function RightColumn({ domains, kpiDefinitions, kpiLogs, activeDomainId, onRefresh }: RightColumnProps) {
   const { isEditMode } = useEditMode();
   const [newKpiName, setNewKpiName] = useState("");
   const [newKpiUnit, setNewKpiUnit] = useState("");
@@ -29,6 +33,65 @@ export default function RightColumn({ domains, kpiDefinitions, kpiLogs, onRefres
   const [isLogging, setIsLogging] = useState(false);
 
   const todayStr = new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD
+
+  // For defining a new focus domain
+  const [newDomainName, setNewDomainName] = useState("");
+  const [newDomainColor, setNewDomainColor] = useState("#10B981");
+  const [newDomainDesc, setNewDomainDesc] = useState("");
+  const [newDomainPriority, setNewDomainPriority] = useState<"critical" | "high" | "medium" | "low">("medium");
+  const [isAddingDomain, setIsAddingDomain] = useState(false);
+  const [isArchivingDomainId, setIsArchivingDomainId] = useState<string | null>(null);
+
+  const handleDefineDomain = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newDomainName.trim() || !newDomainColor.trim()) return;
+
+    setIsAddingDomain(true);
+    const response = await createDomain({
+      name: newDomainName.trim(),
+      colorHex: newDomainColor.trim(),
+      description: newDomainDesc.trim() || undefined,
+      priority: newDomainPriority,
+      status: "active",
+      iconKey: "circle",
+    });
+    setIsAddingDomain(false);
+
+    if (response.success) {
+      setNewDomainName("");
+      setNewDomainColor("#10B981");
+      setNewDomainDesc("");
+      setNewDomainPriority("medium");
+      
+      // Notify ContextSwitcher to reload options list
+      window.dispatchEvent(new CustomEvent("domain-change"));
+      if (onRefresh) onRefresh();
+    } else {
+      alert(response.error?.message || "Failed to define domain");
+    }
+  };
+
+  const handleArchiveDomain = async (id: string) => {
+    if (!confirm("Are you sure you want to archive this focus domain?")) return;
+
+    setIsArchivingDomainId(id);
+    const response = await archiveDomain(id);
+    setIsArchivingDomainId(null);
+
+    if (response.success) {
+      // If the archived domain was the active context, switch back to Global View
+      if (activeDomainId === id) {
+        await setActiveDomain(null);
+        window.dispatchEvent(new CustomEvent("context-change", { detail: null }));
+      }
+
+      // Notify ContextSwitcher to reload options list
+      window.dispatchEvent(new CustomEvent("domain-change"));
+      if (onRefresh) onRefresh();
+    } else {
+      alert(response.error?.message || "Failed to archive domain");
+    }
+  };
 
   const handleDefineKpi = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,21 +160,45 @@ export default function RightColumn({ domains, kpiDefinitions, kpiLogs, onRefres
             {domains.map((domain) => {
               // Count total KPIs defined in this domain
               const domainKpis = kpiDefinitions.filter((k) => k.domainId === domain.id);
+              const isActiveContext = domain.id === activeDomainId;
 
               return (
                 <div
                   key={domain.id}
-                  className="border border-white/5 rounded p-3 bg-white/[0.01] flex flex-col justify-between"
+                  className={cn(
+                    "border rounded p-3 bg-white/[0.01] flex flex-col justify-between relative overflow-hidden transition-all duration-300",
+                    isActiveContext
+                      ? "border-brand-500/40 shadow-[0_0_12px_rgba(var(--brand-500-rgb),0.15)] bg-brand-500/[0.02]"
+                      : "border-white/5"
+                  )}
                 >
+                  {isActiveContext && (
+                    <div className="absolute top-0 right-0 bg-brand-500 text-white text-[7px] font-mono font-bold uppercase tracking-widest px-1.5 py-0.5 rounded-bl">
+                      FOCUS
+                    </div>
+                  )}
                   <div>
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="w-2.5 h-2.5 rounded-full shrink-0"
-                        style={{ backgroundColor: domain.colorHex }}
-                      />
-                      <span className="text-xs font-bold text-white tracking-tight truncate">
-                        {domain.name}
-                      </span>
+                    <div className="flex items-center justify-between gap-1.5">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span
+                          className="w-2.5 h-2.5 rounded-full shrink-0"
+                          style={{ backgroundColor: domain.colorHex }}
+                        />
+                        <span className="text-xs font-bold text-white tracking-tight truncate">
+                          {domain.name}
+                        </span>
+                      </div>
+                      {isEditMode && (
+                        <button
+                          type="button"
+                          onClick={() => handleArchiveDomain(domain.id)}
+                          disabled={isArchivingDomainId === domain.id}
+                          className="text-white/40 hover:text-rose-400 hover:bg-rose-500/10 p-0.5 rounded transition-all shrink-0 text-[10px]"
+                          title="Archive Domain"
+                        >
+                          ✕
+                        </button>
+                      )}
                     </div>
                     <p className="text-[9px] font-mono text-white/40 mt-1 uppercase tracking-wider">
                       {domain.priority} PRIORITY
@@ -183,6 +270,65 @@ export default function RightColumn({ domains, kpiDefinitions, kpiLogs, onRefres
                   className="px-3 py-1 bg-brand-500 text-white font-mono text-[10px] font-bold uppercase tracking-wider rounded-[2px] hover:bg-brand-400 active:scale-95"
                 >
                   DEFINE
+                </button>
+              </div>
+            </div>
+          </form>
+        )}
+
+        {/* Define Focus Domain Form in Edit Mode */}
+        {isEditMode && (
+          <form onSubmit={handleDefineDomain} className="mt-4 pt-3 border-t border-white/5 space-y-2">
+            <h3 className="font-mono text-[9px] font-bold text-white/30 uppercase tracking-widest">
+              [+] DEFINE FOCUS DOMAIN
+            </h3>
+            <div className="flex flex-col gap-2">
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  placeholder="Domain name (e.g. Health)"
+                  value={newDomainName}
+                  onChange={(e) => setNewDomainName(e.target.value)}
+                  disabled={isAddingDomain}
+                  required
+                  className="w-full rounded-[2px] bg-white/[0.02] border border-white/10 px-2 py-1 font-mono text-[10px] text-white outline-none focus:border-brand-500/30 transition-all"
+                />
+                <input
+                  type="text"
+                  placeholder="Color Hex (e.g. #10B981)"
+                  value={newDomainColor}
+                  onChange={(e) => setNewDomainColor(e.target.value)}
+                  disabled={isAddingDomain}
+                  required
+                  className="w-full rounded-[2px] bg-white/[0.02] border border-white/10 px-2 py-1 font-mono text-[10px] text-white outline-none focus:border-brand-500/30 transition-all"
+                />
+              </div>
+              <input
+                type="text"
+                placeholder="Description (optional)"
+                value={newDomainDesc}
+                onChange={(e) => setNewDomainDesc(e.target.value)}
+                disabled={isAddingDomain}
+                className="w-full rounded-[2px] bg-white/[0.02] border border-white/10 px-2 py-1 font-mono text-[10px] text-white outline-none focus:border-brand-500/30 transition-all"
+              />
+              <div className="flex gap-2">
+                <select
+                  value={newDomainPriority}
+                  onChange={(e: any) => setNewDomainPriority(e.target.value)}
+                  disabled={isAddingDomain}
+                  className="flex-1 rounded-[2px] bg-white/[0.02] border border-white/10 px-2 py-1 font-mono text-[10px] text-white outline-none focus:border-brand-500/30 transition-all"
+                >
+                  <option value="low" className="bg-surface-raised">Low Priority</option>
+                  <option value="medium" className="bg-surface-raised">Medium Priority</option>
+                  <option value="high" className="bg-surface-raised">High Priority</option>
+                  <option value="critical" className="bg-surface-raised">Critical Priority</option>
+                </select>
+                <button
+                  type="submit"
+                  disabled={isAddingDomain}
+                  className="px-3 py-1 bg-brand-500 text-white font-mono text-[10px] font-bold uppercase tracking-wider rounded-[2px] hover:bg-brand-400 active:scale-95"
+                >
+                  ADD DOMAIN
                 </button>
               </div>
             </div>

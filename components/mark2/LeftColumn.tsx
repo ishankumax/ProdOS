@@ -3,20 +3,49 @@
 import React, { useState } from "react";
 import { useEditMode } from "@/providers/edit-mode-provider";
 import { GoalHierarchyNode } from "@/features/goals/queries/getGoalsHierarchy";
+import { Domain } from "@/types/domain";
 import { cn } from "@/lib/utils";
 
 interface LeftColumnProps {
   goals: GoalHierarchyNode[];
+  domains: Domain[];
   onRefresh?: () => void;
 }
 
-export default function LeftColumn({ goals, onRefresh }: LeftColumnProps) {
+export default function LeftColumn({ goals, domains, onRefresh }: LeftColumnProps) {
   const { isEditMode } = useEditMode();
   const [expandedGoals, setExpandedGoals] = useState<Record<string, boolean>>({});
 
   const toggleGoalExpand = (id: string) => {
     setExpandedGoals((prev) => ({ ...prev, [id]: !prev[id] }));
   };
+
+  // Dynamic domain contributions based on filtered goals
+  const totalGoalsCount = goals.length;
+  const domainContributions = domains
+    .map((d) => {
+      const count = goals.filter((g) => g.domainId === d.id).length;
+      const percentage = totalGoalsCount > 0 ? Math.round((count / totalGoalsCount) * 100) : 0;
+      return {
+        ...d,
+        count,
+        percentage,
+      };
+    })
+    .filter((d) => d.count > 0);
+
+  // If the percentages don't add up to 100 exactly due to rounding, adjust the largest one
+  const totalPercentage = domainContributions.reduce((sum, d) => sum + d.percentage, 0);
+  if (totalPercentage > 0 && totalPercentage !== 100 && domainContributions.length > 0) {
+    const diff = 100 - totalPercentage;
+    let maxIdx = 0;
+    for (let i = 1; i < domainContributions.length; i++) {
+      if (domainContributions[i].percentage > domainContributions[maxIdx].percentage) {
+        maxIdx = i;
+      }
+    }
+    domainContributions[maxIdx].percentage += diff;
+  }
 
   return (
     <div className="flex flex-col gap-6 w-full">
@@ -132,30 +161,44 @@ export default function LeftColumn({ goals, onRefresh }: LeftColumnProps) {
         </div>
 
         <div className="space-y-4">
-          <div>
-            <div className="flex justify-between text-xs font-mono text-white/60 mb-1.5">
-              <span>Overall Impact</span>
-              <span>100%</span>
+          {domainContributions.length === 0 ? (
+            <div className="text-center py-4 text-white/30 text-xs font-mono">
+              No active goals to distribute.
             </div>
-            {/* Horizontal Distribution Stack Bar */}
-            <div className="w-full h-3 rounded bg-white/5 flex overflow-hidden">
-              <div className="bg-emerald-500 h-full hover:opacity-85 cursor-help" style={{ width: "45%" }} title="ReadNovaStory: 45%" />
-              <div className="bg-indigo-500 h-full hover:opacity-85 cursor-help" style={{ width: "30%" }} title="ITB Tech: 30%" />
-              <div className="bg-amber-500 h-full hover:opacity-85 cursor-help" style={{ width: "25%" }} title="Investments: 25%" />
-            </div>
-          </div>
+          ) : (
+            <>
+              <div>
+                <div className="flex justify-between text-xs font-mono text-white/60 mb-1.5">
+                  <span>Overall Impact</span>
+                  <span>100%</span>
+                </div>
+                {/* Horizontal Distribution Stack Bar */}
+                <div className="w-full h-3 rounded bg-white/5 flex overflow-hidden">
+                  {domainContributions.map((d) => (
+                    <div
+                      key={d.id}
+                      className="h-full hover:opacity-85 cursor-help transition-all duration-300"
+                      style={{ width: `${d.percentage}%`, backgroundColor: d.colorHex }}
+                      title={`${d.name}: ${d.percentage}% (${d.count} goal${d.count > 1 ? "s" : ""})`}
+                    />
+                  ))}
+                </div>
+              </div>
 
-          <div className="grid grid-cols-3 gap-2 font-mono text-[9px] uppercase tracking-wider font-bold text-center">
-            <div className="border border-white/5 rounded p-1 bg-emerald-500/5 text-emerald-400">
-              RNS: 45%
-            </div>
-            <div className="border border-white/5 rounded p-1 bg-indigo-500/5 text-indigo-400">
-              ITB: 30%
-            </div>
-            <div className="border border-white/5 rounded p-1 bg-amber-500/5 text-amber-400">
-              INV: 25%
-            </div>
-          </div>
+              <div className="flex flex-wrap gap-2 justify-center font-mono text-[9px] uppercase tracking-wider font-bold">
+                {domainContributions.map((d) => (
+                  <div
+                    key={d.id}
+                    className="border border-white/5 rounded px-2 py-1 flex items-center gap-1.5"
+                    style={{ backgroundColor: `${d.colorHex}10`, color: d.colorHex }}
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: d.colorHex }} />
+                    {d.name.slice(0, 3)}: {d.percentage}%
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
