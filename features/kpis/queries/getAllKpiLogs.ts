@@ -4,7 +4,7 @@ import { KpiLog } from "@/types/kpi";
 export async function getAllKpiLogs(): Promise<KpiLog[]> {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Unauthorized");
+  if (!user) return [];
 
   // Fetch logs that belong to definitions owned by user
   const { data, error } = await supabase

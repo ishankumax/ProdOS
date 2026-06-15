@@ -9,7 +9,7 @@ export async function getKpiLogs(kpiDefinitionId: string): Promise<KpiLog[]> {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    throw new Error("Unauthorized");
+    return [];
   }
 
   // 1. Verify owner of the definition

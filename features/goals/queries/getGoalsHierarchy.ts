@@ -30,7 +30,7 @@ export interface GoalHierarchyNode {
 export async function getGoalsHierarchy(): Promise<GoalHierarchyNode[]> {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Unauthorized");
+  if (!user) return [];
 
   // 1. Fetch all goals
   const { data: goals, error: goalsError } = await supabase

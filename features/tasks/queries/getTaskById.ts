@@ -9,7 +9,7 @@ export async function getTaskById(taskId: string): Promise<Task | null> {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    throw new Error("Unauthorized");
+    return null;
   }
 
   const { data, error } = await supabase

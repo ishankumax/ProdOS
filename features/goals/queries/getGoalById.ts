@@ -9,7 +9,7 @@ export async function getGoalById(id: string): Promise<Goal | null> {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    throw new Error("Unauthorized");
+    return null;
   }
 
   const { data, error } = await supabase

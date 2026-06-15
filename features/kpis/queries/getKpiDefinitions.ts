@@ -9,7 +9,7 @@ export async function getKpiDefinitions(domainId?: string): Promise<KpiDefinitio
   } = await supabase.auth.getUser();
 
   if (!user) {
-    throw new Error("Unauthorized");
+    return [];
   }
 
   let query = supabase

@@ -9,7 +9,7 @@ export async function getGoalsByDomain(domainId: string): Promise<Goal[]> {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    throw new Error("Unauthorized");
+    return [];
   }
 
   const { data, error } = await supabase
