@@ -44,10 +44,22 @@ export default function RightColumn({ domains, kpiDefinitions, kpiLogs, activeDo
 
   const handleDefineDomain = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newDomainName.trim() || !newDomainColor.trim()) return;
+    console.log("handleDefineDomain clicked. Name:", newDomainName, "Color:", newDomainColor);
+    if (!newDomainName.trim() || !newDomainColor.trim()) {
+      console.warn("Name or Color is empty!");
+      return;
+    }
 
     setIsAddingDomain(true);
     try {
+      console.log("Invoking createDomain Server Action with data:", {
+        name: newDomainName.trim(),
+        colorHex: newDomainColor.trim(),
+        description: newDomainDesc.trim() || undefined,
+        priority: newDomainPriority,
+        status: "active",
+        iconKey: "circle",
+      });
       const response = await createDomain({
         name: newDomainName.trim(),
         colorHex: newDomainColor.trim(),
@@ -56,9 +68,11 @@ export default function RightColumn({ domains, kpiDefinitions, kpiLogs, activeDo
         status: "active",
         iconKey: "circle",
       });
+      console.log("createDomain Server Action response received:", response);
       setIsAddingDomain(false);
 
       if (response.success) {
+        console.log("Domain created successfully. Resetting form states...");
         setNewDomainName("");
         setNewDomainColor("#10B981");
         setNewDomainDesc("");
@@ -68,6 +82,7 @@ export default function RightColumn({ domains, kpiDefinitions, kpiLogs, activeDo
         window.dispatchEvent(new CustomEvent("domain-change"));
         if (onRefresh) onRefresh();
       } else {
+        console.error("createDomain failed:", response.error);
         alert(response.error?.message || "Failed to define domain");
       }
     } catch (err: any) {
