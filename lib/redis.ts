@@ -48,3 +48,9 @@ export async function evictUserGoalsCache(userId: string): Promise<void> {
   await evictCache(`user:${userId}:goals`);
   await evictCache(`user:${userId}:analytics`);
 }
+
+export async function evictUserTasksCache(userId: string): Promise<void> {
+  await evictCache(`user:${userId}:tasks`);
+  await evictCache(`user:${userId}:analytics`);
+}
+
