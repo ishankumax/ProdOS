@@ -1,9 +1,4 @@
-import { createClient } from "@/lib/supabase-server";
-import { Habit, HabitLog, HabitWithStats } from "@/types/habits";
-import { computeHabitStreaks } from "@/lib/analytics";
-import { HabitSchema, HabitLogSchema } from "@/lib/validation/schemas";
-import { z } from "zod";
-import { invalidateCache } from "@/lib/cache/redis";
+import { Habit, HabitWithStats } from "@/types/habits";
 
 const MOCK_HABITS: HabitWithStats[] = [
   { id: '1', name: 'Physical Training', user_id: 'mock', created_at: new Date().toISOString(), current_streak: 5, today_completed: false, history_7_days: [true, true, true, true, true, false, false] },

@@ -1,8 +1,4 @@
-import { createClient } from "@/lib/supabase-server";
 import type { Goal, GoalType } from "@/types/goals";
-import { GoalSchema } from "@/lib/validation/schemas";
-import { z } from "zod";
-import { invalidateCache } from "@/lib/cache/redis";
 
 /**
  * Fetch all goals for the authenticated user, newest first.

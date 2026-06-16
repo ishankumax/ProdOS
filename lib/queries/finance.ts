@@ -1,4 +1,3 @@
-import { createClient } from "@/lib/supabase-server";
 import { Earning, Expense, Bill } from "@/types/finance";
 
 const MOCK_EARNINGS: Earning[] = [
