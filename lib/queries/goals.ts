@@ -1,19 +1,34 @@
+import { createClient } from "@/lib/supabase-server";
+import { getAuthenticatedUser } from "@/lib/auth-helpers";
 import type { Goal, GoalType } from "@/types/goals";
 
 /**
  * Fetch all goals for the authenticated user, newest first.
  * RLS on the goals table ensures only the owner's rows are returned.
  */
-const MOCK_GOALS: Goal[] = [
-  { id: '1', title: 'Refactor Portfolio Layout', type: 'daily', completed: false, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), user_id: 'mock' },
-  { id: '2', title: 'Complete Finance OS UI', type: 'daily', completed: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), user_id: 'mock' },
-  { id: '3', title: 'Deep Work: Project Strategy', type: 'daily', completed: false, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), user_id: 'mock' },
-];
-
 export async function getUserGoals(): Promise<Goal[]> {
-  return MOCK_GOALS;
-}
+  try {
+    const user = await getAuthenticatedUser();
+    if (!user) return [];
 
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("goals")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching user goals:", error.message);
+      return [];
+    }
+
+    return (data || []) as Goal[];
+  } catch (err) {
+    console.error("Error in getUserGoals:", err);
+    return [];
+  }
+}
 
 /**
  * Insert a new goal for the authenticated user.
@@ -22,14 +37,65 @@ export async function createGoal(
   title: string,
   type: GoalType
 ): Promise<Goal> {
-  console.log("Mock create goal", title, type);
-  return MOCK_GOALS[0]!;
+  const user = await getAuthenticatedUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("goals")
+    .insert({
+      user_id: user.id,
+      title,
+      type,
+      completed: false,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error creating goal:", error.message);
+    throw new Error(error.message);
+  }
+
+  return data as Goal;
 }
 
+/**
+ * Toggle a goal's completed state.
+ */
 export async function toggleGoal(id: string, completed: boolean): Promise<void> {
-  console.log("Mock toggle goal", id, completed);
+  const user = await getAuthenticatedUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const supabase = createClient();
+  const { error } = await supabase
+    .from("goals")
+    .update({ completed })
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) {
+    console.error("Error toggling goal:", error.message);
+    throw new Error(error.message);
+  }
 }
 
+/**
+ * Delete a goal.
+ */
 export async function deleteGoal(id: string): Promise<void> {
-  console.log("Mock delete goal", id);
+  const user = await getAuthenticatedUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const supabase = createClient();
+  const { error } = await supabase
+    .from("goals")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) {
+    console.error("Error deleting goal:", error.message);
+    throw new Error(error.message);
+  }
 }
