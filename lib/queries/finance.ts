@@ -1,62 +1,292 @@
-import { Earning, Expense, Bill } from "@/types/finance";
+import { createClient } from "@/lib/supabase-server";
+import { getAuthenticatedUser } from "@/lib/auth-helpers";
+import type { Earning, Expense, Bill } from "@/types/finance";
 
-const MOCK_EARNINGS: Earning[] = [
-  { id: '1', source: 'Freelancing - Web App', amount: 2500, category: 'Freelancing', paymentDate: '2024-05-01', status: 'Paid', user_id: 'mock' },
-  { id: '2', source: 'Consulting - Fintech', amount: 1200, category: 'Consulting', paymentDate: '2024-05-10', status: 'Pending', user_id: 'mock' },
-  { id: '3', source: 'Events - Workshop', amount: 500, category: 'Events', paymentDate: '2024-05-15', status: 'Paid', user_id: 'mock' },
-];
-
-const MOCK_EXPENSES: Expense[] = [
-  { id: '1', title: 'Adobe Creative Cloud', amount: 52, type: 'Subscription', date: '2024-05-01', user_id: 'mock' },
-  { id: '2', title: 'Vercel Pro', amount: 20, type: 'Subscription', date: '2024-05-02', user_id: 'mock' },
-  { id: '3', title: 'Business Travel - NYC', amount: 450, type: 'Travel', date: '2024-05-05', user_id: 'mock' },
-];
-
-const MOCK_BILLS: Bill[] = [
-  { id: '1', title: 'Domain - kumar.dev', amount: 15, dueDate: '2024-06-01', status: 'Unpaid', recurring: true, user_id: 'mock' },
-  { id: '2', title: 'AWS Hosting', amount: 45, dueDate: '2024-05-28', status: 'Paid', recurring: true, user_id: 'mock' },
-];
-
+/**
+ * Fetch all finance data (earnings, expenses, bills) for the authenticated user.
+ */
 export async function getFinanceData() {
-  return {
-    earnings: MOCK_EARNINGS,
-    expenses: MOCK_EXPENSES,
-    bills: MOCK_BILLS,
-  };
+  try {
+    const user = await getAuthenticatedUser();
+    if (!user) {
+      return {
+        earnings: [],
+        expenses: [],
+        bills: [],
+      };
+    }
+
+    const supabase = createClient();
+
+    const [earningsRes, expensesRes, billsRes] = await Promise.all([
+      supabase
+        .from("earnings")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("payment_date", { ascending: false }),
+      supabase
+        .from("expenses")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("date", { ascending: false }),
+      supabase
+        .from("bills")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("due_date", { ascending: false }),
+    ]);
+
+    if (earningsRes.error) console.error("Error fetching earnings:", earningsRes.error.message);
+    if (expensesRes.error) console.error("Error fetching expenses:", expensesRes.error.message);
+    if (billsRes.error) console.error("Error fetching bills:", billsRes.error.message);
+
+    const earnings = (earningsRes.data || []).map((e) => ({
+      id: e.id,
+      source: e.source,
+      amount: Number(e.amount),
+      category: e.category,
+      paymentDate: e.payment_date,
+      status: e.status,
+      user_id: e.user_id,
+    })) as Earning[];
+
+    const expenses = (expensesRes.data || []).map((e) => ({
+      id: e.id,
+      title: e.title,
+      amount: Number(e.amount),
+      type: e.type,
+      date: e.date,
+      user_id: e.user_id,
+    })) as Expense[];
+
+    const bills = (billsRes.data || []).map((b) => ({
+      id: b.id,
+      title: b.title,
+      amount: Number(b.amount),
+      dueDate: b.due_date,
+      status: b.status,
+      recurring: b.recurring,
+      user_id: b.user_id,
+    })) as Bill[];
+
+    return { earnings, expenses, bills };
+  } catch (err) {
+    console.error("Error in getFinanceData:", err);
+    return {
+      earnings: [],
+      expenses: [],
+      bills: [],
+    };
+  }
 }
 
-export async function updateEarning(id: string, updates: Partial<Earning>) {
-  console.log("Mock update earning", id, updates);
+/**
+ * Update an existing earning.
+ */
+export async function updateEarning(id: string, updates: Partial<Earning>): Promise<void> {
+  const user = await getAuthenticatedUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const supabase = createClient();
+
+  const mappedUpdates: Record<string, unknown> = { ...updates } as Record<string, unknown>;
+  if (mappedUpdates.paymentDate !== undefined) {
+    mappedUpdates.payment_date = mappedUpdates.paymentDate;
+    delete mappedUpdates.paymentDate;
+  }
+  delete mappedUpdates.id;
+  delete mappedUpdates.user_id;
+
+  const { error } = await supabase
+    .from("earnings")
+    .update(mappedUpdates)
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) {
+    console.error("Error updating earning:", error.message);
+    throw new Error(error.message);
+  }
 }
 
-export async function createEarning() {
-  console.log("Mock create earning");
+/**
+ * Create a new default earning for the user.
+ */
+export async function createEarning(): Promise<void> {
+  const user = await getAuthenticatedUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const supabase = createClient();
+  const { error } = await supabase.from("earnings").insert({
+    user_id: user.id,
+    source: "New Earning Source",
+    amount: 0,
+    category: "Other",
+    payment_date: new Date().toISOString().split("T")[0]!,
+    status: "Pending",
+  });
+
+  if (error) {
+    console.error("Error creating earning:", error.message);
+    throw new Error(error.message);
+  }
 }
 
-export async function deleteEarning(id: string) {
-  console.log("Mock delete earning", id);
+/**
+ * Delete an earning.
+ */
+export async function deleteEarning(id: string): Promise<void> {
+  const user = await getAuthenticatedUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const supabase = createClient();
+  const { error } = await supabase
+    .from("earnings")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) {
+    console.error("Error deleting earning:", error.message);
+    throw new Error(error.message);
+  }
 }
 
-export async function updateExpense(id: string, updates: Partial<Expense>) {
-  console.log("Mock update expense", id, updates);
+/**
+ * Update an existing expense.
+ */
+export async function updateExpense(id: string, updates: Partial<Expense>): Promise<void> {
+  const user = await getAuthenticatedUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const supabase = createClient();
+
+  const mappedUpdates: Record<string, unknown> = { ...updates } as Record<string, unknown>;
+  delete mappedUpdates.id;
+  delete mappedUpdates.user_id;
+
+  const { error } = await supabase
+    .from("expenses")
+    .update(mappedUpdates)
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) {
+    console.error("Error updating expense:", error.message);
+    throw new Error(error.message);
+  }
 }
 
-export async function createExpense() {
-  console.log("Mock create expense");
+/**
+ * Create a new default expense.
+ */
+export async function createExpense(): Promise<void> {
+  const user = await getAuthenticatedUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const supabase = createClient();
+  const { error } = await supabase.from("expenses").insert({
+    user_id: user.id,
+    title: "New Expense",
+    amount: 0,
+    type: "Misc",
+    date: new Date().toISOString().split("T")[0]!,
+  });
+
+  if (error) {
+    console.error("Error creating expense:", error.message);
+    throw new Error(error.message);
+  }
 }
 
-export async function deleteExpense(id: string) {
-  console.log("Mock delete expense", id);
+/**
+ * Delete an expense.
+ */
+export async function deleteExpense(id: string): Promise<void> {
+  const user = await getAuthenticatedUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const supabase = createClient();
+  const { error } = await supabase
+    .from("expenses")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) {
+    console.error("Error deleting expense:", error.message);
+    throw new Error(error.message);
+  }
 }
 
-export async function updateBill(id: string, updates: Partial<Bill>) {
-  console.log("Mock update bill", id, updates);
+/**
+ * Update an existing bill.
+ */
+export async function updateBill(id: string, updates: Partial<Bill>): Promise<void> {
+  const user = await getAuthenticatedUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const supabase = createClient();
+
+  const mappedUpdates: Record<string, unknown> = { ...updates } as Record<string, unknown>;
+  if (mappedUpdates.dueDate !== undefined) {
+    mappedUpdates.due_date = mappedUpdates.dueDate;
+    delete mappedUpdates.dueDate;
+  }
+  delete mappedUpdates.id;
+  delete mappedUpdates.user_id;
+
+  const { error } = await supabase
+    .from("bills")
+    .update(mappedUpdates)
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) {
+    console.error("Error updating bill:", error.message);
+    throw new Error(error.message);
+  }
 }
 
-export async function createBill() {
-  console.log("Mock create bill");
+/**
+ * Create a new default bill.
+ */
+export async function createBill(): Promise<void> {
+  const user = await getAuthenticatedUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const supabase = createClient();
+  const { error } = await supabase.from("bills").insert({
+    user_id: user.id,
+    title: "New Bill",
+    amount: 0,
+    due_date: new Date().toISOString().split("T")[0]!,
+    status: "Unpaid",
+    recurring: false,
+  });
+
+  if (error) {
+    console.error("Error creating bill:", error.message);
+    throw new Error(error.message);
+  }
 }
 
-export async function deleteBill(id: string) {
-  console.log("Mock delete bill", id);
+/**
+ * Delete a bill.
+ */
+export async function deleteBill(id: string): Promise<void> {
+  const user = await getAuthenticatedUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const supabase = createClient();
+  const { error } = await supabase
+    .from("bills")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) {
+    console.error("Error deleting bill:", error.message);
+    throw new Error(error.message);
+  }
 }
