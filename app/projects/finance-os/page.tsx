@@ -10,8 +10,7 @@ import {
   updateExpenseAction, createExpenseAction, deleteExpenseAction,
   updateBillAction, createBillAction, deleteBillAction 
 } from "./actions";
-import { createClient } from "@/lib/supabase-server";
-import { redirect } from "next/navigation";
+import { getAuthenticatedUser } from "@/lib/auth-helpers";
 
 export const metadata = {
   title: "Finance OS — Productivity OS",
@@ -19,14 +18,8 @@ export const metadata = {
 };
 
 export default async function FinanceOSPage() {
-  // const supabase = createClient();
-  // const { data: { user } } = await supabase.auth.getUser();
-
-  // if (!user) {
-  //   redirect("/login");
-  // }
-
-  const user = { email: "demo@workspace.ai" };
+  const user = await getAuthenticatedUser();
+  const email = user?.email || "demo@workspace.ai";
 
   const { earnings, expenses, bills } = await getFinanceData();
 
@@ -47,7 +40,7 @@ export default async function FinanceOSPage() {
   };
 
   return (
-    <DashboardShell userEmail={user.email}>
+    <DashboardShell userEmail={email}>
       <div className="prod-container">
         {/* Header */}
         <div className="space-y-2">

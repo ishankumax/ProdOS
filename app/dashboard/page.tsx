@@ -1,5 +1,4 @@
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase-server";
+import { getAuthenticatedUser } from "@/lib/auth-helpers";
 import DashboardShell from "@/components/dashboard/DashboardShell";
 import DashboardContent from "@/components/dashboard/DashboardContent";
 import { getUserGoals } from "@/lib/queries/goals";
@@ -21,15 +20,11 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardPage() {
-  // const supabase = createClient();
-  // const {
-  //   data: { user },
-  // } = await supabase.auth.getUser();
-  // if (!user) redirect("/login");
-  const user = { email: "demo@workspace.ai" };
+  const user = await getAuthenticatedUser();
+  const email = user?.email || "demo@workspace.ai";
 
   return (
-    <DashboardShell userEmail={user.email}>
+    <DashboardShell userEmail={email}>
       {/* Scanline Effect Overlay */}
       <div
         aria-hidden="true"
@@ -41,7 +36,7 @@ export default async function DashboardPage() {
       <div className="prod-container">
         {/* Primary Execution Layer (includes Header with Version switcher) */}
         <Suspense fallback={<div className="h-[400px] animate-pulse bg-white/5 rounded-[2px]" />}>
-           <TodayWrapper userEmail={user.email} />
+           <TodayWrapper userEmail={email} />
         </Suspense>
 
         <div id="insights" className="pt-20 pb-10 text-center opacity-10 text-[9px] uppercase font-bold tracking-[0.4em] scroll-mt-24">
