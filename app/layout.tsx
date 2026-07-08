@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import FloatingThemeSelector from "@/components/ui/FloatingThemeSelector";
 
 const inter = Inter({
   subsets: ["latin"],
