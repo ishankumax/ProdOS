@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import BottomNavbar, { WorkspaceType } from "./BottomNavbar";
 import Header from "./Header";
 import GoalsRail from "./GoalsRail";
 import CompletedDrawer from "./CompletedDrawer";
+import CalendarOverlay from "./CalendarOverlay";
 import { useEditMode } from "@/contexts/EditModeContext";
 
 interface ShellProps {
@@ -17,6 +18,8 @@ export default function Shell({ children, activeWorkspace, onWorkspaceChange }: 
   const { isEditing, toggleEdit } = useEditMode();
   const [toast, setToast] = useState<{ message: string; type: "on" | "off" } | null>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const [calOpen, setCalOpen] = useState(false);
+  const calBtnRef = useRef<HTMLButtonElement>(null);
 
   // Show toast whenever isEditing changes (skip very first mount render)
   useEffect(() => {
@@ -81,6 +84,20 @@ export default function Shell({ children, activeWorkspace, onWorkspaceChange }: 
             <i className={`${isEditing ? "fi fi-sr-check" : "fi fi-sr-pencil"} text-sm flex items-center`}></i>
           </button>
 
+          {/* Calendar Toggle Button */}
+          <button
+            ref={calBtnRef}
+            onClick={() => setCalOpen(o => !o)}
+            title="Calendar"
+            className={`w-11 h-11 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 border backdrop-blur-md ${
+              calOpen
+                ? "bg-violet-500 border-violet-400 text-white shadow-violet-500/40 scale-110"
+                : "bg-white/8 border-white/15 text-white/60 hover:text-white hover:bg-white/15 hover:border-white/30"
+            }`}
+          >
+            <i className="fi fi-sr-calendar text-sm flex items-center"></i>
+          </button>
+
           {/* Context Action Button (calculator / timer) */}
           <button
             className="w-11 h-11 bg-white/8 hover:bg-white/15 border border-white/15 hover:border-white/30 rounded-full flex items-center justify-center shadow-lg transition-all backdrop-blur-md text-white/60 hover:text-white"
@@ -93,6 +110,12 @@ export default function Shell({ children, activeWorkspace, onWorkspaceChange }: 
             )}
           </button>
         </div>
+
+        {/* Calendar Overlay (full-height right panel) */}
+        <CalendarOverlay
+          isOpen={calOpen}
+          onClose={() => setCalOpen(false)}
+        />
       </div>
     </div>
   );
