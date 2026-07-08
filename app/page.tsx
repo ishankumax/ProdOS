@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Shell from "@/components/layout/Shell";
-import { WorkspaceType } from "@/components/layout/Sidebar";
+import { WorkspaceType } from "@/components/layout/BottomNavbar";
 import TasksWidget from "@/components/workspaces/TasksWidget";
 import HealthWidget from "@/components/workspaces/HealthWidget";
 import RightPanel from "@/components/layout/RightPanel";
