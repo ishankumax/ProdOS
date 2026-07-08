@@ -13,7 +13,7 @@ export default function GoalsRail() {
         <span className="text-xs font-bold tracking-widest text-white/20 uppercase">Goals</span>
       </div>
       <div className="flex flex-col gap-4">
-        {GOALS.map((goal, i) => (
+        {GOALS.map((goal) => (
           <button
             key={goal}
             onClick={() => setActiveGoal(activeGoal === goal ? null : goal)}
