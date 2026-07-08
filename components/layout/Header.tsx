@@ -1,4 +1,4 @@
-import { WorkspaceType } from "./Sidebar";
+import { WorkspaceType } from "./BottomNavbar";
 
 interface HeaderProps {
   activeWorkspace: WorkspaceType;

@@ -16,9 +16,9 @@ export default function FinanceDashboard() {
     // Simple AI parsing mock: "Invested ₹500 in SBI" -> { amount: 500, company: "SBI" }
     const match = logText.match(/invested[^\d]*(\d+)[^a-z]*in\s+([a-z\s]+)/i);
     
-    if (match) {
+    if (match?.[1] && match[2]) {
       addInvestment({
-        amount: parseInt(match[1]),
+        amount: parseInt(match[1], 10),
         company: match[2].trim(),
         type: "Equity"
       });

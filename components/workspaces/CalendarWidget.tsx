@@ -24,11 +24,11 @@ const EVENT_TYPE_ICON: Record<string, string> = {
   event: "fi fi-sr-star",
 };
 
-const EVENT_TYPE_COLOR: Record<string, string> = {
+const EVENT_TYPE_COLOR = {
   task: "#3bf651ff",
   meeting: "#5cf6e9ff",
   event: "#daf50bff",
-};
+} as const;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function getDaysInMonth(year: number, month: number) {
@@ -44,7 +44,12 @@ function toKey(year: number, month: number, day: number) {
 const MONTH_NAMES = [
   "January","February","March","April","May","June",
   "July","August","September","October","November","December",
-];
+] as const;
+
+function getMonthName(month: number, short = false) {
+  const name = MONTH_NAMES[Math.max(0, Math.min(11, month))] ?? MONTH_NAMES[0];
+  return short ? name.slice(0, 3) : name;
+}
 const DAY_LABELS = ["S","M","T","W","T","F","S"];
 
 // ─── Main Component ───────────────────────────────────────────────────────────
@@ -114,7 +119,6 @@ export default function CalendarWidget() {
 
   // Dates that have events (dots)
   const datesWithEvents = useMemo(() => {
-    const todayKey = toKey(today.getFullYear(), today.getMonth(), today.getDate());
     const set = new Set<number>();
     // Mark today if tasks exist
     if (tasks.filter(t => !t.completed).length > 0 &&
@@ -123,15 +127,16 @@ export default function CalendarWidget() {
     }
     // Mark mock-event dates
     Object.keys(MOCK_EVENTS).forEach(key => {
-      if (MOCK_EVENTS[key].length > 0) {
+      const events = MOCK_EVENTS[key];
+      if (events && events.length > 0) {
         const [y, m, d] = key.split("-").map(Number);
-        if (y === viewYear && m - 1 === viewMonth) set.add(d);
+        if (y === viewYear && m !== undefined && m - 1 === viewMonth && d) set.add(d);
       }
     });
     return set;
   }, [tasks, viewMonth, viewYear, today]);
 
-  const formattedSelected = `${selectedDay} ${MONTH_NAMES[viewMonth].slice(0, 3)}`;
+  const formattedSelected = `${selectedDay} ${getMonthName(viewMonth, true)}`;
 
   return (
     <div className="relative">
@@ -149,7 +154,7 @@ export default function CalendarWidget() {
         <div className="flex items-center gap-2">
           <i className={`fi fi-sr-calendar text-xs flex items-center ${isOpen ? "text-indigo-400" : ""}`} />
           <span className="text-xs font-semibold tracking-wide uppercase">
-            {isOpen ? `${MONTH_NAMES[viewMonth]} ${viewYear}` : "Calendar"}
+            {isOpen ? `${getMonthName(viewMonth)} ${viewYear}` : "Calendar"}
           </span>
         </div>
         <motion.i
@@ -181,7 +186,7 @@ export default function CalendarWidget() {
                   <i className="fi fi-sr-angle-left text-[10px] flex items-center" />
                 </button>
                 <span className="text-xs font-bold text-white/80 tracking-wide">
-                  {MONTH_NAMES[viewMonth]} {viewYear}
+                  {getMonthName(viewMonth)} {viewYear}
                 </span>
                 <button
                   onClick={goToNext}
