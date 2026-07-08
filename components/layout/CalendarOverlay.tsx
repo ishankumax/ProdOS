@@ -26,7 +26,12 @@ function toKey(year: number, month: number, day: number) {
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December",
-];
+] as const;
+
+function getMonthName(month: number, short = false) {
+  const name = MONTH_NAMES[Math.max(0, Math.min(11, month))] ?? MONTH_NAMES[0];
+  return short ? name.slice(0, 3) : name;
+}
 const DAY_LABELS = ["S", "M", "T", "W", "T", "F", "S"];
 
 type ViewMode = "month" | "year" | "decade";
@@ -170,14 +175,14 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
   // ── Header label ──────────────────────────────────────────────────────────
   const headerLabel =
     viewMode === "month"
-      ? `${MONTH_NAMES[viewMonth]} ${viewYear}`
+      ? `${getMonthName(viewMonth)} ${viewYear}`
       : viewMode === "year"
       ? `${viewYear}`
       : `${decadeStart} – ${decadeStart + 9}`;
 
   const taskSectionLabel = isSelectedToday
     ? "Today's Tasks"
-    : `${selectedDay} ${MONTH_NAMES[viewMonth].slice(0, 3)}`;
+    : `${selectedDay} ${getMonthName(viewMonth, true)}`;
 
   return (
     <AnimatePresence>

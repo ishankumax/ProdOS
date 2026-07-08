@@ -17,4 +17,6 @@ const FinanceRecordSchema = new Schema<IFinanceRecord>({
   loggedDate: { type: Date, default: Date.now },
 });
 
-export const FinanceRecord = models.FinanceRecord || model<IFinanceRecord>('FinanceRecord', FinanceRecordSchema);
+export const FinanceRecord =
+  (models.FinanceRecord as mongoose.Model<IFinanceRecord> | undefined) ??
+  model<IFinanceRecord>('FinanceRecord', FinanceRecordSchema);
