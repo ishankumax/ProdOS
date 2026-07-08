@@ -9,11 +9,11 @@ interface SidebarProps {
   onWorkspaceChange: (w: WorkspaceType) => void;
 }
 
-const WORKSPACES: WorkspaceType[] = [
-  "Personal Life",
-  "Skill Check",
-  "Financial Dashboard",
-  "InTheBox",
+const WORKSPACES: { name: WorkspaceType; icon: string }[] = [
+  { name: "Personal Life", icon: "🌱" },
+  { name: "Skill Check", icon: "💻" },
+  { name: "Financial Dashboard", icon: "📈" },
+  { name: "InTheBox", icon: "📦" },
 ];
 
 export default function Sidebar({ activeWorkspace, onWorkspaceChange }: SidebarProps) {
@@ -39,28 +39,21 @@ export default function Sidebar({ activeWorkspace, onWorkspaceChange }: SidebarP
         )}
         <nav className={`space-y-2 ${isCollapsed ? "flex flex-col items-center" : ""}`}>
           {WORKSPACES.map((ws) => {
-            // If the user meant "to the personal life section only", maybe we hide others when collapsed?
-            // Let's just show initials when collapsed.
-            const initials = ws.split(" ").map(w => w[0]).join("");
-            
             return (
               <button
-                key={ws}
-                onClick={() => onWorkspaceChange(ws)}
-                title={ws}
+                key={ws.name}
+                onClick={() => onWorkspaceChange(ws.name)}
+                title={ws.name}
                 className={`text-left rounded-md text-sm transition-all flex items-center ${
-                  isCollapsed ? "justify-center w-10 h-10 p-0" : "w-full px-3 py-2"
+                  isCollapsed ? "justify-center w-10 h-10 p-0" : "w-full px-3 py-2 gap-3"
                 } ${
-                  activeWorkspace === ws
+                  activeWorkspace === ws.name
                     ? "bg-white/10 text-white font-medium"
                     : "text-white/60 hover:bg-white/5 hover:text-white"
                 }`}
               >
-                {isCollapsed ? (
-                  <span className="font-bold text-xs">{initials}</span>
-                ) : (
-                  <span>{ws}</span>
-                )}
+                <span className="text-base">{ws.icon}</span>
+                {!isCollapsed && <span>{ws.name}</span>}
               </button>
             );
           })}
