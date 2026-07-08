@@ -20,7 +20,7 @@ export default function Shell({ children, activeWorkspace, onWorkspaceChange }: 
         <Header activeWorkspace={activeWorkspace} />
 
         {/* Workspace Content Layer */}
-        <div className="flex-1 flex overflow-hidden relative pb-20">
+        <div className="flex-1 flex overflow-hidden relative pb-24">
           <GoalsRail />
           <CompletedDrawer />
           
