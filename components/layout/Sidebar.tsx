@@ -9,11 +9,11 @@ interface SidebarProps {
   onWorkspaceChange: (w: WorkspaceType) => void;
 }
 
-const WORKSPACES: { name: WorkspaceType; icon: string }[] = [
-  { name: "Personal Life", icon: "🌱" },
-  { name: "Skill Check", icon: "💻" },
-  { name: "Financial Dashboard", icon: "📈" },
-  { name: "InTheBox", icon: "📦" },
+const WORKSPACES: { name: WorkspaceType; iconClass: string }[] = [
+  { name: "Personal Life", iconClass: "fi fi-sr-home" },
+  { name: "Skill Check", iconClass: "fi fi-sr-laptop" },
+  { name: "Financial Dashboard", iconClass: "fi fi-sr-chart-histogram" },
+  { name: "InTheBox", iconClass: "fi fi-sr-box" },
 ];
 
 export default function Sidebar({ activeWorkspace, onWorkspaceChange }: SidebarProps) {
@@ -52,7 +52,7 @@ export default function Sidebar({ activeWorkspace, onWorkspaceChange }: SidebarP
                     : "text-white/60 hover:bg-white/5 hover:text-white"
                 }`}
               >
-                <span className="text-base">{ws.icon}</span>
+                <i className={`${ws.iconClass} text-sm flex items-center`}></i>
                 {!isCollapsed && <span>{ws.name}</span>}
               </button>
             );
@@ -67,7 +67,7 @@ export default function Sidebar({ activeWorkspace, onWorkspaceChange }: SidebarP
             isCollapsed ? "w-10 h-10 p-0" : "w-full gap-2 px-3 py-2"
           }`}
         >
-          <span>+</span> {!isCollapsed && "New Workspace"}
+          <i className="fi fi-sr-plus flex items-center text-xs"></i> {!isCollapsed && "New Workspace"}
         </button>
       </div>
     </aside>
