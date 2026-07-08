@@ -23,7 +23,7 @@ export default function TasksWidget() {
     <div className="flex-1 min-w-[400px] max-w-2xl bg-white/5 border border-white/10 rounded-xl p-6 flex flex-col h-full">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-lg font-bold text-white tracking-tight">Today's Execution</h2>
+          <h2 className="text-lg font-bold text-white tracking-tight">Today&apos;s Execution</h2>
           <p className="text-xs text-white/40 mt-1">Focused task list</p>
         </div>
         <button 

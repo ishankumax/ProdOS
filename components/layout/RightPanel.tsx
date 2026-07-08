@@ -34,7 +34,7 @@ export default function RightPanel() {
       </div>
 
       <div>
-        <h3 className="text-xs font-bold tracking-widest text-white/20 uppercase mb-3">Today's Agenda</h3>
+        <h3 className="text-xs font-bold tracking-widest text-white/20 uppercase mb-3">Today&apos;s Agenda</h3>
         <div className="p-3 bg-white/5 rounded text-sm text-white/60 text-center italic">
           No events synced
         </div>

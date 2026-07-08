@@ -39,7 +39,6 @@ export default function Sidebar({ activeWorkspace, onWorkspaceChange }: SidebarP
         )}
         <nav className={`space-y-2 ${isCollapsed ? "flex flex-col items-center" : ""}`}>
           {WORKSPACES.map((ws) => {
-            const isPersonalLife = ws === "Personal Life";
             // If the user meant "to the personal life section only", maybe we hide others when collapsed?
             // Let's just show initials when collapsed.
             const initials = ws.split(" ").map(w => w[0]).join("");
