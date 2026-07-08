@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import BottomNavbar, { WorkspaceType } from "./BottomNavbar";
 import Header from "./Header";
 import GoalsRail from "./GoalsRail";
@@ -14,18 +15,36 @@ interface ShellProps {
 
 export default function Shell({ children, activeWorkspace, onWorkspaceChange }: ShellProps) {
   const { isEditing, toggleEdit } = useEditMode();
+  const [toast, setToast] = useState<{ message: string; type: "on" | "off" } | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Show toast whenever isEditing changes (skip very first mount render)
+  useEffect(() => {
+    if (!isMounted) { setIsMounted(true); return; }
+    setToast({ message: isEditing ? "Edit Mode ON" : "Edit Mode OFF", type: isEditing ? "on" : "off" });
+    const t = setTimeout(() => setToast(null), 2500);
+    return () => clearTimeout(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditing]);
 
   return (
     <div className="flex h-screen bg-[#0d0d14] text-white overflow-hidden relative">
-      {/* Edit mode top banner */}
-      {isEditing && (
-        <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-center gap-3 py-2 bg-blue-500/10 border-b border-blue-500/20 backdrop-blur-sm pointer-events-none">
-          <i className="fi fi-sr-pencil text-blue-400 text-xs flex items-center"></i>
-          <span className="text-blue-400 text-xs font-semibold tracking-wider uppercase">
-            Edit Mode — Click any <span className="text-white/70 normal-case font-normal">+ Add</span> button to add content
-          </span>
-        </div>
-      )}
+
+      {/* Toast Notification */}
+      <div
+        className={`absolute top-5 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-2.5 px-4 py-2.5 rounded-full border backdrop-blur-md shadow-2xl transition-all duration-300 pointer-events-none select-none ${
+          toast
+            ? "opacity-100 translate-y-0 scale-100"
+            : "opacity-0 -translate-y-2 scale-95"
+        } ${
+          toast?.type === "on"
+            ? "bg-blue-500/20 border-blue-500/40 text-blue-300"
+            : "bg-white/8 border-white/15 text-white/60"
+        }`}
+      >
+        <i className={`${toast?.type === "on" ? "fi fi-sr-pencil" : "fi fi-sr-check"} text-xs flex items-center`}></i>
+        <span className="text-xs font-semibold tracking-wide">{toast?.message ?? "Edit Mode OFF"}</span>
+      </div>
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 relative">
@@ -33,7 +52,7 @@ export default function Shell({ children, activeWorkspace, onWorkspaceChange }: 
         <Header activeWorkspace={activeWorkspace} />
 
         {/* Workspace Content Layer */}
-        <div className={`flex-1 flex overflow-hidden relative pb-24 transition-all duration-300 ${isEditing ? "pt-9" : ""}`}>
+        <div className="flex-1 flex overflow-hidden relative pb-24">
           <GoalsRail />
           <CompletedDrawer />
           
