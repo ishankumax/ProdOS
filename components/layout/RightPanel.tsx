@@ -20,7 +20,9 @@ export default function RightPanel() {
       </div>
 
       <div className="mb-8">
-        <h3 className="text-xs font-bold tracking-widest text-white/20 uppercase mb-3">World Clocks</h3>
+        <h3 className="text-xs font-bold tracking-widest text-white/20 uppercase mb-3 flex items-center">
+          <i className="fi fi-sr-globe mr-2 text-[10px]"></i> World Clocks
+        </h3>
         <div className="space-y-2">
           <div className="flex justify-between items-center text-sm">
             <span className="text-white/60">SFO</span>
@@ -34,12 +36,14 @@ export default function RightPanel() {
       </div>
 
       <div>
-        <h3 className="text-xs font-bold tracking-widest text-white/20 uppercase mb-3">Today&apos;s Agenda</h3>
+        <h3 className="text-xs font-bold tracking-widest text-white/20 uppercase mb-3 flex items-center">
+          <i className="fi fi-sr-calendar mr-2 text-[10px]"></i> Today&apos;s Agenda
+        </h3>
         <div className="p-3 bg-white/5 rounded text-sm text-white/60 text-center italic">
           No events synced
         </div>
-        <button className="w-full mt-3 py-2 border border-white/10 rounded text-xs text-white/40 hover:text-white hover:bg-white/5 transition-colors">
-          Connect Google Calendar
+        <button className="w-full mt-3 py-2 border border-white/10 rounded text-xs text-white/40 hover:text-white hover:bg-white/5 transition-colors flex items-center justify-center gap-1.5">
+          <i className="fi fi-sr-calendar-plus text-[10px]"></i> Connect Google Calendar
         </button>
       </div>
     </aside>

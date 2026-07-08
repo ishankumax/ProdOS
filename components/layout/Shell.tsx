@@ -36,9 +36,9 @@ export default function Shell({ children, activeWorkspace, onWorkspaceChange }: 
         <div className="absolute bottom-8 right-8">
           <button className="w-14 h-14 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full flex items-center justify-center shadow-lg transition-all backdrop-blur-md">
             {activeWorkspace === "Financial Dashboard" ? (
-              <span className="text-xl">🧮</span> // Calculator
+              <i className="fi fi-sr-calculator text-lg text-white"></i>
             ) : (
-              <span className="text-xl">⏱️</span> // Pomodoro Timer
+              <i className="fi fi-sr-clock text-lg text-white"></i>
             )}
           </button>
         </div>
