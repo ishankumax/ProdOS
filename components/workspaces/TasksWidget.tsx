@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useData } from "@/components/providers/DataProvider";
+import { useEditMode } from "@/contexts/EditModeContext";
 
 export default function TasksWidget() {
   const { tasks, addTask, toggleTask } = useData();
+  const { isEditing } = useEditMode();
   const [newTaskText, setNewTaskText] = useState("");
   const [isAdding, setIsAdding] = useState(false);
 
@@ -26,17 +28,20 @@ export default function TasksWidget() {
           <h2 className="text-lg font-bold text-white tracking-tight">Today&apos;s Execution</h2>
           <p className="text-xs text-white/40 mt-1">Focused task list</p>
         </div>
-        <button 
-          onClick={() => setIsAdding(true)}
-          className="w-8 h-8 rounded-full bg-blue-500 hover:bg-blue-400 text-white flex items-center justify-center font-bold transition-colors"
-        >
-          +
-        </button>
+        {isEditing && (
+          <button
+            onClick={() => setIsAdding(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/15 border border-blue-500/30 text-blue-400 text-xs font-medium hover:bg-blue-500/25 transition-all"
+          >
+            <i className="fi fi-sr-plus flex items-center text-[10px]"></i>
+            Add Task
+          </button>
+        )}
       </div>
 
       <div className="flex-1 overflow-auto space-y-2 pr-2">
-        {isAdding && (
-          <form onSubmit={handleAdd} className="mb-4">
+        {isEditing && isAdding && (
+          <form onSubmit={handleAdd} className="mb-4 animate-in fade-in slide-in-from-top-2 duration-200">
             <input
               type="text"
               autoFocus
@@ -44,7 +49,7 @@ export default function TasksWidget() {
               onChange={(e) => setNewTaskText(e.target.value)}
               onBlur={() => !newTaskText.trim() && setIsAdding(false)}
               placeholder="What needs to be done?"
-              className="w-full bg-[#0d0d14] border border-white/10 rounded px-4 py-3 text-sm focus:outline-none focus:border-blue-500 text-white"
+              className="w-full bg-[#0d0d14] border border-blue-500/30 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-blue-500 text-white placeholder:text-white/30"
             />
           </form>
         )}
