@@ -1,6 +1,8 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { ICONS, WORKSPACE_ICONS } from "@/lib/theme";
+import { SPRING_BOUNCE, pressAnimation } from "@/lib/motion";
 
 export type WorkspaceType = "Personal Life" | "Skill Check" | "InTheBox" | "Financial Dashboard";
 
@@ -22,21 +24,29 @@ export default function BottomNavbar({ activeWorkspace, onWorkspaceChange }: Bot
       {WORKSPACES.map((ws) => {
         const isActive = activeWorkspace === ws.name;
         return (
-          <button
+          <motion.button
             key={ws.name}
             onClick={() => onWorkspaceChange(ws.name)}
+            whileTap={pressAnimation}
             title={ws.name}
-            className={`flex items-center gap-0 group-hover:gap-2 h-9 rounded-full px-2.5 transition-all duration-300 ease-in-out overflow-hidden ${
+            className={`relative flex items-center gap-0 group-hover:gap-2 h-9 rounded-full px-2.5 transition-all duration-300 ease-in-out overflow-hidden z-10 ${
               isActive
-                ? "bg-brand-500 text-white shadow-md shadow-[var(--accent-shadow)]"
+                ? "text-white"
                 : "text-white/40 hover:text-white hover:bg-white/[0.08]"
             }`}
           >
+            {isActive && (
+              <motion.div
+                layoutId="navbarActiveBg"
+                className="absolute inset-0 bg-brand-500 shadow-md shadow-[var(--accent-shadow)] z-[-1] rounded-full"
+                transition={SPRING_BOUNCE}
+              />
+            )}
             <i className={`${ws.iconClass} text-sm flex items-center flex-shrink-0`} />
             <span className="text-xs font-medium whitespace-nowrap overflow-hidden max-w-0 group-hover:max-w-[120px] opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
               {ws.name}
             </span>
-          </button>
+          </motion.button>
         );
       })}
 
@@ -44,7 +54,8 @@ export default function BottomNavbar({ activeWorkspace, onWorkspaceChange }: Bot
       <div className="w-px h-5 bg-white/[0.09] mx-0.5 flex-shrink-0" />
 
       {/* New Workspace */}
-      <button
+      <motion.button
+        whileTap={pressAnimation}
         title="New Workspace"
         className="flex items-center gap-0 group-hover:gap-2 h-9 rounded-full px-2.5 border border-dashed border-white/20 text-white/30 hover:text-white hover:border-white/40 hover:bg-white/5 transition-all duration-300 ease-in-out overflow-hidden"
       >
@@ -52,7 +63,7 @@ export default function BottomNavbar({ activeWorkspace, onWorkspaceChange }: Bot
         <span className="text-xs font-medium whitespace-nowrap overflow-hidden max-w-0 group-hover:max-w-[48px] opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
           New
         </span>
-      </button>
+      </motion.button>
     </div>
   );
 }

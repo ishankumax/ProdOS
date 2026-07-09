@@ -4,6 +4,7 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useData } from "@/components/providers/DataProvider";
 import { ICONS, CLASSES, TEXT, LAYOUT } from "@/lib/theme";
+import { GENIE_PANEL_VARIANTS, GENIE_PANEL_TRANSITION, GENIE_LIST_ITEM, GENIE_LIST_TRANSITION, LIST_STAGGER } from "@/lib/motion";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface AgendaTask {
@@ -41,6 +42,12 @@ interface CalendarOverlayProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+// ─── Layout constants (sourced from lib/theme.ts LAYOUT token) ────────────────
+const PANEL_TOP    = LAYOUT.headerH + LAYOUT.margin;          // 88px from top
+const PANEL_BOTTOM = LAYOUT.margin;                            // 24px from bottom
+const PANEL_RIGHT  = LAYOUT.margin + LAYOUT.btnStripW + LAYOUT.btnGap; // 80px from right
+const PANEL_WIDTH  = 288;                                      // px
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProps) {
@@ -166,23 +173,26 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
             onMouseDown={onClose}
           />
 
-          {/* ── Floating inline panel anchored bottom-right ── */}
+          {/* ── Panel — macOS Genie-effect launch animation ────────── */}
           <motion.div
             ref={panelRef}
             key="cal-panel"
-            initial={{ opacity: 0, scale: 0.92, y: 16 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.92, y: 16 }}
-            transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
+            variants={GENIE_PANEL_VARIANTS}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={GENIE_PANEL_TRANSITION}
             style={{
-              position: "fixed",
-              bottom: PANEL_BOTTOM,
-              right: PANEL_RIGHT,
-              width: PANEL_WIDTH,
-              zIndex: 150,
+              position:        "fixed",
+              top:             PANEL_TOP,
+              bottom:          PANEL_BOTTOM,
+              right:           PANEL_RIGHT,
+              width:           PANEL_WIDTH,
+              zIndex:          150,
+              // Anchor the transform to the bottom-right corner (= where the calendar button is)
               transformOrigin: "bottom right",
             }}
-            className={CLASSES.panel}
+            className={`flex flex-col overflow-hidden ${CLASSES.panel}`}
             onMouseDown={e => e.stopPropagation()}
           >
 
@@ -350,7 +360,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
             <div className="flex-shrink-0 mx-4 border-t border-white/[0.06]" />
 
             {/* ══ TASKS SECTION ════════════════════════════════════════ */}
-            <div className="flex flex-col px-4 pt-3 pb-3 max-h-48 min-h-0">
+            <div className="flex-1 flex flex-col px-4 pt-3 pb-4 min-h-0">
 
               {/* Tasks header row */}
               <div className="flex items-center justify-between mb-2 flex-shrink-0 gap-2">
@@ -413,10 +423,14 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                       <motion.div
                         key={task.id}
                         layout
-                        initial={{ opacity: 0, x: -8 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 8, height: 0, marginBottom: 0 }}
-                        transition={{ duration: 0.15, delay: i * 0.03 }}
+                        variants={GENIE_LIST_ITEM}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        transition={{
+                          ...GENIE_LIST_TRANSITION,
+                          delay: i * LIST_STAGGER
+                        }}
                         onClick={() => toggleTask(task.id)}
                         className={`${CLASSES.cardHover} flex items-center gap-2 p-2.5 cursor-pointer group`}
                       >

@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useData } from "@/components/providers/DataProvider";
 import { ICONS, EVENT_COLORS, CLASSES, TEXT } from "@/lib/theme";
+import { GENIE_COLLAPSE, GENIE_COLLAPSE_TRANSITION } from "@/lib/motion";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface AgendaEvent {
@@ -166,10 +167,11 @@ export default function CalendarWidget() {
         {isOpen && (
           <motion.div
             key="calendar-panel"
-            initial={{ opacity: 0, height: 0, y: -6 }}
-            animate={{ opacity: 1, height: "auto", y: 0 }}
-            exit={{ opacity: 0, height: 0, y: -6 }}
-            transition={{ duration: 0.32, ease: [0.4, 0, 0.2, 1] }}
+            variants={GENIE_COLLAPSE}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={GENIE_COLLAPSE_TRANSITION}
             className="overflow-hidden"
           >
             <div className={`mt-2 ${CLASSES.panel} p-3`}>
