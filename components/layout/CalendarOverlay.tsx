@@ -176,19 +176,19 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
           <motion.div
             ref={panelRef}
             key="cal-panel"
-            initial={{ opacity: 0, scale: 0.92, y: 16 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.92, y: 16 }}
+            initial={{ opacity: 0, x: 24 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{   opacity: 0, x: 24 }}
             transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
             style={{
               position: "fixed",
+              top:    PANEL_TOP,
               bottom: PANEL_BOTTOM,
-              right: PANEL_RIGHT,
-              width: PANEL_WIDTH,
+              right:  PANEL_RIGHT,
+              width:  PANEL_WIDTH,
               zIndex: 150,
-              transformOrigin: "bottom right",
             }}
-            className={CLASSES.panel}
+            className={`flex flex-col overflow-hidden ${CLASSES.panel}`}
             onMouseDown={e => e.stopPropagation()}
           >
 
@@ -356,7 +356,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
             <div className="flex-shrink-0 mx-4 border-t border-white/[0.06]" />
 
             {/* ══ TASKS SECTION ════════════════════════════════════════ */}
-            <div className="flex flex-col px-4 pt-3 pb-3 max-h-48 min-h-0">
+            <div className="flex-1 flex flex-col px-4 pt-3 pb-4 min-h-0">
 
               {/* Tasks header row */}
               <div className="flex items-center justify-between mb-2 flex-shrink-0 gap-2">
