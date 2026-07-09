@@ -127,6 +127,38 @@
     --mesh-color-3: 240 5% 10%;
   }
 
+  /* ── Shell-level semantic tokens ─────────────────────────────────────────
+     These map the raw --brand-* vars into role-based names used by
+     Shell, BottomNavbar, CalendarOverlay, TasksWidget, etc.
+     Change the brand theme in :root and ALL accents update everywhere.   */
+
+  :root {
+    /* Active / accent state (replaces hardcoded blue-500 / violet-500) */
+    --accent:          hsl(var(--brand-500));
+    --accent-muted:    hsl(var(--brand-500) / 0.15);
+    --accent-border:   hsl(var(--brand-500) / 0.30);
+    --accent-text:     hsl(var(--brand-400));
+    --accent-shadow:   rgba(var(--brand-500-rgb), 0.35);
+    --accent-glow:     0 0 24px rgba(var(--brand-500-rgb), 0.35);
+
+    /* App shell background (replaces hardcoded #0d0d14) */
+    --shell-bg:        hsl(var(--surface-default));
+    --shell-panel:     hsl(var(--surface-raised));
+    --shell-overlay:   hsl(var(--surface-overlay));
+
+    /* Border layers */
+    --border-subtle:   rgba(255,255,255,0.06);
+    --border-default:  rgba(255,255,255,0.09);
+    --border-strong:   rgba(255,255,255,0.15);
+
+    /* Text opacity scale */
+    --text-dim:        rgba(255,255,255,0.20);
+    --text-muted:      rgba(255,255,255,0.40);
+    --text-subtle:     rgba(255,255,255,0.60);
+    --text-base:       rgba(255,255,255,0.80);
+    --text-strong:     rgba(255,255,255,1.00);
+  }
+
   *,
   *::before,
   *::after {
@@ -140,13 +172,13 @@
   body {
     font-family: var(--font-montserrat), sans-serif;
     min-height: 100dvh;
-    background-color: hsl(var(--surface-default));
+    background-color: var(--shell-bg);
     color: hsl(0 0% 95%);
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   ::selection {
-    background-color: hsl(var(--brand-500) / 0.35);
+    background-color: var(--accent-muted);
     color: hsl(0 0% 100%);
   }
 
@@ -155,16 +187,16 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: hsl(var(--surface-raised));
+    background: var(--shell-panel);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: hsl(var(--surface-overlay));
+    background: var(--shell-overlay);
     border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--brand-500));
+    background: var(--accent);
   }
 
   /* Prevent browser autofill from breaking the dark theme */
@@ -172,7 +204,7 @@
   input:-webkit-autofill:hover, 
   input:-webkit-autofill:focus, 
   input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px hsl(var(--surface-default)) inset !important;
+    -webkit-box-shadow: 0 0 0 30px var(--shell-bg) inset !important;
     -webkit-text-fill-color: white !important;
     transition: background-color 5000s ease-in-out 0s;
   }
