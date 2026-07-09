@@ -42,6 +42,12 @@ interface CalendarOverlayProps {
   onClose: () => void;
 }
 
+// ─── Layout constants (sourced from lib/theme.ts LAYOUT token) ────────────────
+const PANEL_TOP    = LAYOUT.headerH + LAYOUT.margin;          // 88px from top
+const PANEL_BOTTOM = LAYOUT.margin;                            // 24px from bottom
+const PANEL_RIGHT  = LAYOUT.margin + LAYOUT.btnStripW + LAYOUT.btnGap; // 80px from right
+const PANEL_WIDTH  = 288;                                      // px
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProps) {
   const { tasks, addTask, toggleTask } = useData();
