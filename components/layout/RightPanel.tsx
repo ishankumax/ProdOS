@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import CalendarWidget from "@/components/workspaces/CalendarWidget";
+
 
 export default function RightPanel() {
   const [time, setTime] = useState(new Date());
@@ -50,10 +50,7 @@ export default function RightPanel() {
         </div>
       </div>
 
-      {/* ── Collapsible Calendar ───────────────────── */}
-      <div>
-        <CalendarWidget />
-      </div>
+
     </aside>
   );
 }
