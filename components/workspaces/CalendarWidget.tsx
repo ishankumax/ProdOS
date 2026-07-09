@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useData } from "@/components/providers/DataProvider";
+import { ICONS, EVENT_COLORS, CLASSES, TEXT } from "@/lib/theme";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface AgendaEvent {
@@ -19,16 +20,12 @@ const MOCK_EVENTS: Record<string, AgendaEvent[]> = {
 };
 
 const EVENT_TYPE_ICON: Record<string, string> = {
-  task: "fi fi-sr-check-circle",
-  meeting: "fi fi-sr-users",
-  event: "fi fi-sr-star",
+  task:    ICONS.task,
+  meeting: ICONS.users,
+  event:   ICONS.star,
 };
 
-const EVENT_TYPE_COLOR = {
-  task: "#3bf651ff",
-  meeting: "#5cf6e9ff",
-  event: "#daf50bff",
-} as const;
+const EVENT_TYPE_COLOR = EVENT_COLORS;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function getDaysInMonth(year: number, month: number) {
@@ -145,14 +142,14 @@ export default function CalendarWidget() {
         onClick={() => setIsOpen(o => !o)}
         title="Calendar"
         aria-expanded={isOpen}
-        className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl border transition-all duration-200 group ${
+          className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl border transition-all duration-200 group ${
           isOpen
-            ? "bg-indigo-500/20 border-indigo-500/40 text-indigo-300"
-            : "bg-white/5 border-white/10 text-white/50 hover:bg-white/8 hover:border-white/20 hover:text-white/80"
+            ? "bg-brand-500/20 border-brand-500/40 text-brand-300"
+            : "bg-white/[0.05] border-white/[0.09] text-white/50 hover:bg-white/[0.08] hover:border-white/20 hover:text-white/80"
         }`}
       >
         <div className="flex items-center gap-2">
-          <i className={`fi fi-sr-calendar text-xs flex items-center ${isOpen ? "text-indigo-400" : ""}`} />
+          <i className={`${ICONS.calendar} text-xs flex items-center ${isOpen ? "text-brand-400" : ""}`} />
           <span className="text-xs font-semibold tracking-wide uppercase">
             {isOpen ? `${getMonthName(viewMonth)} ${viewYear}` : "Calendar"}
           </span>
@@ -160,7 +157,7 @@ export default function CalendarWidget() {
         <motion.i
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.25, ease: "easeInOut" }}
-          className="fi fi-sr-angle-down text-[10px] flex items-center"
+          className={`${ICONS.chevronDown} text-[10px] flex items-center`}
         />
       </button>
 
@@ -175,7 +172,7 @@ export default function CalendarWidget() {
             transition={{ duration: 0.32, ease: [0.4, 0, 0.2, 1] }}
             className="overflow-hidden"
           >
-            <div className="mt-2 rounded-xl border border-white/8 bg-[#0f0f1a]/80 backdrop-blur-md p-3">
+            <div className={`mt-2 ${CLASSES.panel} p-3`}>
 
               {/* ── Month Header ──────────────────────────── */}
               <div className="flex items-center justify-between mb-3">
@@ -183,7 +180,7 @@ export default function CalendarWidget() {
                   onClick={goToPrev}
                   className="w-6 h-6 rounded-lg flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all"
                 >
-                  <i className="fi fi-sr-angle-left text-[10px] flex items-center" />
+                  <i className={`${ICONS.chevronLeft} text-[10px] flex items-center`} />
                 </button>
                 <span className="text-xs font-bold text-white/80 tracking-wide">
                   {getMonthName(viewMonth)} {viewYear}
@@ -192,7 +189,7 @@ export default function CalendarWidget() {
                   onClick={goToNext}
                   className="w-6 h-6 rounded-lg flex items-center justify-center text-white/40 hover:text-white hover:bg-white/10 transition-all"
                 >
-                  <i className="fi fi-sr-angle-right text-[10px] flex items-center" />
+                  <i className={`${ICONS.chevronRight} text-[10px] flex items-center`} />
                 </button>
               </div>
 
@@ -264,7 +261,7 @@ export default function CalendarWidget() {
               {/* ── Agenda Section ────────────────────────── */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-white/30">
+                  <span className={`text-[10px] font-bold uppercase tracking-widest ${TEXT.dim}`}>
                     {formattedSelected}
                   </span>
                   {agendaItems.length > 0 && (

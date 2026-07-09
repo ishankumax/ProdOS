@@ -7,6 +7,7 @@ import GoalsRail from "./GoalsRail";
 import CompletedDrawer from "./CompletedDrawer";
 import CalendarOverlay from "./CalendarOverlay";
 import { useEditMode } from "@/contexts/EditModeContext";
+import { ICONS, CLASSES, SURFACE, TRANSITION } from "@/lib/theme";
 
 interface ShellProps {
   children: React.ReactNode;
@@ -21,7 +22,6 @@ export default function Shell({ children, activeWorkspace, onWorkspaceChange }: 
   const [calOpen, setCalOpen] = useState(false);
   const calBtnRef = useRef<HTMLButtonElement>(null);
 
-  // Show toast whenever isEditing changes (skip very first mount render)
   useEffect(() => {
     if (!isMounted) { setIsMounted(true); return; }
     setToast({ message: isEditing ? "Edit Mode ON" : "Edit Mode OFF", type: isEditing ? "on" : "off" });
@@ -31,91 +31,79 @@ export default function Shell({ children, activeWorkspace, onWorkspaceChange }: 
   }, [isEditing]);
 
   return (
-    <div className="flex h-screen bg-[#0d0d14] text-white overflow-hidden relative">
+    <div className={`flex h-screen text-white overflow-hidden relative ${SURFACE.tw.base}`}>
 
-      {/* Toast Notification */}
+      {/* ── Toast Notification ────────────────────────────────────── */}
       <div
-        className={`absolute top-5 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-2.5 px-4 py-2.5 rounded-full border backdrop-blur-md shadow-2xl transition-all duration-300 pointer-events-none select-none ${
-          toast
-            ? "opacity-100 translate-y-0 scale-100"
-            : "opacity-0 -translate-y-2 scale-95"
+        className={`absolute top-5 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-2.5 px-4 py-2.5 rounded-full border backdrop-blur-md shadow-2xl ${TRANSITION.panel} pointer-events-none select-none ${
+          toast ? "opacity-100 translate-y-0 scale-100" : "opacity-0 -translate-y-2 scale-95"
         } ${
           toast?.type === "on"
-            ? "bg-blue-500/20 border-blue-500/40 text-blue-300"
+            ? "bg-brand-500/20 border-brand-500/40 text-brand-300"
             : "bg-white/8 border-white/15 text-white/60"
         }`}
       >
-        <i className={`${toast?.type === "on" ? "fi fi-sr-pencil" : "fi fi-sr-check"} text-xs flex items-center`}></i>
+        <i className={`${toast?.type === "on" ? ICONS.edit : ICONS.check} text-xs flex items-center`} />
         <span className="text-xs font-semibold tracking-wide">{toast?.message ?? "Edit Mode OFF"}</span>
       </div>
 
-      {/* Main Content Area */}
+      {/* ── Main Content Area ─────────────────────────────────────── */}
       <div className="flex-1 flex flex-col min-w-0 relative">
-        {/* 1. Header (Shared) */}
         <Header activeWorkspace={activeWorkspace} />
 
-        {/* Workspace Content Layer */}
         <div className="flex-1 flex overflow-hidden relative pb-24">
           <GoalsRail />
           <CompletedDrawer />
-          
           <main className="flex-1 overflow-auto p-8 relative">
             {children}
           </main>
         </div>
 
-        {/* 2. Floating Bottom Navbar */}
+        {/* ── Floating Bottom Navbar ────────────────────────────── */}
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50">
           <BottomNavbar activeWorkspace={activeWorkspace} onWorkspaceChange={onWorkspaceChange} />
         </div>
 
-        {/* 3. Floating Bottom-Right Controls */}
+        {/* ── Floating Bottom-Right Controls ────────────────────── */}
         <div className="absolute bottom-6 right-6 z-50 flex flex-col items-end gap-3">
           {/* Edit Mode Toggle */}
           <button
             onClick={toggleEdit}
             title={isEditing ? "Exit Edit Mode" : "Edit Mode"}
-            className={`w-11 h-11 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 border backdrop-blur-md ${
+            className={`${CLASSES.floatBtn} ${
               isEditing
-                ? "bg-blue-500 border-blue-400 text-white shadow-blue-500/40 scale-110"
-                : "bg-white/8 border-white/15 text-white/60 hover:text-white hover:bg-white/15 hover:border-white/30"
+                ? "!bg-brand-500 !border-brand-400 !text-white shadow-[0_0_24px_var(--accent-shadow)] scale-110"
+                : ""
             }`}
           >
-            <i className={`${isEditing ? "fi fi-sr-check" : "fi fi-sr-pencil"} text-sm flex items-center`}></i>
+            <i className={`${isEditing ? ICONS.check : ICONS.edit} text-sm flex items-center`} />
           </button>
 
-          {/* Calendar Toggle Button */}
+          {/* Calendar Toggle */}
           <button
             ref={calBtnRef}
             onClick={() => setCalOpen(o => !o)}
             title="Calendar"
-            className={`w-11 h-11 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 border backdrop-blur-md ${
+            className={`${CLASSES.floatBtn} ${
               calOpen
-                ? "bg-violet-500 border-violet-400 text-white shadow-violet-500/40 scale-110"
-                : "bg-white/8 border-white/15 text-white/60 hover:text-white hover:bg-white/15 hover:border-white/30"
+                ? "!bg-brand-500 !border-brand-400 !text-white shadow-[0_0_24px_var(--accent-shadow)] scale-110"
+                : ""
             }`}
           >
-            <i className="fi fi-sr-calendar text-sm flex items-center"></i>
+            <i className={`${ICONS.calendar} text-sm flex items-center`} />
           </button>
 
-          {/* Context Action Button (calculator / timer) */}
+          {/* Context Action Button */}
           <button
-            className="w-11 h-11 bg-white/8 hover:bg-white/15 border border-white/15 hover:border-white/30 rounded-full flex items-center justify-center shadow-lg transition-all backdrop-blur-md text-white/60 hover:text-white"
+            className={CLASSES.floatBtn}
             title={activeWorkspace === "Financial Dashboard" ? "Calculator" : "Pomodoro Timer"}
           >
-            {activeWorkspace === "Financial Dashboard" ? (
-              <i className="fi fi-sr-calculator text-sm text-inherit flex items-center"></i>
-            ) : (
-              <i className="fi fi-sr-clock text-sm text-inherit flex items-center"></i>
-            )}
+            <i className={`${activeWorkspace === "Financial Dashboard" ? ICONS.calculator : ICONS.timer} text-sm flex items-center`} />
           </button>
         </div>
 
-        {/* Calendar Overlay (full-height right panel) */}
-        <CalendarOverlay
-          isOpen={calOpen}
-          onClose={() => setCalOpen(false)}
-        />
+        {/* ── Calendar Overlay ──────────────────────────────────── */}
+        <CalendarOverlay isOpen={calOpen} onClose={() => setCalOpen(false)} />
       </div>
     </div>
   );
