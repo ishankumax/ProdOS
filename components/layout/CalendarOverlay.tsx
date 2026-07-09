@@ -172,21 +172,50 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
             onMouseDown={onClose}
           />
 
-          {/* ── Floating inline panel anchored bottom-right ── */}
+          {/* ── Panel — macOS Genie-effect launch animation ────────── */}
           <motion.div
             ref={panelRef}
             key="cal-panel"
-            initial={{ opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{   opacity: 0, x: 24 }}
-            transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
+            initial={{
+              opacity: 0,
+              scaleY: 0.05,
+              scaleX: 0.6,
+              y: 32,
+              clipPath: "inset(92% 0% 0% 20% round 22px)",
+            }}
+            animate={{
+              opacity: 1,
+              scaleY: 1,
+              scaleX: 1,
+              y: 0,
+              clipPath: "inset(0% 0% 0% 0% round 16px)",
+            }}
+            exit={{
+              opacity: 0,
+              scaleY: 0.05,
+              scaleX: 0.6,
+              y: 32,
+              clipPath: "inset(92% 0% 0% 20% round 22px)",
+            }}
+            transition={{
+              // Spring for the scale — gives the natural Genie bounce
+              scaleY:   { type: "spring", stiffness: 380, damping: 28, mass: 0.7 },
+              scaleX:   { type: "spring", stiffness: 420, damping: 32, mass: 0.6 },
+              y:        { type: "spring", stiffness: 380, damping: 28, mass: 0.7 },
+              // clipPath reveals slightly slower for the wipe-up effect
+              clipPath: { type: "spring", stiffness: 320, damping: 30, mass: 0.8 },
+              // Opacity is instant — panel appears at once
+              opacity:  { duration: 0.08 },
+            }}
             style={{
-              position: "fixed",
-              top:    PANEL_TOP,
-              bottom: PANEL_BOTTOM,
-              right:  PANEL_RIGHT,
-              width:  PANEL_WIDTH,
-              zIndex: 150,
+              position:        "fixed",
+              top:             PANEL_TOP,
+              bottom:          PANEL_BOTTOM,
+              right:           PANEL_RIGHT,
+              width:           PANEL_WIDTH,
+              zIndex:          150,
+              // Anchor the transform to the bottom-right corner (= where the calendar button is)
+              transformOrigin: "bottom right",
             }}
             className={`flex flex-col overflow-hidden ${CLASSES.panel}`}
             onMouseDown={e => e.stopPropagation()}
