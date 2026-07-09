@@ -46,21 +46,17 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
   const { tasks, addTask, toggleTask } = useData();
   const today = new Date();
 
-  const [viewYear, setViewYear] = useState(today.getFullYear());
-  const [viewMonth, setViewMonth] = useState(today.getMonth());
+  const [viewYear,    setViewYear]    = useState(today.getFullYear());
+  const [viewMonth,   setViewMonth]   = useState(today.getMonth());
   const [selectedDay, setSelectedDay] = useState(today.getDate());
-  const [viewMode, setViewMode] = useState<ViewMode>("month");
-  const [decadeStart, setDecadeStart] = useState(
-    Math.floor(today.getFullYear() / 10) * 10
-  );
+  const [viewMode,    setViewMode]    = useState<ViewMode>("month");
+  const [decadeStart, setDecadeStart] = useState(Math.floor(today.getFullYear() / 10) * 10);
 
-  // Task input state
-  const [newTaskText, setNewTaskText] = useState("");
+  const [newTaskText,  setNewTaskText]  = useState("");
   const [isAddingTask, setIsAddingTask] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // Focus input when adding
   useEffect(() => {
     if (isAddingTask) setTimeout(() => inputRef.current?.focus(), 50);
   }, [isAddingTask]);
@@ -73,11 +69,9 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
         onClose();
       }
     };
-    const timeout = setTimeout(() => document.addEventListener("mousedown", handler), 80);
-    return () => {
-      clearTimeout(timeout);
-      document.removeEventListener("mousedown", handler);
-    };
+    // small delay so the opening click doesn't instantly close
+    const id = setTimeout(() => document.addEventListener("mousedown", handler), 80);
+    return () => { clearTimeout(id); document.removeEventListener("mousedown", handler); };
   }, [isOpen, onClose]);
 
   // Close on Escape
@@ -88,7 +82,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
     return () => document.removeEventListener("keydown", handler);
   }, [isOpen, onClose]);
 
-  // ── Navigation ─────────────────────────────────────────────────────────────
+  // ── Navigation ────────────────────────────────────────────────────────────
   const goToPrev = () => {
     if (viewMode === "month") {
       if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1); }
@@ -112,71 +106,49 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
     }
   };
 
-  // ── Calendar Grid ──────────────────────────────────────────────────────────
+  // ── Grid ──────────────────────────────────────────────────────────────────
   const daysInMonth = getDaysInMonth(viewYear, viewMonth);
-  const firstDay = getFirstDayOfMonth(viewYear, viewMonth);
+  const firstDay    = getFirstDayOfMonth(viewYear, viewMonth);
   const cells: (number | null)[] = [
     ...Array(firstDay).fill(null),
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
   ];
   while (cells.length % 7 !== 0) cells.push(null);
 
-  const isToday = (day: number) =>
-    day === today.getDate() &&
-    viewMonth === today.getMonth() &&
-    viewYear === today.getFullYear();
+  const isToday       = (d: number) => d === today.getDate() && viewMonth === today.getMonth() && viewYear === today.getFullYear();
+  const isSelectedDay = (d: number) => d === selectedDay;
 
-  const isSelectedDay = (day: number) => day === selectedDay;
-
-  // ── Task data ─────────────────────────────────────────────────────────────
-  const selectedKey = toKey(viewYear, viewMonth, selectedDay);
-  const todayKey = toKey(today.getFullYear(), today.getMonth(), today.getDate());
+  // ── Tasks ─────────────────────────────────────────────────────────────────
+  const selectedKey    = toKey(viewYear, viewMonth, selectedDay);
+  const todayKey       = toKey(today.getFullYear(), today.getMonth(), today.getDate());
   const isSelectedToday = selectedKey === todayKey;
 
   const visibleTasks: AgendaTask[] = useMemo(() => {
     if (!isSelectedToday) return [];
     return tasks.filter(t => !t.completed).map(t => ({
-      id: t.id,
-      title: t.text,
-      completed: t.completed,
-      type: "task" as const,
+      id: t.id, title: t.text, completed: t.completed, type: "task" as const,
     }));
   }, [isSelectedToday, tasks]);
 
   const datesWithTasks = useMemo(() => {
     const set = new Set<number>();
-    if (
-      tasks.filter(t => !t.completed).length > 0 &&
-      viewMonth === today.getMonth() &&
-      viewYear === today.getFullYear()
-    ) {
+    if (tasks.filter(t => !t.completed).length > 0 && viewMonth === today.getMonth() && viewYear === today.getFullYear())
       set.add(today.getDate());
-    }
     return set;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tasks, viewMonth, viewYear]);
 
-  // ── Task Add ───────────────────────────────────────────────────────────────
   const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
-    if (newTaskText.trim()) {
-      addTask(newTaskText.trim());
-      setNewTaskText("");
-      setIsAddingTask(false);
-    }
+    if (newTaskText.trim()) { addTask(newTaskText.trim()); setNewTaskText(""); setIsAddingTask(false); }
   };
 
-  // ── Header label ──────────────────────────────────────────────────────────
   const headerLabel =
-    viewMode === "month"
-      ? `${getMonthName(viewMonth)} ${viewYear}`
-      : viewMode === "year"
-      ? `${viewYear}`
-      : `${decadeStart} – ${decadeStart + 9}`;
+    viewMode === "month" ? `${getMonthName(viewMonth)} ${viewYear}` :
+    viewMode === "year"  ? `${viewYear}` :
+                           `${decadeStart} – ${decadeStart + 9}`;
 
-  const taskSectionLabel = isSelectedToday
-    ? "Today's Tasks"
-    : `${selectedDay} ${getMonthName(viewMonth, true)}`;
+  const taskSectionLabel = isSelectedToday ? "Today's Tasks" : `${selectedDay} ${getMonthName(viewMonth, true)}`;
 
   return (
     <AnimatePresence>
@@ -229,7 +201,6 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                 >
                   <i className="fi fi-sr-angle-left text-[10px] flex items-center" />
                 </button>
-
                 <button
                   onClick={() =>
                     setViewMode(m =>
@@ -240,19 +211,14 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                 >
                   {headerLabel}
                 </button>
-
-                <button
-                  onClick={goToNext}
-                  className="w-7 h-7 rounded-lg flex items-center justify-center text-white/35 hover:text-white hover:bg-white/10 transition-all"
-                >
+                <button onClick={goToNext} className="w-7 h-7 rounded-lg flex items-center justify-center text-white/35 hover:text-white hover:bg-white/10 transition-all">
                   <i className="fi fi-sr-angle-right text-[10px] flex items-center" />
                 </button>
               </div>
 
-              {/* ── Calendar Views ──────────────────────────── */}
               <AnimatePresence mode="wait">
 
-                {/* Month View */}
+                {/* Month view */}
                 {viewMode === "month" && (
                   <motion.div
                     key="month"
@@ -275,17 +241,10 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                         </div>
                       ))}
                     </div>
-
-                    {/* Date cells */}
                     <div className="grid grid-cols-7">
                       {cells.map((day, idx) => {
-                        if (day === null)
-                          return <div key={`e-${idx}`} className="h-8" />;
-                        const todayF = isToday(day);
-                        const selF = isSelectedDay(day);
-                        const hasDot = datesWithTasks.has(day);
-                        const isWknd = idx % 7 === 0 || idx % 7 === 6;
-
+                        if (day === null) return <div key={`e-${idx}`} className="h-9" />;
+                        const todF = isToday(day), selF = isSelectedDay(day), dot = datesWithTasks.has(day), wknd = idx % 7 === 0 || idx % 7 === 6;
                         return (
                           <button
                             key={`d-${day}`}
@@ -321,7 +280,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                   </motion.div>
                 )}
 
-                {/* Year View */}
+                {/* Year view */}
                 {viewMode === "year" && (
                   <motion.div
                     key="year"
@@ -332,8 +291,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                     className="grid grid-cols-3 gap-1.5 py-1"
                   >
                     {MONTH_NAMES.map((name, mi) => {
-                      const isCurr = mi === today.getMonth() && viewYear === today.getFullYear();
-                      const isSel = mi === viewMonth;
+                      const curr = mi === today.getMonth() && viewYear === today.getFullYear(), sel = mi === viewMonth;
                       return (
                         <button
                           key={name}
@@ -352,7 +310,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                   </motion.div>
                 )}
 
-                {/* Decade View */}
+                {/* Decade view */}
                 {viewMode === "decade" && (
                   <motion.div
                     key="decade"
@@ -363,9 +321,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                     className="grid grid-cols-4 gap-1.5 py-1"
                   >
                     {Array.from({ length: 12 }, (_, i) => decadeStart - 1 + i).map(yr => {
-                      const inDec = yr >= decadeStart && yr <= decadeStart + 9;
-                      const isCurr = yr === today.getFullYear();
-                      const isSel = yr === viewYear;
+                      const inDec = yr >= decadeStart && yr <= decadeStart + 9, curr = yr === today.getFullYear(), sel = yr === viewYear;
                       return (
                         <button
                           key={yr}
@@ -395,17 +351,13 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
             {/* ══ TASKS SECTION ════════════════════════════════════════ */}
             <div className="flex flex-col px-4 pt-3 pb-3 max-h-48 min-h-0">
 
-              {/* Tasks header */}
+              {/* Tasks header row */}
               <div className="flex items-center justify-between mb-2 flex-shrink-0">
                 <div className="flex items-center gap-1.5">
                   <i className="fi fi-sr-list-check text-[10px] text-violet-400 flex items-center" />
-                  <span className="text-[9px] font-bold uppercase tracking-widest text-white/35">
-                    {taskSectionLabel}
-                  </span>
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-white/35">{taskSectionLabel}</span>
                   {visibleTasks.length > 0 && (
-                    <span className="text-[8px] px-1.5 py-0.5 rounded-full bg-violet-500/20 text-violet-300 font-bold ml-1">
-                      {visibleTasks.length}
-                    </span>
+                    <span className="text-[8px] px-1.5 py-0.5 rounded-full bg-violet-500/20 text-violet-300 font-bold ml-1">{visibleTasks.length}</span>
                   )}
                 </div>
                 {/* Add task button inline */}
@@ -425,23 +377,11 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                 </button>
               </div>
 
-              {/* Add task inline form */}
+              {/* Add-task form */}
               <AnimatePresence>
                 {isAddingTask && (
-                  <motion.form
-                    key="add-input"
-                    initial={{ opacity: 0, height: 0, marginBottom: 0 }}
-                    animate={{ opacity: 1, height: "auto", marginBottom: 8 }}
-                    exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-                    transition={{ duration: 0.2 }}
-                    onSubmit={handleAddTask}
-                    className="flex-shrink-0 overflow-hidden"
-                  >
-                    <input
-                      ref={inputRef}
-                      type="text"
-                      value={newTaskText}
-                      onChange={e => setNewTaskText(e.target.value)}
+                  <motion.form key="add-input" initial={{ opacity: 0, height: 0, marginBottom: 0 }} animate={{ opacity: 1, height: "auto", marginBottom: 8 }} exit={{ opacity: 0, height: 0, marginBottom: 0 }} transition={{ duration: 0.2 }} onSubmit={handleAddTask} className="flex-shrink-0 overflow-hidden">
+                    <input ref={inputRef} type="text" value={newTaskText} onChange={e => setNewTaskText(e.target.value)}
                       onBlur={() => { if (!newTaskText.trim()) setIsAddingTask(false); }}
                       onKeyDown={e => e.key === "Escape" && setIsAddingTask(false)}
                       placeholder="New task…"
@@ -482,7 +422,6 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                         onClick={() => toggleTask(task.id)}
                         className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.04] border border-white/[0.06] hover:bg-white/[0.07] hover:border-white/10 cursor-pointer transition-all group"
                       >
-                        {/* Checkbox */}
                         <div className="w-4 h-4 rounded-[5px] border border-violet-400/35 flex-shrink-0 flex items-center justify-center group-hover:border-violet-400/70 transition-colors">
                           <i className="fi fi-sr-check text-[7px] text-violet-400 opacity-0 group-hover:opacity-50 flex items-center transition-opacity" />
                         </div>
@@ -509,10 +448,7 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
 // ─── Live Clock ───────────────────────────────────────────────────────────────
 function LiveClock() {
   const [time, setTime] = useState(new Date());
-  useEffect(() => {
-    const t = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(t);
-  }, []);
+  useEffect(() => { const t = setInterval(() => setTime(new Date()), 1000); return () => clearInterval(t); }, []);
 
   const timeStr = time.toLocaleTimeString([], {
     hour: "2-digit", minute: "2-digit",
