@@ -120,14 +120,6 @@ export default function Shell({ children, activeWorkspace, onWorkspaceChange }: 
             <i className={`${ICONS.calendar} text-sm flex items-center`} />
           </motion.button>
 
-          {/* Context Action Button */}
-          <motion.button
-            whileTap={pressAnimation}
-            className={CLASSES.floatBtn}
-            title={activeWorkspace === "Financial Dashboard" ? "Calculator" : "Pomodoro Timer"}
-          >
-            <i className={`${activeWorkspace === "Financial Dashboard" ? ICONS.calculator : ICONS.timer} text-sm flex items-center`} />
-          </motion.button>
         </div>
 
         {/* ── Calendar Overlay ──────────────────────────────────── */}
