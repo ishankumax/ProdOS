@@ -13,7 +13,8 @@ export default function TasksWidget() {
   const [newTaskText, setNewTaskText] = useState("");
   const [isAdding, setIsAdding] = useState(false);
 
-  const pendingTasks = tasks.filter((t) => !t.completed);
+  const todayKey = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-${String(new Date().getDate()).padStart(2, "0")}`;
+  const pendingTasks = tasks.filter((t) => !t.completed && (!t.dateKey || t.dateKey === todayKey));
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();

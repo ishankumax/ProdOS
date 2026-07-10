@@ -8,7 +8,7 @@ import GoalsRail from "./GoalsRail";
 import CompletedDrawer from "./CompletedDrawer";
 import CalendarOverlay from "./CalendarOverlay";
 import { useEditMode } from "@/contexts/EditModeContext";
-import { ICONS, CLASSES, SURFACE, TRANSITION } from "@/lib/theme";
+import { ICONS, CLASSES, SURFACE } from "@/lib/theme";
 import { GENIE_TOAST, GENIE_TOAST_TRANSITION, WORKSPACE_ENTER, WORKSPACE_EXIT, WORKSPACE_TRANSITION, pressAnimation } from "@/lib/motion";
 
 interface ShellProps {
@@ -120,14 +120,6 @@ export default function Shell({ children, activeWorkspace, onWorkspaceChange }: 
             <i className={`${ICONS.calendar} text-sm flex items-center`} />
           </motion.button>
 
-          {/* Context Action Button */}
-          <motion.button
-            whileTap={pressAnimation}
-            className={CLASSES.floatBtn}
-            title={activeWorkspace === "Financial Dashboard" ? "Calculator" : "Pomodoro Timer"}
-          >
-            <i className={`${activeWorkspace === "Financial Dashboard" ? ICONS.calculator : ICONS.timer} text-sm flex items-center`} />
-          </motion.button>
         </div>
 
         {/* ── Calendar Overlay ──────────────────────────────────── */}

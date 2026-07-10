@@ -132,23 +132,41 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
   const isSelectedToday = selectedKey === todayKey;
 
   const visibleTasks: AgendaTask[] = useMemo(() => {
-    if (!isSelectedToday) return [];
-    return tasks.filter(t => !t.completed).map(t => ({
-      id: t.id, title: t.text, completed: t.completed, type: "task" as const,
-    }));
-  }, [isSelectedToday, tasks]);
+    return tasks
+      .filter((t) => !t.completed && t.dateKey === selectedKey)
+      .map((t) => ({
+        id: t.id,
+        title: t.text,
+        completed: t.completed,
+        type: "task" as const,
+      }));
+  }, [selectedKey, tasks]);
 
   const datesWithTasks = useMemo(() => {
     const set = new Set<number>();
-    if (tasks.filter(t => !t.completed).length > 0 && viewMonth === today.getMonth() && viewYear === today.getFullYear())
-      set.add(today.getDate());
+    tasks.forEach((t) => {
+      if (!t.completed && t.dateKey) {
+        const parts = t.dateKey.split("-");
+        if (parts.length === 3) {
+          const y = parseInt(parts[0], 10);
+          const m = parseInt(parts[1], 10) - 1; // 0-indexed month
+          const d = parseInt(parts[2], 10);
+          if (y === viewYear && m === viewMonth) {
+            set.add(d);
+          }
+        }
+      }
+    });
     return set;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tasks, viewMonth, viewYear]);
 
   const handleAddTask = (e: React.FormEvent) => {
     e.preventDefault();
-    if (newTaskText.trim()) { addTask(newTaskText.trim()); setNewTaskText(""); setIsAddingTask(false); }
+    if (newTaskText.trim()) {
+      addTask(newTaskText.trim(), selectedKey);
+      setNewTaskText("");
+      setIsAddingTask(false);
+    }
   };
 
   const headerLabel =
