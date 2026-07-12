@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useData } from "@/components/providers/DataProvider";
 import { ICONS, CLASSES, TEXT, LAYOUT } from "@/lib/theme";
 import { GENIE_PANEL_VARIANTS, GENIE_PANEL_TRANSITION, GENIE_LIST_ITEM, GENIE_LIST_TRANSITION, LIST_STAGGER } from "@/lib/motion";
+import { getDaysInMonth, getFirstDayOfMonth, toKey, getMonthName, DAY_LABELS, MONTH_NAMES } from "@/utils/date";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface AgendaTask {
@@ -13,28 +14,6 @@ interface AgendaTask {
   completed: boolean;
   type: "task";
 }
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-function getDaysInMonth(year: number, month: number) {
-  return new Date(year, month + 1, 0).getDate();
-}
-function getFirstDayOfMonth(year: number, month: number) {
-  return new Date(year, month, 1).getDay();
-}
-function toKey(year: number, month: number, day: number) {
-  return `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-}
-
-const MONTH_NAMES = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-] as const;
-
-function getMonthName(month: number, short = false) {
-  const name = MONTH_NAMES[Math.max(0, Math.min(11, month))] ?? MONTH_NAMES[0];
-  return short ? name.slice(0, 3) : name;
-}
-const DAY_LABELS = ["S", "M", "T", "W", "T", "F", "S"];
 
 type ViewMode = "month" | "year" | "decade";
 

@@ -6,6 +6,7 @@ import { useData } from "@/components/providers/DataProvider";
 import { useEditMode } from "@/contexts/EditModeContext";
 import { ICONS, CLASSES, TEXT } from "@/lib/theme";
 import { GENIE_LIST_ITEM, GENIE_LIST_TRANSITION, LIST_STAGGER } from "@/lib/motion";
+import { toKey } from "@/utils/date";
 
 export default function TasksWidget() {
   const { tasks, addTask, toggleTask } = useData();
@@ -13,7 +14,8 @@ export default function TasksWidget() {
   const [newTaskText, setNewTaskText] = useState("");
   const [isAdding, setIsAdding] = useState(false);
 
-  const todayKey = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-${String(new Date().getDate()).padStart(2, "0")}`;
+  const today = new Date();
+  const todayKey = toKey(today.getFullYear(), today.getMonth(), today.getDate());
   const pendingTasks = tasks.filter((t) => !t.completed && (!t.dateKey || t.dateKey === todayKey));
 
   const handleAdd = (e: React.FormEvent) => {

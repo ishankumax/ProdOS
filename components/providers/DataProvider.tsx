@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { toKey } from "@/utils/date";
 
 export interface Task {
   id: string;
@@ -78,7 +79,8 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   }, [tasks, investments, workspaces, isLoaded]);
 
   const addTask = (text: string, dateKey?: string) => {
-    const defaultDateKey = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-${String(new Date().getDate()).padStart(2, "0")}`;
+    const today = new Date();
+    const defaultDateKey = toKey(today.getFullYear(), today.getMonth(), today.getDate());
     const newTask: Task = {
       id: Math.random().toString(36).substr(2, 9),
       text,
