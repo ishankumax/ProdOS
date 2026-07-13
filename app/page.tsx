@@ -5,8 +5,6 @@ import Shell from "@/components/layout/Shell";
 import { WorkspaceType } from "@/components/layout/BottomNavbar";
 import TasksWidget from "@/components/workspaces/TasksWidget";
 import HealthWidget from "@/components/workspaces/HealthWidget";
-
-
 import FinanceDashboard from "@/components/workspaces/FinanceDashboard";
 import { DataProvider } from "@/components/providers/DataProvider";
 import { EditModeProvider } from "@/contexts/EditModeContext";
@@ -31,7 +29,6 @@ export default function HomePage() {
                   </div>
                 )}
               </div>
-
             </div>
           )}
         </Shell>

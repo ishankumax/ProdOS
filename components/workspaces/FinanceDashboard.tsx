@@ -1,12 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useData } from "@/components/providers/DataProvider";
+import { useEditMode } from "@/contexts/EditModeContext";
 import { CLASSES, TEXT, ICONS } from "@/lib/theme";
 
 export default function FinanceDashboard() {
   const { investments, addInvestment } = useData();
+  const { isEditing } = useEditMode();
   const [logText, setLogText] = useState("");
+  
+  const [visibleModules, setVisibleModules] = useState({
+    investments: true,
+    distribution: true,
+    savings: true,
+    logging: true
+  });
+
+  useEffect(() => {
+    const stored = localStorage.getItem("prod_os_finance_modules");
+    if (stored) {
+      try {
+        setVisibleModules(JSON.parse(stored));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("prod_os_finance_modules", JSON.stringify(visibleModules));
+  }, [visibleModules]);
+
+  const hideModule = (key: keyof typeof visibleModules) => {
+    setVisibleModules(prev => ({ ...prev, [key]: false }));
+  };
 
   const totalNetWorth = 1245000 + investments.reduce((acc, inv) => acc + (inv.amount || 0), 0);
 
@@ -28,7 +56,17 @@ export default function FinanceDashboard() {
       <div className="flex justify-between items-end mb-8 border-b border-white/[0.06] pb-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Finance Command</h2>
-          <p className={`text-sm mt-1 ${TEXT.muted}`}>Portfolio &amp; Cashflow</p>
+          <div className="flex items-center gap-4 mt-1">
+            <p className={`text-sm ${TEXT.muted}`}>Portfolio &amp; Cashflow</p>
+            {isEditing && Object.values(visibleModules).some(v => !v) && (
+              <button 
+                onClick={() => setVisibleModules({ investments: true, distribution: true, savings: true, logging: true })}
+                className="text-xs text-brand-400 hover:text-brand-300 transition-colors bg-brand-500/10 px-2 py-0.5 rounded"
+              >
+                Restore Modules
+              </button>
+            )}
+          </div>
         </div>
         <div className="text-right">
           <div className="text-3xl font-mono text-brand-400">₹{totalNetWorth.toLocaleString("en-IN")}</div>
@@ -39,7 +77,13 @@ export default function FinanceDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
         {/* Investments Card */}
-        <div className={`col-span-1 lg:col-span-2 ${CLASSES.card} p-6`}>
+        {visibleModules.investments && (
+        <div className={`col-span-1 lg:col-span-2 ${CLASSES.card} p-6 relative group`}>
+          {isEditing && (
+            <button onClick={() => hideModule('investments')} className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center bg-black/20 rounded text-white/40 hover:text-red-400 hover:bg-black/40 transition-all z-10" title="Delete Module">
+              <i className={`${ICONS.delete} text-[10px]`} />
+            </button>
+          )}
           <div className="flex justify-between mb-4">
             <h3 className={`font-bold ${TEXT.base}`}>Investments</h3>
             <button className="text-brand-400 text-sm hover:text-brand-300 transition-colors">
@@ -70,9 +114,16 @@ export default function FinanceDashboard() {
             )}
           </div>
         </div>
+        )}
 
         {/* Distribution Ring */}
-        <div className={`${CLASSES.card} p-6 flex flex-col items-center justify-center`}>
+        {visibleModules.distribution && (
+        <div className={`${CLASSES.card} p-6 flex flex-col items-center justify-center relative group`}>
+          {isEditing && (
+            <button onClick={() => hideModule('distribution')} className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center bg-black/20 rounded text-white/40 hover:text-red-400 hover:bg-black/40 transition-all z-10" title="Delete Module">
+              <i className={`${ICONS.delete} text-[10px]`} />
+            </button>
+          )}
           <h3 className={`text-xs font-bold uppercase tracking-widest w-full text-left mb-6 ${TEXT.muted}`}>
             Distribution
           </h3>
@@ -83,9 +134,16 @@ export default function FinanceDashboard() {
             </div>
           </div>
         </div>
+        )}
 
         {/* Savings & Emergency */}
-        <div className={`${CLASSES.card} p-6`}>
+        {visibleModules.savings && (
+        <div className={`${CLASSES.card} p-6 relative group`}>
+          {isEditing && (
+            <button onClick={() => hideModule('savings')} className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center bg-black/20 rounded text-white/40 hover:text-red-400 hover:bg-black/40 transition-all z-10" title="Delete Module">
+              <i className={`${ICONS.delete} text-[10px]`} />
+            </button>
+          )}
           <h3 className={`font-bold mb-4 ${TEXT.base}`}>Savings &amp; Emergency</h3>
           <div className="space-y-4">
             <div>
@@ -108,12 +166,19 @@ export default function FinanceDashboard() {
             </div>
           </div>
         </div>
+        )}
 
         {/* AI Logging */}
+        {visibleModules.logging && (
         <form
           onSubmit={handleLog}
-          className={`col-span-1 lg:col-span-2 ${CLASSES.card} p-6 flex flex-col justify-end`}
+          className={`col-span-1 lg:col-span-2 ${CLASSES.card} p-6 flex flex-col justify-end relative group`}
         >
+          {isEditing && (
+            <button type="button" onClick={() => hideModule('logging')} className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center bg-black/20 rounded text-white/40 hover:text-red-400 hover:bg-black/40 transition-all z-10" title="Delete Module">
+              <i className={`${ICONS.delete} text-[10px]`} />
+            </button>
+          )}
           <div className={`text-xs mb-2 ${TEXT.muted}`}>AI-Assisted Logging</div>
           <div className="flex gap-2">
             <input
@@ -131,6 +196,7 @@ export default function FinanceDashboard() {
             </button>
           </div>
         </form>
+        )}
 
       </div>
     </div>

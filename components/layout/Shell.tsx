@@ -7,9 +7,11 @@ import Header from "./Header";
 import GoalsRail from "./GoalsRail";
 import CompletedDrawer from "./CompletedDrawer";
 import CalendarOverlay from "./CalendarOverlay";
+import NotesOverlay from "./NotesOverlay";
+import StatusBar from "./StatusBar";
 import { useEditMode } from "@/contexts/EditModeContext";
-import { ICONS, CLASSES, SURFACE } from "@/lib/theme";
-import { GENIE_TOAST, GENIE_TOAST_TRANSITION, WORKSPACE_ENTER, WORKSPACE_EXIT, WORKSPACE_TRANSITION, pressAnimation } from "@/lib/motion";
+import { ICONS, SURFACE } from "@/lib/theme";
+import { GENIE_TOAST, GENIE_TOAST_TRANSITION, WORKSPACE_ENTER, WORKSPACE_EXIT, WORKSPACE_TRANSITION } from "@/lib/motion";
 
 interface ShellProps {
   children: React.ReactNode;
@@ -18,11 +20,13 @@ interface ShellProps {
 }
 
 export default function Shell({ children, activeWorkspace, onWorkspaceChange }: ShellProps) {
-  const { isEditing, toggleEdit } = useEditMode();
+  const { isEditing } = useEditMode();
   const [toast, setToast] = useState<{ message: string; type: "on" | "off" } | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const [calOpen, setCalOpen] = useState(false);
   const calBtnRef = useRef<HTMLButtonElement>(null);
+  const [notesOpen, setNotesOpen] = useState(false);
+  const notesBtnRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!isMounted) { setIsMounted(true); return; }
@@ -61,7 +65,7 @@ export default function Shell({ children, activeWorkspace, onWorkspaceChange }: 
       <div className="flex-1 flex flex-col min-w-0 relative">
         <Header activeWorkspace={activeWorkspace} />
 
-        <div className="flex-1 flex overflow-hidden relative pb-24">
+        <div className="flex-1 flex overflow-hidden relative pb-32">
           <GoalsRail />
           <CompletedDrawer />
           <main className="flex-1 overflow-auto p-8 relative">
@@ -85,45 +89,24 @@ export default function Shell({ children, activeWorkspace, onWorkspaceChange }: 
         </div>
 
         {/* ── Floating Bottom Navbar ────────────────────────────── */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50">
+        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 z-50">
           <BottomNavbar activeWorkspace={activeWorkspace} onWorkspaceChange={onWorkspaceChange} />
         </div>
 
-        {/* ── Floating Bottom-Right Controls ────────────────────── */}
-        <div className="absolute bottom-6 right-6 z-50 flex flex-col items-end gap-3">
-          {/* Edit Mode Toggle */}
-          <motion.button
-            onClick={toggleEdit}
-            whileTap={pressAnimation}
-            title={isEditing ? "Exit Edit Mode" : "Edit Mode"}
-            className={`${CLASSES.floatBtn} ${
-              isEditing
-                ? "!bg-brand-500 !border-brand-400 !text-white shadow-[0_0_24px_var(--accent-shadow)] scale-110"
-                : ""
-            }`}
-          >
-            <i className={`${isEditing ? ICONS.check : ICONS.edit} text-sm flex items-center`} />
-          </motion.button>
+        {/* ── Fixed Bottom Strip (Status Bar) ──────────────────────── */}
+        <StatusBar
+          activeWorkspace={activeWorkspace}
+          calOpen={calOpen}
+          setCalOpen={setCalOpen}
+          calBtnRef={calBtnRef}
+          notesOpen={notesOpen}
+          setNotesOpen={setNotesOpen}
+          notesBtnRef={notesBtnRef}
+        />
 
-          {/* Calendar Toggle */}
-          <motion.button
-            ref={calBtnRef}
-            onClick={() => setCalOpen(o => !o)}
-            whileTap={pressAnimation}
-            title="Calendar"
-            className={`${CLASSES.floatBtn} ${
-              calOpen
-                ? "!bg-brand-500 !border-brand-400 !text-white shadow-[0_0_24px_var(--accent-shadow)] scale-110"
-                : ""
-            }`}
-          >
-            <i className={`${ICONS.calendar} text-sm flex items-center`} />
-          </motion.button>
-
-        </div>
-
-        {/* ── Calendar Overlay ──────────────────────────────────── */}
+        {/* ── Overlays ────────────────────────────────────────────── */}
         <CalendarOverlay isOpen={calOpen} onClose={() => setCalOpen(false)} />
+        <NotesOverlay isOpen={notesOpen} onClose={() => setNotesOpen(false)} />
       </div>
     </div>
   );
