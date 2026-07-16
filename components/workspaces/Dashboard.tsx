@@ -26,6 +26,7 @@ import HabitTracker from "../widgets/HabitTracker";
 import DailyPlanner from "../widgets/DailyPlanner";
 import DigitalJournal from "../widgets/DigitalJournal";
 import MicroTrackers from "../widgets/MicroTrackers";
+import RecycleBin from "../widgets/RecycleBin";
 
 // Custom sortable widget wrapper with size context menu
 function SortableWidget({
@@ -124,6 +125,7 @@ const AVAILABLE_WIDGETS: Record<string, React.ReactNode> = {
   planner: <DailyPlanner />,
   journal: <DigitalJournal />,
   trackers: <div className="col-span-1 lg:col-span-2"><MicroTrackers /></div>,
+  recycle: <RecycleBin />,
 };
 
 export default function Dashboard() {
@@ -134,13 +136,14 @@ export default function Dashboard() {
   const storageKey = `prod-os-home-layout-${userId}`;
   const sizeKey = `prod-os-home-sizes-${userId}`;
 
-  const [activeWidgets, setActiveWidgets] = useState<string[]>(["todo", "habits", "planner", "journal", "trackers"]);
+  const [activeWidgets, setActiveWidgets] = useState<string[]>(["todo", "habits", "planner", "journal", "trackers", "recycle"]);
   const [widgetSizes, setWidgetSizes] = useState<Record<string, "small" | "medium" | "large">>({
     todo: "medium",
     habits: "medium",
     planner: "medium",
     journal: "medium",
     trackers: "large",
+    recycle: "medium",
   });
 
   const [showPicker, setShowPicker] = useState(false);
@@ -221,6 +224,7 @@ export default function Dashboard() {
             { id: "planner", name: "Daily Planner 📅" },
             { id: "journal", name: "Digital Journal 📖" },
             { id: "trackers", name: "Micro Trackers 💧" },
+            { id: "recycle", name: "Recycle Bin 🗑️" },
           ].map((w) => {
             const active = activeWidgets.includes(w.id);
             return (

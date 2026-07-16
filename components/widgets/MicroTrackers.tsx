@@ -28,27 +28,34 @@ export default function MicroTrackers() {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full">
       
-      {/* Water Tracker */}
+      {/* Hydration Tracker */}
       <div className={`p-4 ${CLASSES.card} flex flex-col justify-between`}>
         <div>
-          <span className="text-[10px] text-white/40 uppercase font-semibold">Water Intake</span>
-          <p className="text-lg font-bold text-white mt-1">{water} glasses</p>
+          <span className="text-[10px] text-white/40 uppercase font-semibold">Hydration</span>
+          <p className="text-lg font-bold text-white mt-1">{water} / 8 glasses</p>
         </div>
-        <div className="flex gap-2 mt-3">
-          <button
-            onClick={() => { setWater(w => { const n = Math.max(0, w - 1); save("prod_os_tracker_water", n); return n; }) }}
-            className="flex-1 py-1 rounded bg-white/5 border border-white/10 text-xs text-white/70 hover:text-white"
-          >
-            -
-          </button>
-          <button
-            onClick={() => { setWater(w => { const n = w + 1; save("prod_os_tracker_water", n); return n; }) }}
-            className="flex-1 py-1 rounded bg-brand-500/20 border border-brand-500/30 text-xs text-brand-300 hover:bg-brand-500/30"
-          >
-            +
-          </button>
+        <div className="flex gap-1.5 mt-3 flex-wrap">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <button
+              key={i}
+              onClick={() => {
+                const n = i < water ? i : i + 1;
+                setWater(n);
+                save("prod_os_tracker_water", n);
+              }}
+              title={`${i + 1} glass${i !== 0 ? "es" : ""}`}
+              className={`w-7 h-8 rounded-lg border transition-all text-xs flex items-center justify-center ${
+                i < water
+                  ? "bg-blue-500/30 border-blue-400/40 text-blue-300"
+                  : "bg-white/[0.03] border-white/10 text-white/20 hover:border-white/20"
+              }`}
+            >
+              <i className="fi fi-sr-glass-water text-sm" />
+            </button>
+          ))}
         </div>
       </div>
+
 
       {/* Sleep Tracker */}
       <div className={`p-4 ${CLASSES.card} flex flex-col justify-between`}>

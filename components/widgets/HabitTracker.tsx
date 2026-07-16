@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { CLASSES, TEXT } from "@/lib/theme";
+import { useEditMode } from "@/contexts/EditModeContext";
 
 interface Habit {
   id: string;
@@ -13,6 +14,7 @@ interface Habit {
 export default function HabitTracker() {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [newHabitName, setNewHabitName] = useState("");
+  const { isEditing } = useEditMode();
 
   useEffect(() => {
     const saved = localStorage.getItem("prod_os_habits");
@@ -62,6 +64,10 @@ export default function HabitTracker() {
       return h;
     });
     saveHabits(updated);
+  };
+
+  const deleteHabit = (id: string) => {
+    saveHabits(habits.filter((h) => h.id !== id));
   };
 
   const getWeekDays = () => {
@@ -120,6 +126,15 @@ export default function HabitTracker() {
                   >
                     {isTodayDone ? "✓" : "+"}
                   </button>
+                  {isEditing && (
+                    <button
+                      onClick={() => deleteHabit(habit.id)}
+                      title="Delete habit"
+                      className="w-6 h-6 flex items-center justify-center rounded-lg text-red-400/50 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 transition-colors"
+                    >
+                      <i className="fi fi-sr-trash text-[9px]" />
+                    </button>
+                  )}
                 </div>
               </div>
 
