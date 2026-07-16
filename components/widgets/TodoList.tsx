@@ -42,7 +42,7 @@ export default function TodoList() {
         />
         <select
           value={priority}
-          onChange={(e) => setPriority(e.target.value as any)}
+          onChange={(e) => setPriority(e.target.value as "low" | "medium" | "high")}
           className="bg-white/[0.04] border border-white/10 rounded-lg text-xs text-white/70 px-2 outline-none"
         >
           <option value="low">Low</option>

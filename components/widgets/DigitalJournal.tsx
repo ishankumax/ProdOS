@@ -44,7 +44,7 @@ export default function DigitalJournal() {
     localStorage.setItem("prod_os_journal_v2", JSON.stringify(updated));
   };
 
-  const handleChange = (field: keyof JournalEntry, value: any) => {
+  const handleChange = (field: keyof JournalEntry, value: string | string[]) => {
     const updated = { ...entry, [field]: value };
     saveEntry(updated);
   };

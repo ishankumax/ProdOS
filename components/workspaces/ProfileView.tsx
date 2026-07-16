@@ -3,8 +3,14 @@
 import { useState, useEffect } from "react";
 import { CLASSES, TEXT } from "@/lib/theme";
 
+interface UserOnboardingData {
+  wakeTime?: string;
+  sleepTime?: string;
+  [key: string]: unknown;
+}
+
 export default function ProfileView() {
-  const [userData, setUserData] = useState<any>(null);
+  const [userData, setUserData] = useState<UserOnboardingData | null>(null);
   const [aiInsights, setAiInsights] = useState<string[]>([]);
 
   useEffect(() => {

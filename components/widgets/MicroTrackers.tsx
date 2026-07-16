@@ -21,7 +21,7 @@ export default function MicroTrackers() {
     setEnergy(parseInt(localStorage.getItem("prod_os_tracker_energy") || "70", 10));
   }, []);
 
-  const save = (key: string, val: any) => {
+  const save = (key: string, val: string | number) => {
     localStorage.setItem(key, val.toString());
   };
 

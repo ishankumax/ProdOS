@@ -11,7 +11,7 @@ export default function FocusView() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    let interval: any = null;
+    let interval: ReturnType<typeof setInterval> | undefined = undefined;
     if (isActive && secondsLeft > 0) {
       interval = setInterval(() => {
         setSecondsLeft((s) => s - 1);
@@ -126,7 +126,7 @@ export default function FocusView() {
               return (
                 <button
                   key={sound.id}
-                  onClick={() => handleSoundToggle(sound.id as any)}
+                  onClick={() => handleSoundToggle(sound.id as typeof soundLoop)}
                   className={`w-full p-4 rounded-xl border text-left text-xs font-semibold flex items-center justify-between transition-all ${
                     active
                       ? "bg-brand-500/10 border-brand-500/40 text-brand-300 shadow-[0_0_8px_rgba(var(--brand-500-rgb),0.1)]"
