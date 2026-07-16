@@ -299,7 +299,7 @@ export default function BottomNavbar({ activeWorkspace, onWorkspaceChange, onSet
               onClick={() => onWorkspaceChange(ws.name)}
               whileTap={pressAnimation}
               title={ws.name}
-              className={`relative flex items-center gap-0 group-hover:gap-2 h-9 rounded-full px-2.5 transition-all duration-300 ease-in-out overflow-hidden z-10 ${
+              className={`relative flex items-center gap-2 h-9 rounded-full px-2.5 transition-all duration-300 ease-in-out overflow-hidden z-10 ${
                 isActive
                   ? "text-white"
                   : "text-white/40 hover:text-white hover:bg-white/[0.08]"
@@ -313,34 +313,15 @@ export default function BottomNavbar({ activeWorkspace, onWorkspaceChange, onSet
                 />
               )}
               <i className={`${ws.iconClass} text-sm flex items-center flex-shrink-0`} />
-              <span className="text-xs font-medium whitespace-nowrap overflow-hidden max-w-0 group-hover:max-w-[120px] opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
+              <span className="text-xs font-medium whitespace-nowrap overflow-hidden max-w-[120px] opacity-100 transition-all duration-300 ease-in-out">
                 {ws.name}
               </span>
             </motion.button>
           );
         })}
 
-        {isEditing && (
-          <>
-            <motion.div
-              layout
-              className="w-px h-5 bg-white/[0.09] mx-0.5 flex-shrink-0"
-            />
 
-            <motion.button
-              layout
-              onClick={() => setShowAddModal(true)}
-              whileTap={pressAnimation}
-              title="New Workspace"
-              className="flex items-center gap-0 group-hover:gap-2 h-9 rounded-full px-2.5 border border-dashed border-white/20 text-white/30 hover:text-white hover:border-white/40 hover:bg-white/5 transition-all duration-300 ease-in-out overflow-hidden"
-            >
-              <i className={`${ICONS.add} flex items-center text-xs flex-shrink-0`} />
-              <span className="text-xs font-medium whitespace-nowrap overflow-hidden max-w-0 group-hover:max-w-[48px] opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
-                New
-              </span>
-            </motion.button>
-          </>
-        )}
+
 
         <motion.div
           layout
@@ -387,7 +368,7 @@ export default function BottomNavbar({ activeWorkspace, onWorkspaceChange, onSet
           }}
           whileTap={pressAnimation}
           title={user ? "Profile" : "Sign In"}
-          className={`flex items-center gap-0 group-hover:gap-2 h-9 rounded-full transition-all duration-300 ease-in-out overflow-hidden ${
+          className={`flex items-center gap-2 h-9 rounded-full transition-all duration-300 ease-in-out overflow-hidden ${
             user ? "px-1.5" : "px-2.5 text-white/40 hover:text-white hover:bg-white/[0.08]"
           }`}
         >
@@ -404,7 +385,7 @@ export default function BottomNavbar({ activeWorkspace, onWorkspaceChange, onSet
           ) : (
             <i className="fi fi-sr-user flex items-center text-sm flex-shrink-0" />
           )}
-          <span className="text-xs font-medium whitespace-nowrap overflow-hidden max-w-0 group-hover:max-w-[60px] opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
+          <span className="text-xs font-medium whitespace-nowrap overflow-hidden max-w-[60px] opacity-100 transition-all duration-300 ease-in-out">
             {user ? "Profile" : "Sign In"}
           </span>
         </motion.button>
