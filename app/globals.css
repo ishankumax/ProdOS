@@ -127,12 +127,116 @@
     --mesh-color-3: 240 5% 10%;
   }
 
+  /* VS Code Themes */
+  [data-theme="vscode-dark-modern"] {
+    --brand-500: 212 100% 42%;
+    --brand-400: 212 100% 52%;
+    --brand-500-rgb: 0 120 212;
+    --surface-default: 0 0% 9%; /* #181818 */
+    --surface-raised: 0 0% 12%; /* #1F1F1F */
+    --surface-overlay: 0 0% 16%; /* #2B2B2B */
+  }
+
+  [data-theme="vscode-dark-plus"] {
+    --brand-500: 212 100% 42%;
+    --brand-400: 212 100% 52%;
+    --brand-500-rgb: 14 99 156;
+    --surface-default: 0 0% 12%; /* #1e1e1e */
+    --surface-raised: 0 0% 15%; /* #252526 */
+    --surface-overlay: 0 0% 20%; /* #333333 */
+  }
+
+  [data-theme="vscode-dark-vs"] {
+    --brand-500: 212 100% 42%;
+    --brand-400: 212 100% 52%;
+    --brand-500-rgb: 14 99 156;
+    --surface-default: 0 0% 12%; 
+    --surface-raised: 0 0% 15%; 
+    --surface-overlay: 0 0% 20%; 
+  }
+
+  [data-theme="vscode-hc-black"] {
+    --brand-500: 212 100% 42%;
+    --brand-400: 212 100% 52%;
+    --brand-500-rgb: 0 0 0;
+    --surface-default: 0 0% 0%; 
+    --surface-raised: 0 0% 0%; 
+    --surface-overlay: 0 0% 0%; 
+  }
+
+  [data-theme="vscode-2026-dark"] {
+    --brand-500: 212 100% 42%;
+    --brand-400: 212 100% 52%;
+    --brand-500-rgb: 0 120 212;
+    --surface-default: 0 0% 6%; /* #0f0f0f */
+    --surface-raised: 0 0% 9%; 
+    --surface-overlay: 0 0% 12%; 
+  }
+
+  [data-theme="vscode-light-modern"] {
+    --brand-500: 212 100% 42%;
+    --brand-400: 212 100% 32%;
+    --brand-500-rgb: 0 120 212;
+    --surface-default: 0 0% 98%; /* #fafafa */
+    --surface-raised: 0 0% 95%; /* #f3f3f3 */
+    --surface-overlay: 0 0% 90%; /* #e5e5e5 */
+    --text-color-rgb: 36, 36, 36;
+    --border-color-rgb: 0, 0, 0;
+  }
+
+  [data-theme="vscode-light-plus"] {
+    --brand-500: 212 100% 42%;
+    --brand-400: 212 100% 32%;
+    --brand-500-rgb: 0 122 204;
+    --surface-default: 0 0% 100%; /* #ffffff */
+    --surface-raised: 0 0% 96%; /* #f3f3f3 */
+    --surface-overlay: 0 0% 93%; /* #ededed */
+    --text-color-rgb: 0, 0, 0;
+    --border-color-rgb: 0, 0, 0;
+  }
+
+  [data-theme="vscode-light-vs"] {
+    --brand-500: 212 100% 42%;
+    --brand-400: 212 100% 32%;
+    --brand-500-rgb: 0 122 204;
+    --surface-default: 0 0% 100%; 
+    --surface-raised: 0 0% 96%; 
+    --surface-overlay: 0 0% 93%; 
+    --text-color-rgb: 0, 0, 0;
+    --border-color-rgb: 0, 0, 0;
+  }
+
+  [data-theme="vscode-hc-light"] {
+    --brand-500: 212 100% 42%;
+    --brand-400: 212 100% 32%;
+    --brand-500-rgb: 15 74 133;
+    --surface-default: 0 0% 100%; 
+    --surface-raised: 0 0% 100%; 
+    --surface-overlay: 0 0% 100%; 
+    --text-color-rgb: 0, 0, 0;
+    --border-color-rgb: 0, 0, 0;
+  }
+
+  [data-theme="vscode-2026-light"] {
+    --brand-500: 212 100% 42%;
+    --brand-400: 212 100% 32%;
+    --brand-500-rgb: 0 120 212;
+    --surface-default: 0 0% 99%; /* #fdfdfd */
+    --surface-raised: 0 0% 96%; 
+    --surface-overlay: 0 0% 92%; 
+    --text-color-rgb: 36, 36, 36;
+    --border-color-rgb: 0, 0, 0;
+  }
+
   /* ── Shell-level semantic tokens ─────────────────────────────────────────
      These map the raw --brand-* vars into role-based names used by
      Shell, BottomNavbar, CalendarOverlay, TasksWidget, etc.
      Change the brand theme in :root and ALL accents update everywhere.   */
 
   :root {
+    --text-color-rgb: 255, 255, 255;
+    --border-color-rgb: 255, 255, 255;
+
     /* Active / accent state (replaces hardcoded blue-500 / violet-500) */
     --accent:          hsl(var(--brand-500));
     --accent-muted:    hsl(var(--brand-500) / 0.15);
@@ -147,16 +251,16 @@
     --shell-overlay:   hsl(var(--surface-overlay));
 
     /* Border layers */
-    --border-subtle:   rgba(255,255,255,0.06);
-    --border-default:  rgba(255,255,255,0.09);
-    --border-strong:   rgba(255,255,255,0.15);
+    --border-subtle:   rgba(var(--border-color-rgb), 0.06);
+    --border-default:  rgba(var(--border-color-rgb), 0.09);
+    --border-strong:   rgba(var(--border-color-rgb), 0.15);
 
     /* Text opacity scale */
-    --text-dim:        rgba(255,255,255,0.20);
-    --text-muted:      rgba(255,255,255,0.40);
-    --text-subtle:     rgba(255,255,255,0.60);
-    --text-base:       rgba(255,255,255,0.80);
-    --text-strong:     rgba(255,255,255,1.00);
+    --text-dim:        rgba(var(--text-color-rgb), 0.20);
+    --text-muted:      rgba(var(--text-color-rgb), 0.40);
+    --text-subtle:     rgba(var(--text-color-rgb), 0.60);
+    --text-base:       rgba(var(--text-color-rgb), 0.80);
+    --text-strong:     rgba(var(--text-color-rgb), 1.00);
   }
 
   *,
@@ -173,7 +277,7 @@
     font-family: var(--font-montserrat), sans-serif;
     min-height: 100dvh;
     background-color: var(--shell-bg);
-    color: hsl(0 0% 95%);
+    color: rgb(var(--text-color-rgb));
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 

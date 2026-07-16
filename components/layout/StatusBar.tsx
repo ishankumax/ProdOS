@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { WorkspaceType } from "./BottomNavbar";
 import { useEditMode } from "@/contexts/EditModeContext";
-import { useData } from "@/components/providers/DataProvider";
-import { ICONS, CLASSES } from "@/lib/theme";
+import { ICONS } from "@/lib/theme";
 import { pressAnimation } from "@/lib/motion";
 
 // ─── SVG Segmented Progress Bar ───────────────────────────────────────────────
@@ -46,6 +45,7 @@ interface StatusBarProps {
   notesOpen: boolean;
   setNotesOpen: React.Dispatch<React.SetStateAction<boolean>>;
   notesBtnRef: React.RefObject<HTMLButtonElement>;
+  onSettingsOpen?: () => void;
 }
 
 const getWeekNumber = (d: Date) => {
@@ -66,7 +66,7 @@ const getProgressColor = (progress: number): string => {
 
 
 // ─── Status Bar ──────────────────────────────────────────────────────────
-export default function StatusBar({ activeWorkspace, calOpen, setCalOpen, calBtnRef, notesOpen, setNotesOpen, notesBtnRef }: StatusBarProps) {
+export default function StatusBar({ activeWorkspace, calOpen, setCalOpen, calBtnRef, notesOpen, setNotesOpen, notesBtnRef, onSettingsOpen }: StatusBarProps) {
   const { isEditing, toggleEdit } = useEditMode();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isMounted,   setIsMounted]   = useState(false);
@@ -89,7 +89,9 @@ export default function StatusBar({ activeWorkspace, calOpen, setCalOpen, calBtn
     <div className="absolute bottom-0 left-0 right-0 h-10 bg-[#09090e]/90 backdrop-blur-md border-t border-white/[0.06] flex items-center justify-between px-8 z-[100] text-[11px] uppercase tracking-wider font-semibold text-white/40 select-none">
 
       {/* ── Left: Workspace label ── */}
-      <span>Workspace: {activeWorkspace}</span>
+      <span onClick={onSettingsOpen} className="cursor-pointer hover:text-white transition-colors">
+        Workspace: {activeWorkspace}
+      </span>
 
       {/* ── Right: Time / Date / Day + Edit button ── */}
       {isMounted && (
