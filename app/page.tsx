@@ -18,9 +18,11 @@ import Goals from "@/components/workspaces/Goals";
 import WellnessView from "@/components/workspaces/WellnessView";
 import FocusView from "@/components/workspaces/FocusView";
 import ProfileView from "@/components/workspaces/ProfileView";
+import JournalView from "@/components/workspaces/JournalView";
 
 function HomeContent() {
   const [workspace, setWorkspace] = useState<WorkspaceType>("Home");
+  const [calendarJournalDate, setCalendarJournalDate] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const { user } = useAuth();
@@ -62,6 +64,8 @@ function HomeContent() {
         return <FocusView />;
       case "profile":
         return <ProfileView />;
+      case "journal":
+        return <JournalView calendarSelectedDate={calendarJournalDate} />;
       default:
         return (
           <div className="flex h-full items-center justify-center text-white/40 italic flex-col gap-4">
@@ -74,7 +78,15 @@ function HomeContent() {
   };
 
   return (
-    <Shell activeWorkspace={workspace} onWorkspaceChange={setWorkspace}>
+    <Shell
+      activeWorkspace={workspace}
+      onWorkspaceChange={setWorkspace}
+      onCalendarDateSelect={(dateKey) => {
+        if (workspace.toLowerCase() === "journal") {
+          setCalendarJournalDate(dateKey);
+        }
+      }}
+    >
       {renderWorkspace()}
     </Shell>
   );

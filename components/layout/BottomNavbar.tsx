@@ -163,7 +163,7 @@ export default function BottomNavbar({ activeWorkspace, onWorkspaceChange, onSet
 
       <motion.div
         layout
-        className="group flex items-center gap-1 p-1.5 bg-[#0d0d14]/85 border border-white/[0.09] rounded-full backdrop-blur-lg shadow-[0_8px_32px_rgba(0,0,0,0.5)] transition-all duration-300"
+        className="group flex items-center gap-1 p-1.5 bg-[#0d0d14]/65 border border-[var(--accent)] rounded-full backdrop-blur-2xl shadow-[0_0_24px_var(--accent-shadow)] transition-all duration-300"
       >
         {workspaces.map((ws) => {
           const isActive = activeWorkspace === ws.name;

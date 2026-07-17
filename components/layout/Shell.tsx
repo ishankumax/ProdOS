@@ -18,9 +18,10 @@ interface ShellProps {
   children: React.ReactNode;
   activeWorkspace: WorkspaceType;
   onWorkspaceChange: (w: WorkspaceType) => void;
+  onCalendarDateSelect?: (dateKey: string) => void;
 }
 
-export default function Shell({ children, activeWorkspace, onWorkspaceChange }: ShellProps) {
+export default function Shell({ children, activeWorkspace, onWorkspaceChange, onCalendarDateSelect }: ShellProps) {
   const { isEditing } = useEditMode();
   const [toast, setToast] = useState<{ message: string; type: "on" | "off" } | null>(null);
   const [isMounted, setIsMounted] = useState(false);
@@ -65,12 +66,12 @@ export default function Shell({ children, activeWorkspace, onWorkspaceChange }: 
 
       {/* ── Main Content Area ─────────────────────────────────────── */}
       <div className="flex-1 flex flex-col min-w-0 relative">
-        <Header activeWorkspace={activeWorkspace} />
+        {activeWorkspace.toLowerCase() !== "journal" && <Header activeWorkspace={activeWorkspace} />}
 
-        <div className="flex-1 flex overflow-hidden relative pb-32">
-          <GoalsRail />
-          <CompletedDrawer />
-          <main className="flex-1 overflow-auto p-8 relative">
+        <div className={`flex-1 flex overflow-hidden relative ${activeWorkspace.toLowerCase() === "journal" ? "pb-0" : "pb-32"}`}>
+          {activeWorkspace.toLowerCase() !== "journal" && <GoalsRail />}
+          {activeWorkspace.toLowerCase() !== "journal" && <CompletedDrawer />}
+          <main className={`flex-1 overflow-auto relative ${activeWorkspace.toLowerCase() === "journal" ? "px-0 py-4 pb-28" : "p-8"}`}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeWorkspace}
@@ -108,7 +109,7 @@ export default function Shell({ children, activeWorkspace, onWorkspaceChange }: 
         />
 
         {/* ── Overlays ────────────────────────────────────────────── */}
-        <CalendarOverlay isOpen={calOpen} onClose={() => setCalOpen(false)} />
+        <CalendarOverlay isOpen={calOpen} onClose={() => setCalOpen(false)} onDateSelect={onCalendarDateSelect} />
         <NotesOverlay isOpen={notesOpen} onClose={() => setNotesOpen(false)} />
         <SettingsView isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
       </div>

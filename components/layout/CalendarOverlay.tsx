@@ -20,6 +20,7 @@ type ViewMode = "month" | "year" | "decade";
 interface CalendarOverlayProps {
   isOpen: boolean;
   onClose: () => void;
+  onDateSelect?: (dateKey: string) => void;
 }
 
 // ─── Layout constants (sourced from lib/theme.ts LAYOUT token) ────────────────
@@ -29,7 +30,7 @@ const PANEL_RIGHT  = LAYOUT.margin;                           // 24px from right
 const PANEL_WIDTH  = 288;                                      // px
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProps) {
+export default function CalendarOverlay({ isOpen, onClose, onDateSelect }: CalendarOverlayProps) {
   const { tasks, addTask, toggleTask } = useData();
   const today = new Date();
 
@@ -254,7 +255,13 @@ export default function CalendarOverlay({ isOpen, onClose }: CalendarOverlayProp
                         return (
                           <button
                             key={`d-${day}`}
-                            onClick={() => setSelectedDay(day)}
+                            onClick={() => {
+                              setSelectedDay(day);
+                              // Notify Journal workspace about the date selection
+                              if (onDateSelect) {
+                                onDateSelect(toKey(viewYear, viewMonth, day));
+                              }
+                            }}
                             className="relative flex flex-col items-center justify-center h-8 rounded-lg transition-all duration-150 group/cell"
                           >
                             <span
