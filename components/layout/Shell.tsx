@@ -4,8 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import BottomNavbar, { WorkspaceType } from "./BottomNavbar";
 import Header from "./Header";
-import GoalsRail from "./GoalsRail";
-import CompletedDrawer from "./CompletedDrawer";
 import CalendarOverlay from "./CalendarOverlay";
 import NotesOverlay from "./NotesOverlay";
 import StatusBar from "./StatusBar";
@@ -69,8 +67,6 @@ export default function Shell({ children, activeWorkspace, onWorkspaceChange, on
         {activeWorkspace.toLowerCase() !== "journal" && <Header activeWorkspace={activeWorkspace} />}
 
         <div className={`flex-1 flex overflow-hidden relative ${activeWorkspace.toLowerCase() === "journal" ? "pb-0" : "pb-32"}`}>
-          {activeWorkspace.toLowerCase() !== "journal" && <GoalsRail />}
-          {activeWorkspace.toLowerCase() !== "journal" && <CompletedDrawer />}
           <main className={`flex-1 overflow-auto relative ${activeWorkspace.toLowerCase() === "journal" ? "px-0 py-4 pb-28" : "p-8"}`}>
             <AnimatePresence mode="wait">
               <motion.div

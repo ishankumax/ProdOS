@@ -1,19 +1,10 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useData } from "@/components/providers/DataProvider";
-import { ICONS, CLASSES, TEXT, LAYOUT } from "@/lib/theme";
-import { GENIE_PANEL_VARIANTS, GENIE_PANEL_TRANSITION, GENIE_LIST_ITEM, GENIE_LIST_TRANSITION, LIST_STAGGER } from "@/lib/motion";
+import { ICONS, CLASSES, LAYOUT } from "@/lib/theme";
+import { GENIE_PANEL_VARIANTS, GENIE_PANEL_TRANSITION } from "@/lib/motion";
 import { getDaysInMonth, getFirstDayOfMonth, toKey, getMonthName, DAY_LABELS, MONTH_NAMES } from "@/utils/date";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-interface AgendaTask {
-  id: string;
-  title: string;
-  completed: boolean;
-  type: "task";
-}
 
 type ViewMode = "month" | "year" | "decade";
 
@@ -23,15 +14,11 @@ interface CalendarOverlayProps {
   onDateSelect?: (dateKey: string) => void;
 }
 
-// ─── Layout constants (sourced from lib/theme.ts LAYOUT token) ────────────────
-const PANEL_TOP    = LAYOUT.headerH + LAYOUT.margin;          // 88px from top
 const PANEL_BOTTOM = LAYOUT.margin + 40;                      // 64px from bottom (clears 40px status bar)
 const PANEL_RIGHT  = LAYOUT.margin;                           // 24px from right (aligns with status bar buttons)
 const PANEL_WIDTH  = 288;                                      // px
 
-// ─── Main Component ───────────────────────────────────────────────────────────
 export default function CalendarOverlay({ isOpen, onClose, onDateSelect }: CalendarOverlayProps) {
-  const { tasks, addTask, toggleTask } = useData();
   const today = new Date();
 
   const [viewYear,    setViewYear]    = useState(today.getFullYear());
@@ -40,14 +27,7 @@ export default function CalendarOverlay({ isOpen, onClose, onDateSelect }: Calen
   const [viewMode,    setViewMode]    = useState<ViewMode>("month");
   const [decadeStart, setDecadeStart] = useState(Math.floor(today.getFullYear() / 10) * 10);
 
-  const [newTaskText,  setNewTaskText]  = useState("");
-  const [isAddingTask, setIsAddingTask] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (isAddingTask) setTimeout(() => inputRef.current?.focus(), 50);
-  }, [isAddingTask]);
 
   // Close on outside click
   useEffect(() => {
@@ -57,7 +37,6 @@ export default function CalendarOverlay({ isOpen, onClose, onDateSelect }: Calen
         onClose();
       }
     };
-    // small delay so the opening click doesn't instantly close
     const id = setTimeout(() => document.addEventListener("mousedown", handler), 80);
     return () => { clearTimeout(id); document.removeEventListener("mousedown", handler); };
   }, [isOpen, onClose]);
@@ -106,64 +85,15 @@ export default function CalendarOverlay({ isOpen, onClose, onDateSelect }: Calen
   const isToday       = (d: number) => d === today.getDate() && viewMonth === today.getMonth() && viewYear === today.getFullYear();
   const isSelectedDay = (d: number) => d === selectedDay;
 
-  // ── Tasks ─────────────────────────────────────────────────────────────────
-  const selectedKey    = toKey(viewYear, viewMonth, selectedDay);
-  const todayKey       = toKey(today.getFullYear(), today.getMonth(), today.getDate());
-  const isSelectedToday = selectedKey === todayKey;
-
-  const visibleTasks: AgendaTask[] = useMemo(() => {
-    return tasks
-      .filter((t) => !t.completed && t.dateKey === selectedKey)
-      .map((t) => ({
-        id: t.id,
-        title: t.text,
-        completed: t.completed,
-        type: "task" as const,
-      }));
-  }, [selectedKey, tasks]);
-
-  const datesWithTasks = useMemo(() => {
-    const set = new Set<number>();
-    tasks.forEach((t) => {
-      if (!t.completed && t.dateKey) {
-        const parts = t.dateKey.split("-");
-        const yStr = parts[0];
-        const mStr = parts[1];
-        const dStr = parts[2];
-        if (yStr !== undefined && mStr !== undefined && dStr !== undefined) {
-          const y = parseInt(yStr, 10);
-          const m = parseInt(mStr, 10) - 1; // 0-indexed month
-          const d = parseInt(dStr, 10);
-          if (y === viewYear && m === viewMonth) {
-            set.add(d);
-          }
-        }
-      }
-    });
-    return set;
-  }, [tasks, viewMonth, viewYear]);
-
-  const handleAddTask = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newTaskText.trim()) {
-      addTask(newTaskText.trim(), selectedKey);
-      setNewTaskText("");
-      setIsAddingTask(false);
-    }
-  };
-
   const headerLabel =
     viewMode === "month" ? `${getMonthName(viewMonth)} ${viewYear}` :
     viewMode === "year"  ? `${viewYear}` :
                            `${decadeStart} – ${decadeStart + 9}`;
 
-  const taskSectionLabel = isSelectedToday ? "Today's Tasks" : `${selectedDay} ${getMonthName(viewMonth, true)}`;
-
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* ── Subtle backdrop (not full-screen blur, just dimming) ── */}
           <motion.div
             key="cal-backdrop"
             initial={{ opacity: 0 }}
@@ -174,7 +104,6 @@ export default function CalendarOverlay({ isOpen, onClose, onDateSelect }: Calen
             onMouseDown={onClose}
           />
 
-          {/* ── Panel — macOS Genie-effect launch animation ────────── */}
           <motion.div
             ref={panelRef}
             key="cal-panel"
@@ -185,21 +114,16 @@ export default function CalendarOverlay({ isOpen, onClose, onDateSelect }: Calen
             transition={GENIE_PANEL_TRANSITION}
             style={{
               position:        "fixed",
-              top:             PANEL_TOP,
               bottom:          PANEL_BOTTOM,
               right:           PANEL_RIGHT,
               width:           PANEL_WIDTH,
               zIndex:          150,
-              // Anchor the transform to the bottom-right corner (= where the calendar button is)
               transformOrigin: "bottom right",
             }}
-            className={`flex flex-col overflow-hidden ${CLASSES.panel}`}
+            className={`flex flex-col overflow-hidden pb-4 ${CLASSES.panel}`}
             onMouseDown={e => e.stopPropagation()}
           >
-
-            {/* ══ CALENDAR SECTION ════════════════════════════════════ */}
             <div className="flex-shrink-0 px-4 pt-3 pb-2">
-
               {/* Month/Year header with nav */}
               <div className="flex items-center justify-between mb-2">
                 <button
@@ -224,7 +148,6 @@ export default function CalendarOverlay({ isOpen, onClose, onDateSelect }: Calen
               </div>
 
               <AnimatePresence mode="wait">
-
                 {/* Month view */}
                 {viewMode === "month" && (
                   <motion.div
@@ -251,13 +174,12 @@ export default function CalendarOverlay({ isOpen, onClose, onDateSelect }: Calen
                     <div className="grid grid-cols-7">
                       {cells.map((day, idx) => {
                         if (day === null) return <div key={`e-${idx}`} className="h-9" />;
-                        const todF = isToday(day), selF = isSelectedDay(day), hasDot = datesWithTasks.has(day), isWknd = idx % 7 === 0 || idx % 7 === 6;
+                        const todF = isToday(day), selF = isSelectedDay(day), isWknd = idx % 7 === 0 || idx % 7 === 6;
                         return (
                           <button
                             key={`d-${day}`}
                             onClick={() => {
                               setSelectedDay(day);
-                              // Notify Journal workspace about the date selection
                               if (onDateSelect) {
                                 onDateSelect(toKey(viewYear, viewMonth, day));
                               }
@@ -281,11 +203,6 @@ export default function CalendarOverlay({ isOpen, onClose, onDateSelect }: Calen
                             >
                               {day}
                             </span>
-                            {hasDot && (
-                              <span
-                                className={`absolute bottom-0 w-1 h-1 rounded-full ${selF ? "bg-white" : "bg-violet-400"}`}
-                              />
-                            )}
                           </button>
                         );
                       })}
@@ -354,108 +271,11 @@ export default function CalendarOverlay({ isOpen, onClose, onDateSelect }: Calen
                     })}
                   </motion.div>
                 )}
-
               </AnimatePresence>
             </div>
-
-            {/* ── Divider ──────────────────────────────────────────── */}
-            <div className="flex-shrink-0 mx-4 border-t border-white/[0.06]" />
-
-            {/* ══ TASKS SECTION ════════════════════════════════════════ */}
-            <div className="flex-1 flex flex-col px-4 pt-3 pb-4 min-h-0">
-
-              {/* Tasks header row */}
-              <div className="flex items-center justify-between mb-2 flex-shrink-0 gap-2">
-                <div className="flex items-center gap-1.5">
-                  <i className="fi fi-sr-list-check text-[10px] text-violet-400 flex items-center" />
-                  <span className={`text-[9px] font-bold uppercase tracking-widest ${TEXT.muted}`}>{taskSectionLabel}</span>
-                  {visibleTasks.length > 0 && (
-                    <span className="text-[8px] px-1.5 py-0.5 rounded-full bg-violet-500/20 text-violet-300 font-bold ml-1">{visibleTasks.length}</span>
-                  )}
-                </div>
-                {/* Add task button inline */}
-                <button
-                  onClick={() => setIsAddingTask(a => !a)}
-                  title="Add Task"
-                  className={`w-6 h-6 rounded-full flex items-center justify-center border transition-all duration-200 ${isAddingTask ? "bg-brand-500 border-brand-400 text-white scale-110" : "bg-white/[0.06] border-white/[0.12] text-white/40 hover:bg-brand-500/20 hover:border-brand-500/40 hover:text-brand-400"}`}
-                >
-                  <motion.i
-                    animate={{ rotate: isAddingTask ? 45 : 0 }}
-                    transition={{ duration: 0.2 }}
-                    className={`${ICONS.add} text-[10px] flex items-center`}
-                  />
-                </button>
-              </div>
-
-              {/* Add-task form */}
-              <AnimatePresence>
-                {isAddingTask && (
-                  <motion.form key="add-input" initial={{ opacity: 0, height: 0, marginBottom: 0 }} animate={{ opacity: 1, height: "auto", marginBottom: 8 }} exit={{ opacity: 0, height: 0, marginBottom: 0 }} transition={{ duration: 0.2 }} onSubmit={handleAddTask} className="flex-shrink-0 overflow-hidden">
-                    <input ref={inputRef} type="text" value={newTaskText} onChange={e => setNewTaskText(e.target.value)}
-                      onBlur={() => { if (!newTaskText.trim()) setIsAddingTask(false); }}
-                      onKeyDown={e => e.key === "Escape" && setIsAddingTask(false)}
-                      placeholder="New task…"
-                      className={CLASSES.input}
-                    />
-                  </motion.form>
-                )}
-              </AnimatePresence>
-
-              {/* Scrollable task list */}
-              <div
-                className="flex-1 overflow-y-auto space-y-1.5 pr-0.5 min-h-0"
-                style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(139,92,246,0.2) transparent" }}
-              >
-                <AnimatePresence mode="popLayout">
-                  {visibleTasks.length === 0 && !isAddingTask ? (
-                    <motion.div
-                      key="empty"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="flex flex-col items-center justify-center py-5 text-center"
-                    >
-                      <div className="w-8 h-8 rounded-xl bg-white/4 border border-white/8 flex items-center justify-center mb-2">
-                        <i className="fi fi-sr-check-circle text-white/15 text-sm flex items-center" />
-                      </div>
-                      <p className="text-[10px] text-white/20 italic">No tasks for this day</p>
-                    </motion.div>
-                  ) : (
-                    visibleTasks.map((task, i) => (
-                      <motion.div
-                        key={task.id}
-                        layout
-                        variants={GENIE_LIST_ITEM}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                        transition={{
-                          ...GENIE_LIST_TRANSITION,
-                          delay: i * LIST_STAGGER
-                        }}
-                        onClick={() => toggleTask(task.id)}
-                        className={`${CLASSES.cardHover} flex items-center gap-2 p-2.5 cursor-pointer group`}
-                      >
-                        <div className="w-4 h-4 rounded-[5px] border border-brand-400/35 flex-shrink-0 flex items-center justify-center group-hover:border-brand-400/70 transition-colors">
-                          <i className={`${ICONS.check} text-[7px] text-brand-400 opacity-0 group-hover:opacity-50 flex items-center transition-opacity`} />
-                        </div>
-                        {/* Accent bar */}
-                        <div className="w-0.5 self-stretch rounded-full flex-shrink-0 bg-brand-400/50" />
-                        {/* Text */}
-                        <p className="text-[11px] font-medium text-white/75 leading-tight truncate flex-1">
-                          {task.title}
-                        </p>
-                      </motion.div>
-                    ))
-                  )}
-                </AnimatePresence>
-              </div>
-            </div>
-
           </motion.div>
         </>
       )}
     </AnimatePresence>
   );
 }
-

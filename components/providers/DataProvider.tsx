@@ -53,11 +53,6 @@ interface DataContextType {
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 const DEFAULT_WORKSPACES: Workspace[] = [
-  { name: "Dashboard", iconClass: "fi fi-sr-home" },
-  { name: "Finance", iconClass: "fi fi-sr-chart-histogram" },
-  { name: "Goals", iconClass: "fi fi-sr-target" },
-  { name: "Fitness", iconClass: "fi fi-sr-heart" },
-  { name: "Skill Learning", iconClass: "fi fi-sr-graduation-cap" },
   { name: "Journal", iconClass: "fi fi-sr-book-alt" },
 ];
 
@@ -95,7 +90,10 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 
       if (storedWorkspaces) {
         const parsed = JSON.parse(storedWorkspaces);
-        setWorkspaces(parsed.length === 0 ? DEFAULT_WORKSPACES : parsed);
+        const filtered = parsed.filter((ws: Workspace) =>
+          !["dashboard", "finance", "goals", "fitness", "skill learning"].includes(ws.name.toLowerCase())
+        );
+        setWorkspaces(filtered.length === 0 ? DEFAULT_WORKSPACES : filtered);
       } else {
         setWorkspaces(DEFAULT_WORKSPACES);
       }

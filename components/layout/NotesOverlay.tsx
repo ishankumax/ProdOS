@@ -13,7 +13,7 @@ const PANEL_WIDTH  = 288;
 
 export default function NotesOverlay({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { workspaces } = useData();
-  const [selectedContext, setSelectedContext] = useState("Personal Life");
+  const [selectedContext, setSelectedContext] = useState("Journal");
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [showContextMenu, setShowContextMenu] = useState(false);
   const contextMenuRef = useRef<HTMLDivElement>(null);

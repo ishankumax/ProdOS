@@ -12,22 +12,34 @@ import Login from "@/components/auth/Login";
 import OnboardingView from "@/components/onboarding/OnboardingView";
 
 // Workspace Components
-import Dashboard from "@/components/workspaces/Dashboard";
-import FinanceDashboard from "@/components/workspaces/FinanceDashboard";
-import Goals from "@/components/workspaces/Goals";
-import WellnessView from "@/components/workspaces/WellnessView";
 import FocusView from "@/components/workspaces/FocusView";
 import ProfileView from "@/components/workspaces/ProfileView";
 import JournalView from "@/components/workspaces/JournalView";
 
 function HomeContent() {
-  const [workspace, setWorkspace] = useState<WorkspaceType>("Home");
+  const [workspace, setWorkspace] = useState<WorkspaceType>("Journal");
   const [calendarJournalDate, setCalendarJournalDate] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
-  const { user } = useAuth();
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
+  const { user, isLoading } = useAuth();
 
   useEffect(() => {
+    // Load persisted workspace on mount
+    const savedWs = localStorage.getItem("prod_os_active_workspace");
+    if (savedWs) {
+      const lower = savedWs.toLowerCase();
+      if (lower === "home" || lower === "dashboard") {
+        setWorkspace("Journal");
+      } else {
+        setWorkspace(savedWs);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isLoading) return;
+    
     // Check credentials simulation or NextAuth session
     const demoUser = localStorage.getItem("prod_os_demo_user");
     if (demoUser || user) {
@@ -36,8 +48,24 @@ function HomeContent() {
       if (!onboardingCompleted) {
         setNeedsOnboarding(true);
       }
+    } else {
+      setIsAuthenticated(false);
     }
-  }, [user]);
+    setIsAuthChecked(true);
+  }, [user, isLoading]);
+
+  const handleWorkspaceChange = (newWs: WorkspaceType) => {
+    setWorkspace(newWs);
+    localStorage.setItem("prod_os_active_workspace", newWs);
+  };
+
+  if (!isAuthChecked) {
+    return (
+      <div className="fixed inset-0 bg-[#0d0d14] flex items-center justify-center z-[10000]">
+        <div className="w-8 h-8 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return <Login />;
@@ -49,22 +77,14 @@ function HomeContent() {
 
   const renderWorkspace = () => {
     switch (workspace.toLowerCase()) {
-      case "dashboard":
-      case "home":
-        return <Dashboard />;
-      case "finance":
-        return <FinanceDashboard />;
-      case "goals":
-        return <Goals />;
-      case "wellness":
-      case "health":
-        return <WellnessView />;
       case "focus":
       case "timer":
         return <FocusView />;
       case "profile":
         return <ProfileView />;
       case "journal":
+      case "home":
+      case "dashboard":
         return <JournalView calendarSelectedDate={calendarJournalDate} />;
       default:
         return (
@@ -80,7 +100,7 @@ function HomeContent() {
   return (
     <Shell
       activeWorkspace={workspace}
-      onWorkspaceChange={setWorkspace}
+      onWorkspaceChange={handleWorkspaceChange}
       onCalendarDateSelect={(dateKey) => {
         if (workspace.toLowerCase() === "journal") {
           setCalendarJournalDate(dateKey);
