@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { WorkspaceType } from "./BottomNavbar";
 import { useEditMode } from "@/contexts/EditModeContext";
+import { useJournal } from "@/contexts/JournalContext";
 import { ICONS } from "@/lib/theme";
 import { pressAnimation } from "@/lib/motion";
 
@@ -85,17 +86,45 @@ export default function StatusBar({ activeWorkspace, calOpen, setCalOpen, calBtn
   const weekProgress = (dayIndex + dayProgress) / 7;
   const currentWeek  = getWeekNumber(currentTime);
 
-  return (
-    <div className="absolute bottom-0 left-0 right-0 h-10 bg-[#09090e]/90 backdrop-blur-md border-t border-white/[0.06] flex items-center justify-between px-8 z-[100] text-[11px] uppercase tracking-wider font-semibold text-white/40 select-none">
+  const { entry } = useJournal();
+  const completed = entry?.tasks?.filter((t) => t.completed).length || 0;
+  const total = entry?.tasks?.length || 0;
+  const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
 
-      {/* ── Left: Workspace label ── */}
-      <span onClick={onSettingsOpen} className="cursor-pointer hover:text-white transition-colors">
+  const getProgressColorStatusBar = (pct: number): string => {
+    if (pct >= 80) return "from-emerald-500 to-emerald-400";
+    if (pct >= 60) return "from-yellow-500 to-emerald-500";
+    if (pct >= 40) return "from-orange-500 to-yellow-500";
+    if (pct >= 20) return "from-red-500 to-orange-500";
+    return "from-red-600 to-red-500";
+  };
+
+  return (
+    <div className="absolute bottom-0 left-0 right-0 h-10 bg-[#09090e]/90 backdrop-blur-md border-t border-white/[0.06] grid grid-cols-3 items-center px-8 z-[100] text-[11px] uppercase tracking-wider font-semibold text-white/40 select-none">
+
+      {/* ── Left: Daily Completion Progress ── */}
+      <div className="flex items-center gap-3 justify-self-start">
+        <span className="text-[10px] text-white/35 uppercase font-semibold whitespace-nowrap">Daily Progress</span>
+        <span className="text-[10px] text-white/50 font-mono">{completed}/{total}</span>
+        <div className="w-24 h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+          <motion.div
+            className={`h-full rounded-full bg-gradient-to-r ${getProgressColorStatusBar(percentage)}`}
+            initial={{ width: 0 }}
+            animate={{ width: `${percentage}%` }}
+            transition={{ type: "spring", stiffness: 200, damping: 30 }}
+          />
+        </div>
+        <span className="text-[10px] text-white/50 font-mono">{percentage}%</span>
+      </div>
+
+      {/* ── Center: Workspace label ── */}
+      <span onClick={onSettingsOpen} className="cursor-pointer hover:text-white transition-colors justify-self-center whitespace-nowrap">
         Workspace: {activeWorkspace}
       </span>
 
       {/* ── Right: Time / Date / Day + Edit button ── */}
       {isMounted && (
-        <div className="flex items-center gap-2 text-white/35 normal-case font-mono">
+        <div className="flex items-center gap-2 text-white/35 normal-case font-mono justify-self-end justify-end">
           {/* Cal button — opens CalendarOverlay via Shell */}
           <button
             ref={calBtnRef}

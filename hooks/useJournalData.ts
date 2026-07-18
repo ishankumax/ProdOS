@@ -303,6 +303,26 @@ export function useJournalData(externalDate?: string | null) {
         if (userId) {
           syncEntryToSupabase(loaded, userId);
         }
+      } else {
+        let dirty = false;
+        if (!loaded.tasks || !Array.isArray(loaded.tasks)) {
+          loaded.tasks = createBlankEntry(selectedDate).tasks;
+          dirty = true;
+        }
+        if (typeof loaded.journalContent !== "string") {
+          loaded.journalContent = "";
+          dirty = true;
+        }
+        if (typeof loaded.completionPercentage !== "number") {
+          loaded.completionPercentage = computeCompletion(loaded.tasks);
+          dirty = true;
+        }
+        if (dirty) {
+          saveToLS(loaded);
+          if (userId) {
+            syncEntryToSupabase(loaded, userId);
+          }
+        }
       }
 
       if (!cancelled) {
@@ -348,8 +368,8 @@ export function useJournalData(externalDate?: string | null) {
       const week: WeekDayData[] = weekKeys.map((key) => {
         const d = dateFromKey(key);
         const entry = localEntries.get(key);
-        const total = entry ? entry.tasks.length : TASK_COUNT;
-        const completed = entry
+        const total = (entry && entry.tasks) ? entry.tasks.length : TASK_COUNT;
+        const completed = (entry && entry.tasks)
           ? entry.tasks.filter((t) => t.completed).length
           : 0;
         return {
@@ -399,7 +419,7 @@ export function useJournalData(externalDate?: string | null) {
     (taskId: string) => {
       const updated = {
         ...entry,
-        tasks: entry.tasks.map((t) =>
+        tasks: (entry.tasks || []).map((t) =>
           t.id === taskId ? { ...t, completed: !t.completed } : t
         ),
       };
@@ -412,7 +432,7 @@ export function useJournalData(externalDate?: string | null) {
     (taskId: string, newName: string) => {
       const updated = {
         ...entry,
-        tasks: entry.tasks.map((t) =>
+        tasks: (entry.tasks || []).map((t) =>
           t.id === taskId ? { ...t, taskName: newName } : t
         ),
       };

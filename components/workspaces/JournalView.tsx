@@ -1,24 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useJournalData } from "@/hooks/useJournalData";
+import { useJournal } from "@/contexts/JournalContext";
 import DailyTasksGrid from "@/components/journal/DailyTasksGrid";
 import WeeklyProgressTracker from "@/components/journal/WeeklyProgressTracker";
 import DailyJournalEditor from "@/components/journal/DailyJournalEditor";
 import { SPRING_FLUID } from "@/lib/motion";
 
-// ── Props ──────────────────────────────────────────────────────────────────────
-
-interface JournalViewProps {
-  /** When the calendar overlay selects a date, it passes the dateKey here */
-  calendarSelectedDate?: string | null;
-}
-
-
-
 // ── Main Component ─────────────────────────────────────────────────────────────
 
-export default function JournalView({ calendarSelectedDate }: JournalViewProps) {
+export default function JournalView() {
   const {
     selectedDate,
     entry,
@@ -30,7 +21,7 @@ export default function JournalView({ calendarSelectedDate }: JournalViewProps) 
     reorderTasks,
     updateJournalContent,
     navigateToDate,
-  } = useJournalData(calendarSelectedDate);
+  } = useJournal();
 
   if (!isLoaded) {
     return (

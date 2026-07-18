@@ -191,14 +191,7 @@ export default function DailyTasksGrid({
     }
   }
 
-  // Color for progress bar based on percentage
-  const getProgressColor = () => {
-    if (percentage >= 80) return "from-emerald-500 to-emerald-400";
-    if (percentage >= 60) return "from-yellow-500 to-emerald-500";
-    if (percentage >= 40) return "from-orange-500 to-yellow-500";
-    if (percentage >= 20) return "from-red-500 to-orange-500";
-    return "from-red-600 to-red-500";
-  };
+
 
   return (
     <div className={`p-5 ${CLASSES.card} space-y-4`}>
@@ -246,26 +239,6 @@ export default function DailyTasksGrid({
           </div>
         </SortableContext>
       </DndContext>
-
-      {/* Progress Bar */}
-      <div className="space-y-1.5">
-        <div className="flex items-center justify-between">
-          <span className="text-[9px] font-bold uppercase tracking-widest text-white/35">
-            Completion
-          </span>
-          <span className="text-[10px] font-bold text-white/50">
-            {percentage}%
-          </span>
-        </div>
-        <div className="h-2 rounded-full bg-white/[0.06] overflow-hidden">
-          <motion.div
-            className={`h-full rounded-full bg-gradient-to-r ${getProgressColor()}`}
-            initial={{ width: 0 }}
-            animate={{ width: `${percentage}%` }}
-            transition={{ type: "spring", stiffness: 200, damping: 30, mass: 0.8 }}
-          />
-        </div>
-      </div>
     </div>
   );
 }

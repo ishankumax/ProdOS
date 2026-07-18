@@ -15,6 +15,7 @@ import OnboardingView from "@/components/onboarding/OnboardingView";
 import FocusView from "@/components/workspaces/FocusView";
 import ProfileView from "@/components/workspaces/ProfileView";
 import JournalView from "@/components/workspaces/JournalView";
+import { JournalProvider } from "@/contexts/JournalContext";
 
 function HomeContent() {
   const [workspace, setWorkspace] = useState<WorkspaceType>("Journal");
@@ -87,7 +88,7 @@ function HomeContent() {
       case "journal":
       case "home":
       case "dashboard":
-        return <JournalView calendarSelectedDate={calendarJournalDate} />;
+        return <JournalView />;
       default:
         return (
           <div className="flex h-full items-center justify-center text-white/40 italic flex-col gap-4">
@@ -100,17 +101,19 @@ function HomeContent() {
   };
 
   return (
-    <Shell
-      activeWorkspace={workspace}
-      onWorkspaceChange={handleWorkspaceChange}
-      onCalendarDateSelect={(dateKey) => {
-        if (workspace.toLowerCase() === "journal") {
-          setCalendarJournalDate(dateKey);
-        }
-      }}
-    >
-      {renderWorkspace()}
-    </Shell>
+    <JournalProvider calendarSelectedDate={calendarJournalDate}>
+      <Shell
+        activeWorkspace={workspace}
+        onWorkspaceChange={handleWorkspaceChange}
+        onCalendarDateSelect={(dateKey) => {
+          if (workspace.toLowerCase() === "journal") {
+            setCalendarJournalDate(dateKey);
+          }
+        }}
+      >
+        {renderWorkspace()}
+      </Shell>
+    </JournalProvider>
   );
 }
 

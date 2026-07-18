@@ -41,8 +41,6 @@ export default function WeeklyProgressTracker({
   selectedDate,
   onDayClick,
 }: WeeklyProgressTrackerProps) {
-  const BAR_MAX_HEIGHT = 140; // px — maximum height of the bars
-
   return (
     <div className={`p-5 ${CLASSES.card} h-full flex flex-col`}>
       {/* Header */}
@@ -52,19 +50,15 @@ export default function WeeklyProgressTracker({
       </div>
 
       {/* Bars Container */}
-      <div className="flex-1 flex items-end justify-between gap-2 min-h-0">
+      <div className="flex-1 flex items-stretch justify-between gap-2 min-h-0">
         {weeklyData.map((day) => {
           const isSelected = day.date === selectedDate;
-          const barHeight = Math.max(
-            4,
-            (day.percentage / 100) * BAR_MAX_HEIGHT
-          );
 
           return (
             <button
               key={day.date}
               onClick={() => onDayClick(day.date)}
-              className={`flex-1 flex flex-col items-center gap-2 py-2 rounded-xl transition-all duration-200 group ${
+              className={`flex-1 flex flex-col items-center justify-between gap-2 py-3 px-1 rounded-xl transition-all duration-200 group h-full ${
                 isSelected
                   ? "bg-brand-500/10 ring-1 ring-brand-500/30"
                   : "hover:bg-white/[0.04]"
@@ -97,10 +91,7 @@ export default function WeeklyProgressTracker({
               </span>
 
               {/* Vertical Progress Bar */}
-              <div
-                className="w-5 rounded-full bg-white/[0.06] overflow-hidden relative flex items-end"
-                style={{ height: BAR_MAX_HEIGHT }}
-              >
+              <div className="flex-1 w-5 rounded-full bg-white/[0.06] overflow-hidden relative flex items-end my-1">
                 <motion.div
                   className="w-full rounded-full"
                   style={{
@@ -114,7 +105,7 @@ export default function WeeklyProgressTracker({
                         : "none",
                   }}
                   initial={{ height: 0 }}
-                  animate={{ height: barHeight }}
+                  animate={{ height: `${day.percentage}%` }}
                   transition={{
                     ...SPRING_FLUID,
                     delay: 0.05 * weeklyData.indexOf(day),

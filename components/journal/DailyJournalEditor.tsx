@@ -84,45 +84,44 @@ export default function DailyJournalEditor({
       transition={SPRING_FLUID}
     >
       {/* Header */}
-      <div className="flex items-center justify-between mb-1">
+      <div className="flex items-center justify-between mb-4">
+        {/* Left Side: Title */}
         <div className="flex items-center gap-2">
           <span className="text-base">📖</span>
           <h3 className="text-sm font-bold text-white/85">Daily Journal</h3>
         </div>
-        <div className="flex items-center gap-2">
-          {/* Save indicator */}
-          {isSaving ? (
-            <span className="text-[9px] text-amber-400/60 font-semibold flex items-center gap-1">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                className="w-2.5 h-2.5 border border-amber-400/60 border-t-transparent rounded-full"
-              />
-              Saving…
-            </span>
-          ) : localContent.length > 0 ? (
-            <span className="text-[9px] text-brand-400/60 font-semibold flex items-center gap-1">
-              <i className="fi fi-sr-check text-[7px]" />
-              Saved
-            </span>
-          ) : null}
+
+        {/* Right Side: Date/Day + Save indicator */}
+        <div className="flex flex-col items-end gap-0.5 text-right">
+          <span className="text-[11px] text-white/50 font-medium leading-none">
+            {formatDateDisplay(date)}
+          </span>
+          <div className="flex items-center gap-2 mt-0.5">
+            {isToday && (
+              <span className="text-[10px] text-brand-400/70 font-semibold">
+                {getTimeGreeting()}
+              </span>
+            )}
+            
+            {/* Save indicator */}
+            {isSaving ? (
+              <span className="text-[9px] text-amber-400/60 font-semibold flex items-center gap-1">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  className="w-2.5 h-2.5 border border-amber-400/60 border-t-transparent rounded-full"
+                />
+                Saving…
+              </span>
+            ) : localContent.length > 0 ? (
+              <span className="text-[9px] text-brand-400/60 font-semibold flex items-center gap-1">
+                <i className="fi fi-sr-check text-[7px]" />
+                Saved
+              </span>
+            ) : null}
+          </div>
         </div>
       </div>
-
-      {/* Date */}
-      <div className="mb-3">
-        <p className="text-[11px] text-white/50 font-medium">
-          {formatDateDisplay(date)}
-        </p>
-        {isToday && (
-          <p className="text-[10px] text-brand-400/70 font-semibold mt-0.5">
-            {getTimeGreeting()}
-          </p>
-        )}
-      </div>
-
-      {/* Divider */}
-      <div className="border-t border-white/[0.06] mb-3" />
 
       {/* Textarea */}
       <div className="flex-1 relative min-h-0">
