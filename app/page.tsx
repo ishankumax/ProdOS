@@ -23,6 +23,7 @@ function HomeContent() {
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   const { user, isLoading } = useAuth();
+  const userEmail = user?.email;
 
   useEffect(() => {
     // Load persisted workspace on mount
@@ -52,7 +53,8 @@ function HomeContent() {
       setIsAuthenticated(false);
     }
     setIsAuthChecked(true);
-  }, [user, isLoading]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userEmail, isLoading]);
 
   const handleWorkspaceChange = (newWs: WorkspaceType) => {
     setWorkspace(newWs);
