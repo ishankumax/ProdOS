@@ -71,11 +71,39 @@ function generateId(): string {
   return Math.random().toString(36).substring(2, 11) + Date.now().toString(36);
 }
 
-function createBlankEntry(dateKey: string): DailyEntry {
+function getLatestTasksFromLS(): string[] | null {
+  try {
+    const now = new Date();
+    for (let i = 1; i <= 30; i++) {
+      const d = new Date(now);
+      d.setDate(now.getDate() - i);
+      const key = toKey(d.getFullYear(), d.getMonth(), d.getDate());
+      const raw = localStorage.getItem(`${LS_PREFIX}${key}`);
+      if (raw) {
+        const entry = JSON.parse(raw) as DailyEntry;
+        if (entry.tasks && entry.tasks.length > 0) {
+          const hasCustomNames = entry.tasks.some(
+            (t) => t.taskName && !t.taskName.startsWith("Task ")
+          );
+          if (hasCustomNames) {
+            return entry.tasks.map((t) => t.taskName);
+          }
+        }
+      }
+    }
+  } catch (e) {
+    console.error("[Journal] Failed to find latest tasks in LS", e);
+  }
+  return null;
+}
+
+function createBlankEntry(dateKey: string, forceDefault = false): DailyEntry {
   const now = Date.now();
+  const latestNames = (!forceDefault && typeof window !== "undefined") ? getLatestTasksFromLS() : null;
+
   const tasks: DailyTask[] = Array.from({ length: TASK_COUNT }, (_, i) => ({
     id: generateId(),
-    taskName: `Task ${i + 1}`,
+    taskName: latestNames && latestNames[i] ? latestNames[i]! : `Task ${i + 1}`,
     completed: false,
     order: i,
   }));
@@ -263,7 +291,7 @@ export function useJournalData(externalDate?: string | null) {
   const userId = user?.email ?? null;
 
   const [selectedDate, setSelectedDate] = useState<string>(todayKey());
-  const [entry, setEntry] = useState<DailyEntry>(() => createBlankEntry(todayKey()));
+  const [entry, setEntry] = useState<DailyEntry>(() => createBlankEntry(todayKey(), true));
   const [weeklyData, setWeeklyData] = useState<WeekDayData[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
